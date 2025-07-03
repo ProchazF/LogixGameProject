@@ -1,4 +1,4 @@
-# Logix Game Semestral Project Plan
+ Logix Game Semestral Project Plan
 
 ## Project Overview
 This project involves developing a digital version of the logic-based board game **Logix**, complete with a user interface and support for different gameplay modes. The game will support:
