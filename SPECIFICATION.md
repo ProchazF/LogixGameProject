@@ -1,81 +1,72 @@
-Logix Game – Semester Project Specification
-Overview
-The project aims to design and implement a digital version of the board game Logix, complete with a user-friendly interface, support for multiple game modes, and an AI-controlled bot opponent. The game will be developed using the Unity game engine in C#.
+# Logix Game – Semester Project Specification
 
-Key goals:
+## Overview
 
-Digitize the Logix game with polished UI
+The project aims to design and implement a **digital version of the board game *Logix***, complete with a user-friendly interface, support for multiple game modes, and an AI-controlled bot opponent. The game will be developed using the **Unity game engine** in C#.  
 
-Support both human and AI opponents
+**Key goals:**
+- Digitize the *Logix* game with polished UI
+- Support both human and AI opponents
+- Enable multiple play modes (PvP, PvE, Bot vs Bot)
+- Develop an AI bot using search algorithms (e.g., Alpha-Beta, MCTS)
+- Document the rules, design, and implementation
 
-Enable multiple play modes (PvP, PvE, Bot vs Bot)
+---
 
-Develop an AI bot using search algorithms (e.g., Alpha-Beta, MCTS)
+## Features
 
-Document the rules, design, and implementation
+### Core Gameplay
+- Turn-based, logic-based board game
+- Rule enforcement and legal move validation
+- Win condition detection
+- Game state management (board, turn info)
 
-Features
-Core Gameplay
-Turn-based, logic-based board game
+### Game Modes
+- Player vs Player (local)
+- Player vs Bot
+- Bot vs Bot (spectator mode)
 
-Rule enforcement and legal move validation
+### AI Bot
+- Modular bot interface
+- Algorithmic decision-making (e.g., Alpha-Beta pruning or MCTS)
+- Difficulty scaling (adjustable depth/time limits)
 
-Win condition detection
+### User Interface
+- Main menu with mode selection
+- Interactive game board (highlighting legal moves, input handling)
+- Game status display (turn indicator, winner notification)
+- Restart/exit options
+- Animations and UI polish for better UX
 
-Game state management (e.g., board, turn info)
+### Spectator Features
+- Bot vs Bot mode with live updates
+- Optional rule variations (timers, score modes)
 
-Game Modes
-Player vs Player (local)
+---
 
-Player vs Bot
+## Optional / Stretch Features - possivly for Bachelor's
+- Online multiplayer using Unity Netcode
+- Advanced bot difficulty levels
+- Adaptive AI that learns from player behavior
+- Reinforcement Learning-based agent
 
-Bot vs Bot (spectator mode)
+---
 
-AI Bot
-Modular bot interface
+## Deliverables
 
-Algorithmic decision-making (e.g., Alpha-Beta pruning or MCTS)
+- **Playable Logix game** (Unity project)
+- **AI bot** capable of playing competently
+- **Polished UI and UX**
+- **Fully implemented game modes**: PvP, PvE, Bot-vs-Bot
+- **Codebase** with documentation and unit tests
+- **Project presentation/demo-ready build**
 
-Difficulty scaling (adjustable depth/time limits)
+---
 
-User Interface
-Main menu with mode selection
+## Tools & Technologies
 
-Interactive game board (highlighting legal moves, input handling)
-
-Game status display (turn indicator, winner notification)
-
-Restart/exit options
-
-Animations and UI polish for better UX
-
-Spectator Features
-Bot vs Bot mode with live updates
-
-Optional rule variations (timers, score modes)
-
-Advanced bot difficulty levels
-
-Deliverables
-Playable Logix game (Unity project)
-
-AI bot capable of playing competently
-
-Polished UI and UX
-
-Fully implemented game modes: PvP, PvE, Bot-vs-Bot
-
-Codebase with documentation and unit tests
-
-Project presentation/demo-ready build
-
-Tools & Technologies
-Engine: Unity
-
-Language: C#
-
-Version Control: Git (GitLab)
-
-Testing: Unity Test Runner
-
-Planning/Documentation: Markdown files
+- **Engine**: Unity
+- **Language**: C#
+- **Version Control**: Git (GitHub or GitLab)
+- **Testing**: Unity Test Runner
+- **Planning/Documentation**: Markdown files
