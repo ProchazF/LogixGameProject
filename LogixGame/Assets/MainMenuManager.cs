@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
+    public GameObject mainMenuPanel;
     public GameObject modeSelectionPanel;
     public GameObject difficultyPanel;
     public GameObject botVsBotPanel;
@@ -26,6 +27,7 @@ public class MainMenuManager : MonoBehaviour
     // First three buttons in Main Menu screen
     public void OnPlayClicked()
     {
+        mainMenuPanel.SetActive(false);
         modeSelectionPanel.SetActive(true);
     }
 
@@ -37,6 +39,16 @@ public class MainMenuManager : MonoBehaviour
     public void OnAboutClicked()
     {
         Debug.Log("Show about panel or rules scene");
+    }
+
+    // Button to return to menu
+    public void BackToMainMenu()
+    {
+        // Hide all panels except Main Menu
+        mainMenuPanel.SetActive(true);
+        modeSelectionPanel.SetActive(false);
+        difficultyPanel.SetActive(false);
+        botVsBotPanel.SetActive(false);
     }
 
     // Three mode selection buttons
