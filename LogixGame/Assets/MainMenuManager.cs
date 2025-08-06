@@ -15,7 +15,8 @@ public class MainMenuManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        botADifficulty = "Normal";
+        botBDifficulty = "Normal";
     }
 
     // Update is called once per frame
@@ -73,14 +74,23 @@ public class MainMenuManager : MonoBehaviour
     }
 
     // Difficulty selection buttons
-    public void OnDifficultySelected(string difficulty)
+    public void OnPvE_Easy() => StartPvE("Easy");
+    public void OnPvE_Normal() => StartPvE("Normal");
+    public void OnPvE_Hard() => StartPvE("Hard");
+
+    private void StartPvE(string difficulty)
     {
-        if (selectedMode == "PvE")
-        {
-            PlayerPrefs.SetString("GameMode", "PvE");
-            PlayerPrefs.SetString("AIDifficulty", difficulty);
-            SceneManager.LoadScene("GameScene");
-        }
+        // Save in BOTH keys so either GameManager style will work
+        PlayerPrefs.SetString("GameMode", "PvE");
+        PlayerPrefs.SetString("BotA", difficulty);         // PvE bot difficulty
+        PlayerPrefs.SetString("AIDifficulty", difficulty); // legacy/alt key
+        PlayerPrefs.DeleteKey("BotB");                     // ensure EvE leftover is gone
+        PlayerPrefs.Save();
+
+        Debug.Log($"Starting PvE with difficulty: {difficulty}");
+
+        // Load your game scene
+        SceneManager.LoadScene("GameScene");
     }
     // For Bot versus Bot selection
     public void SetBotADifficulty(string difficulty)
