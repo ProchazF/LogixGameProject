@@ -8,6 +8,8 @@ public enum Difficulty { Easy, Normal, Hard }
 
 public class GameManager : MonoBehaviour
 {
+    private const int boardHeight = 7;
+    private const int boardWidth = 7;
     [Header("Spawns")]
     public Transform spawnP1;
     public Transform spawnP2;
@@ -22,18 +24,25 @@ public class GameManager : MonoBehaviour
 
     public TextMeshProUGUI settingsDisplay;
 
+    // Internal game board for bot and validation
+    private GameBoard logicBoard;
+    // Only the visualizer, won't have insane logic
+    public BoardVisualizer boardVisualizer; // drag from scene (e.g., on Canvas or empty GO)
+
     void Start()
     {
-        string mode = PlayerPrefs.GetString("GameMode", "None");
-        string botA = PlayerPrefs.GetString("BotA", "None");
-        string botB = PlayerPrefs.GetString("BotB", "None");
-
+        // Display current config
         string displayText = $"Mode: {mode}\nBotA: {botA}\nBotB: {botB}";
-
         Debug.Log(displayText);
-
         if (settingsDisplay != null)
             settingsDisplay.text = displayText;
+
+        // TODO: create internal game board (logic)
+        GameBoard logicBoard = new GameBoard(boardHeight, boardWidth); // or whatever size
+
+        // TODO: initialize visual board
+        if (boardVisualizer != null)
+            boardVisualizer.Init(logicBoard);
     }
 
 
