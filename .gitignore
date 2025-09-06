@@ -20,3 +20,7 @@ obj/
 *.tmp
 *.old
 *.log
+# Visual Studio / Rider cache
+.vs/
+*.suo
+*.vsidx
