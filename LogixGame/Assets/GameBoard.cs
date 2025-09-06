@@ -1,5 +1,13 @@
+/*
+ * GameBoard.cs
+ * Here is the internal structure oif the game, the board and the rules, which the marbles follow
+ */
+
+
+using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public enum MarbleColor
 {
@@ -13,9 +21,15 @@ public enum MarbleColor
 }
 public class GameBoard : MonoBehaviour
 {
+    // the board itself
     private MarbleColor[,] board;
 
+    // board sizes
     public int width, height;
+
+    // Tracker of colors with which the prevcious player played with
+    private List<MarbleColor> previousMoveColors = new List<MarbleColor>();
+
 
     public GameBoard(int width, int height)
     {
@@ -75,6 +89,124 @@ public class GameBoard : MonoBehaviour
         }
 
         return false;
+    }
+
+    // Change previous colors played with
+    public void RecordMoveColors(params MarbleColor[] colors)
+    {
+        previousMoveColors.Clear();
+
+        foreach (var color in colors)
+        {
+            // Only store real colors (no None, no Black)
+            if (color != MarbleColor.None)
+            {
+                if (!previousMoveColors.Contains(color))
+                    previousMoveColors.Add(color);
+            }
+        }
+
+        Debug.Log("Recorded colors used in move: " + string.Join(", ", previousMoveColors));
+    }
+    
+    // Function to check if the color was played in previous move (if so it's illegal)
+    public bool IsColorAllowed(MarbleColor color)
+    {
+        return !previousMoveColors.Contains(color);
+    }
+
+    // Check if marble is blocked from all sides
+    public bool IsBlocked(int x, int y)
+    {
+        if (!IsValidCoord(x, y)) return true;
+        if (board[x, y] == MarbleColor.None) return true;
+
+        Vector2Int[] directions = {
+        new Vector2Int(0, 1),   // up
+        new Vector2Int(0, -1),  // down
+        new Vector2Int(1, 0),   // right
+        new Vector2Int(-1, 0)   // left
+        };
+
+        foreach (var dir in directions)
+        {
+            int nx = x + dir.x;
+            int ny = y + dir.y;
+            if (IsValidCoord(nx, ny) && board[nx, ny] == MarbleColor.None)
+                return false; // not blocked
+        }
+
+        return true;
+    }
+
+    // Check if a marble can move to other spot (checks path, not adjacency)
+    public bool IsPathThroughEmptyTiles(int fromX, int fromY, int toX, int toY)
+    {
+        if (!IsValidCoord(fromX, fromY) || !IsValidCoord(toX, toY))
+            return false;
+
+        if (board[toX, toY] != MarbleColor.None)
+            return false; // destination must be empty
+
+
+        var visited = new HashSet<Vector2Int>();
+        var queue = new Queue<Vector2Int>();
+        queue.Enqueue(new Vector2Int(fromX, fromY));
+        visited.Add(new Vector2Int(fromX, fromY));
+
+        Vector2Int[] directions = {
+        new Vector2Int(0, 1),
+        new Vector2Int(0, -1),
+        new Vector2Int(1, 0),
+        new Vector2Int(-1, 0)
+    };
+
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+
+            foreach (var dir in directions)
+            {
+                Vector2Int next = current + dir;
+                if (!IsValidCoord(next.x, next.y)) continue;
+                if (visited.Contains(next)) continue;
+
+                // You can only step into empty tiles (or the destination)
+                if (board[next.x, next.y] == MarbleColor.None || (next.x == toX && next.y == toY))
+                {
+                    if (next.x == toX && next.y == toY)
+                        return true;
+
+                    visited.Add(next);
+                    queue.Enqueue(next);
+                }
+            }
+        }
+
+        return false; // no path found
+    }
+
+    public bool CanMoveTo(int fromX, int fromY, int toX, int toY)
+    {
+        if (!IsValidCoord(fromX, fromY) || !IsValidCoord(toX, toY)) return false;
+        if (board[fromX, fromY] == MarbleColor.None) return false;
+        if (board[toX, toY] != MarbleColor.None) return false;
+        if (IsBlocked(fromX, fromY)) return false;
+
+        // NEW: only through empty tiles
+        if (!IsPathThroughEmptyTiles(fromX, fromY, toX, toY)) return false;
+
+        // Simulate move to check adjacency
+        var color = board[fromX, fromY];
+        board[fromX, fromY] = MarbleColor.None;
+        board[toX, toY] = color;
+
+        bool valid = IsAdjacentToAnyMarble(toX, toY);
+
+        board[toX, toY] = MarbleColor.None;
+        board[fromX, fromY] = color;
+
+        return valid;
     }
 
     public void PrintDebugBoard()
