@@ -47,20 +47,65 @@ public class GameBoard : MonoBehaviour
         int heightCenter = height / 2;
         board[widthCenter, heightCenter] = MarbleColor.Black;
     }
+    // Returns marble color on a specific spot
     public MarbleColor GetMarble(int x, int y)
     {
         if (!IsValidCoord(x, y)) return MarbleColor.None;
         return board[x, y];
     }
 
+    // Move itself, take a Marble from "inventory" and place it to board
     public bool PlaceMarble(int x, int y, MarbleColor color)
     {
         if (!IsValidCoord(x, y)) return false;
         if (board[x, y] != MarbleColor.None) return false; // already occupied
+
+        // Enforce adjacency rule
+        if (!IsAdjacentToAnyMarble(x, y)) return false;
+
+        // Enforce color restriction rule
+        if (!IsColorAllowed(color)) return false;
+
         board[x, y] = color;
+        RecordMoveColors(color);  // track used color (even Black)
         return true;
     }
 
+    // Another move on board, take a Marble and move it someplace else, acording to rules
+    public bool MoveMarble(int fromX, int fromY, int toX, int toY)
+    {
+        if (!CanMoveTo(fromX, fromY, toX, toY)) return false; // Has to be true to be able to make this move
+
+        var color = board[fromX, fromY]; //take the color of the marble you want to move
+
+        // Enforce color restriction rule
+        if (!IsColorAllowed(color)) return false;
+
+        board[fromX, fromY] = MarbleColor.None;
+        board[toX, toY] = color;
+
+        RecordMoveColors(color);  // track used color (even Black)
+        return true;
+    }
+
+    // Third and final move possible, replace existing placed marble with diffferent color (not vblack)
+    public bool ReplaceMarble(int x, int y, MarbleColor newColor)
+    {
+        if (!IsValidCoord(x, y)) return false;
+        if (board[x, y] == MarbleColor.None) return false;
+        if (board[x, y] == MarbleColor.Black) return false; // can't replace black
+
+        var oldColor = board[x, y];
+
+        // Enforce color restriction rule
+        if (!IsColorAllowed(oldColor)) return false;
+        if (!IsColorAllowed(newColor)) return false;
+
+        board[x, y] = newColor;
+
+        RecordMoveColors(oldColor, newColor);
+        return true;
+    }
     private bool IsValidCoord(int x, int y)
     {
         return x >= 0 && y >= 0 && x < width && y < height;
