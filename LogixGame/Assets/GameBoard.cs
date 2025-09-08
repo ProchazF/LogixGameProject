@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -31,6 +32,10 @@ public class GameBoard : MonoBehaviour
     private List<MarbleColor> previousMoveColors = new List<MarbleColor>();
 
     private MarbleInventory marbleInventory;
+
+    private static readonly Vector2Int[] Directions = {
+        new(0,1), new(1,0), new(0,-1), new(-1,0)
+    };
 
 
     public GameBoard(int width, int height)
@@ -265,6 +270,99 @@ public class GameBoard : MonoBehaviour
         board[fromX, fromY] = color;
 
         return valid;
+    }
+
+    private bool IsWithinBounds(List<Vector2Int> positions)
+    {
+        return positions.All(p => p.x >= 0 && p.y >= 0 && p.x < width && p.y < height);
+    }
+
+    private bool IsInsideBounds(Vector2Int pos)
+    {
+        return pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height;
+    }
+
+
+    private bool MatchesShapeWithRules(List<MarbleColor> marbles, List<Vector2Int> positions, out MarbleColor matchedColor)
+    {
+        matchedColor = MarbleColor.None;
+
+        // Allow gray and black as wildcards
+        var trueColors = marbles
+            .Where(m => m != MarbleColor.Grey && m != MarbleColor.Black)
+            .Distinct()
+            .ToList();
+
+        if (trueColors.Count > 1) return false;
+        if (!marbles.Contains(MarbleColor.Black)) return false;
+
+        matchedColor = trueColors.Count == 1 ? trueColors[0] : MarbleColor.Grey;
+
+        // Check isolation: no neighbors of same color (excluding shape positions)
+        foreach (var pos in positions)
+        {
+            foreach (var dir in Directions)
+            {
+                var neighbor = pos + dir;
+                if (!IsInsideBounds(neighbor)) continue;
+                if (positions.Contains(neighbor)) continue;
+
+                var neighborColor = board[neighbor.x, neighbor.y];
+                if (neighborColor == matchedColor) return false;
+            }
+        }
+
+        return true;
+    }
+    public bool CheckWinFromBlack(WinShape[] cards, out WinShape matchedCard, out List<Vector2Int> matchedPositions)
+    {
+        matchedCard = null;
+        matchedPositions = null;
+
+        // Step 1: Find all black marbles on the board
+        List<Vector2Int> blackPositions = new();
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (board[x, y] == MarbleColor.Black)
+                    blackPositions.Add(new Vector2Int(x, y));
+            }
+        }
+
+        // Step 2: Try matching each card (with rotations) at each black marble
+        foreach (var black in blackPositions)
+        {
+            foreach (var card in cards)
+            {
+                foreach (var rotation in card.Rotations)
+                {
+                    for (int i = 0; i < rotation.Length; i++) 
+                    {
+                        // Try to align black marble with each offset in shape
+                        Vector2Int offsetToAlign = black - rotation[i];
+                        List<Vector2Int> shapePositions = rotation
+                            .Select(p => p + offsetToAlign).ToList();
+
+                        if (!IsWithinBounds(shapePositions)) continue;
+
+                        List<MarbleColor> marbles = shapePositions
+                            .Select(p => board[p.x, p.y]).ToList();
+
+                        if (!marbles.Contains(MarbleColor.Black)) continue;
+
+                        if (MatchesShapeWithRules(marbles, shapePositions, out MarbleColor matchedColor))
+                        {
+                            matchedCard = card;
+                            matchedPositions = shapePositions;
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     public void PrintDebugBoard()

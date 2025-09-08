@@ -1,3 +1,4 @@
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -8,10 +9,21 @@ public class BoardConsoleTester : MonoBehaviour
     public TMP_InputField inputField;
     public TextMeshProUGUI boardDisplay;
 
+    public WinShape[] testPlayerCards;  // assign these in Inspector or Start()
     private void Start()
     {
         gameBoard = new GameBoard(7, 7);
         gameBoard.PlaceMarble(3, 3, MarbleColor.Black); // Start with black in center
+        // Example assignment if not set in inspector:
+        if (testPlayerCards == null || testPlayerCards.Length < 2)
+        {
+            testPlayerCards = new[] {
+                WinShapeDatabase.AllShapes[0], // Line
+                WinShapeDatabase.AllShapes[1]  // T-shape
+            };
+        }
+
+        ShowPlayerCards();
         RedrawBoard();
     }
 
@@ -58,9 +70,24 @@ public class BoardConsoleTester : MonoBehaviour
                     result = gameBoard.ReplaceMarble(x, y, color);
                 }
                 break;
+
+            case "check":
+                if (gameBoard.CheckWinFromBlack(testPlayerCards, out var winCard, out var winPositions))
+                {
+                    Debug.Log($"✅ WIN DETECTED! Matched card: {winCard.Name}");
+                    HighlightWinInBoardDisplay(winPositions);
+                }
+                else
+                {
+                    Debug.Log("❌ No win found.");
+                }
+                break;
         }
 
-        Debug.Log($"Command '{cmd}' result: {result}");
+        if (parts[0] != "check")
+        {
+            Debug.Log($"Command '{cmd}' result: {result}");
+        }
         RedrawBoard();
     }
 
@@ -106,5 +133,32 @@ public class BoardConsoleTester : MonoBehaviour
             "black" => MarbleColor.Black,
             _ => MarbleColor.None
         };
+    }
+    private void HighlightWinInBoardDisplay(List<Vector2Int> winPositions)
+    {
+        string s = "";
+        for (int y = 6; y >= 0; y--)
+        {
+            for (int x = 0; x < 7; x++)
+            {
+                var marble = gameBoard.GetMarble(x, y);
+                var pos = new Vector2Int(x, y);
+                if (winPositions.Contains(pos))
+                    s += $"[{MarbleChar(marble)}]";  // Brackets around winning marbles
+                else
+                    s += $" {MarbleChar(marble)} ";
+            }
+            s += "\n";
+        }
+        boardDisplay.text = s;
+    }
+
+    private void ShowPlayerCards()
+    {
+        Debug.Log("🃏 Player Cards:");
+        foreach (var card in testPlayerCards)
+        {
+            Debug.Log($"- {card.Name}");
+        }
     }
 }

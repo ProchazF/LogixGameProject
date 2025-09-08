@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class GameManager : MonoBehaviour
 {
     private const int width = 7;
     private const int height = 7;
+    private const int numberOfWinningCardsInHand = 2;
     [Header("Spawns")]
     public Transform spawnP1;
     public Transform spawnP2;
@@ -18,6 +20,9 @@ public class GameManager : MonoBehaviour
     [Header("Prefabs")]
     public GameObject humanPrefab;
     public GameObject botPrefab;
+
+    public WinShape[] playerACards = new WinShape[numberOfWinningCardsInHand]; // player cards 
+    public WinShape[] playerBCards = new WinShape[numberOfWinningCardsInHand]; 
 
     private GameMode mode;
     private Difficulty botA;   // PvE uses botA
@@ -33,13 +38,17 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         // Display current config
+        /*
         string displayText = $"Mode: {mode}\nBotA: {botA}\nBotB: {botB}";
         Debug.Log(displayText);
         if (settingsDisplay != null)
             settingsDisplay.text = displayText;
+        */
 
         // TODO: create internal game board (logic)
         GameBoard myBoard = new GameBoard(width, height); // or whatever size
+
+        AssignCards();
 
         // TODO: initialize visual board
         if (boardVisualizer != null)
@@ -99,6 +108,17 @@ public class GameManager : MonoBehaviour
             "Hard" => Difficulty.Hard,
             _ => Difficulty.Normal
         };
+    }
+
+    void AssignCards()
+    {
+        var rnd = WinShapeDatabase.AllShapes.OrderBy(x => UnityEngine.Random.value).ToList();
+        playerACards[0] = rnd[0];
+        playerACards[1] = rnd[1];
+        playerBCards[0] = rnd[2];
+        playerBCards[1] = rnd[3];
+
+        // (Optional) Show in UI
     }
 
     private GameObject SpawnHuman(Transform t)
