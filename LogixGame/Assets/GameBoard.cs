@@ -30,7 +30,7 @@ public class GameBoard : MonoBehaviour
     // Tracker of colors with which the prevcious player played with
     private List<MarbleColor> previousMoveColors = new List<MarbleColor>();
 
-    private MarbleInventory marbleInventory = new MarbleInventory();
+    private MarbleInventory marbleInventory;
 
 
     public GameBoard(int width, int height)
@@ -38,6 +38,7 @@ public class GameBoard : MonoBehaviour
         this.width = width;
         this.height = height;
         board = new MarbleColor[width, height];
+        marbleInventory = new MarbleInventory();
         InitializeBoard();
     }
 
