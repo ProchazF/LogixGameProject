@@ -30,6 +30,8 @@ public class GameBoard : MonoBehaviour
     // Tracker of colors with which the prevcious player played with
     private List<MarbleColor> previousMoveColors = new List<MarbleColor>();
 
+    private MarbleInventory marbleInventory = new MarbleInventory();
+
 
     public GameBoard(int width, int height)
     {
@@ -66,7 +68,12 @@ public class GameBoard : MonoBehaviour
         // Enforce color restriction rule
         if (!IsColorAllowed(color)) return false;
 
+        if (!marbleInventory.Has(color)) return false;
+
         board[x, y] = color;
+
+        marbleInventory.Use(color); // Update inventory
+
         RecordMoveColors(color);  // track used color (even Black)
         return true;
     }
@@ -94,6 +101,8 @@ public class GameBoard : MonoBehaviour
         if (!IsValidCoord(x, y)) return false;
         if (board[x, y] == MarbleColor.None) return false;
         if (board[x, y] == MarbleColor.Black) return false; // can't replace black
+        // The one placing has to be in inventory
+        if (!marbleInventory.Has(newColor)) return false;
 
         var oldColor = board[x, y];
 
@@ -102,6 +111,9 @@ public class GameBoard : MonoBehaviour
         if (!IsColorAllowed(newColor)) return false;
 
         board[x, y] = newColor;
+
+        marbleInventory.Use(newColor); // Use new one
+        marbleInventory.AddBack(oldColor); // Put old one back
 
         RecordMoveColors(oldColor, newColor);
         return true;
