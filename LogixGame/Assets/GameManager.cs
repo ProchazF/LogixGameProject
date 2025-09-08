@@ -44,28 +44,6 @@ public class GameManager : MonoBehaviour
         // TODO: initialize visual board
         if (boardVisualizer != null)
             boardVisualizer.Init(myBoard);
-
-        // TEST 1: Place black marble in center (starting position)
-        myBoard.PlaceMarble(3, 3, MarbleColor.Black); // no inventory needed for black
-
-        // TEST 2: Try placing red marble next to it (should succeed)
-        bool placedRed = myBoard.PlaceMarble(3, 2, MarbleColor.Red);
-        Debug.Log($"Placed Red: {placedRed}");
-
-        // TEST 3: Try placing red again (should fail if already used 7)
-        for (int i = 0; i < 7; i++)
-            myBoard.PlaceMarble(0, i, MarbleColor.Red); // burn through inventory
-
-        bool placedTooManyRed = myBoard.PlaceMarble(1, 1, MarbleColor.Red);
-        Debug.Log($"Placed 8th Red: {placedTooManyRed}"); // should be false
-
-        // TEST 4: Try replacing red with green
-        bool replaced = myBoard.ReplaceMarble(3, 2, MarbleColor.Green);
-        Debug.Log($"Replaced Red → Green: {replaced}");
-
-        // TEST 5: Try moving the green marble (adjacent to black)
-        bool moved = myBoard.MoveMarble(3, 2, 3, 1);
-        Debug.Log($"Moved Green: {moved}");
     }
 
 
