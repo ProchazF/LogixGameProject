@@ -21,8 +21,8 @@ public class GameManager : MonoBehaviour
     public GameObject humanPrefab;
     public GameObject botPrefab;
 
-    public WinShape[] playerACards = new WinShape[numberOfWinningCardsInHand]; // player cards 
-    public WinShape[] playerBCards = new WinShape[numberOfWinningCardsInHand]; 
+    public WinShapeInstance[] playerACards; // Player cards
+    public WinShapeInstance[] playerBCards;
 
     private GameMode mode;
     private Difficulty botA;   // PvE uses botA
@@ -48,7 +48,18 @@ public class GameManager : MonoBehaviour
         // TODO: create internal game board (logic)
         GameBoard myBoard = new GameBoard(width, height); // or whatever size
 
-        AssignCards();
+        playerACards = GeneratePlayerCards();
+        var usedShapes = new HashSet<WinShape>(playerACards.Select(c => c.Shape));
+        playerBCards = GeneratePlayerCards(usedShapes);
+
+        // Optional: Show them in console
+        Debug.Log("Player A Cards:");
+        foreach (var card in playerACards)
+            Debug.Log($"🃏 {card.Name} (Blocked Color: {card.AssignedColor})");
+
+        Debug.Log("Player B Cards:");
+        foreach (var card in playerBCards)
+            Debug.Log($"🃏 {card.Name} (Blocked Color: {card.AssignedColor})");
 
         // TODO: initialize visual board
         if (boardVisualizer != null)
@@ -110,15 +121,27 @@ public class GameManager : MonoBehaviour
         };
     }
 
-    void AssignCards()
+    private WinShapeInstance[] GeneratePlayerCards(HashSet<WinShape> excluded = null)
     {
-        var rnd = WinShapeDatabase.AllShapes.OrderBy(x => UnityEngine.Random.value).ToList();
-        playerACards[0] = rnd[0];
-        playerACards[1] = rnd[1];
-        playerBCards[0] = rnd[2];
-        playerBCards[1] = rnd[3];
+        var allShapes = WinShapeDatabase.AllShapes;
+        var allColors = new[] { MarbleColor.Red, MarbleColor.Blue, MarbleColor.Green, MarbleColor.Yellow };
 
-        // (Optional) Show in UI
+        var assigned = new List<WinShapeInstance>();
+
+        while (assigned.Count < 2)
+        {
+            var shape = allShapes[Random.Range(0, allShapes.Count)];
+
+            // Avoid duplicate shapes
+            if (assigned.Any(c => c.Shape == shape)) continue;
+            if (excluded != null && excluded.Contains(shape)) continue;
+
+            var blockedColor = allColors[Random.Range(0, allColors.Length)];
+
+            assigned.Add(new WinShapeInstance(shape, blockedColor));
+        }
+
+        return assigned.ToArray();
     }
 
     private GameObject SpawnHuman(Transform t)

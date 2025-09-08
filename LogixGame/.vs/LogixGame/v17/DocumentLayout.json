@@ -3,20 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|c:\\users\\prochajdaf\\matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\logixgame\\assets\\winshapedatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|solutionrelative:assets\\winshapedatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|c:\\users\\prochajdaf\\matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\logixgame\\assets\\winshape.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|solutionrelative:assets\\winshape.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\assets\\boardconsoletester.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|solutionrelative:assets\\boardconsoletester.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|c:\\users\\prochajdaf\\matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\logixgame\\assets\\winshape.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|solutionrelative:assets\\winshape.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\assets\\boardvisualizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|solutionrelative:assets\\boardvisualizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\assets\\marbleinventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|solutionrelative:assets\\marbleinventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\assets\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -27,8 +23,12 @@
       "RelativeMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|solutionrelative:assets\\gameboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\assets\\marbleinventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|solutionrelative:assets\\marbleinventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\assets\\boardvisualizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|solutionrelative:assets\\boardvisualizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|c:\\users\\prochajdaf\\matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\logixgame\\assets\\winshapedatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EEF653E8-5116-07B1-3B2D-2AF6CC60216F}|Assembly-CSharp.csproj|solutionrelative:assets\\winshapedatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,30 +38,30 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "WinShapeDatabase.cs",
               "DocumentMoniker": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\WinShapeDatabase.cs",
               "RelativeDocumentMoniker": "Assets\\WinShapeDatabase.cs",
-              "ToolTip": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\WinShapeDatabase.cs*",
-              "RelativeToolTip": "Assets\\WinShapeDatabase.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAABIAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\WinShapeDatabase.cs",
+              "RelativeToolTip": "Assets\\WinShapeDatabase.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAQwCUAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-08T11:38:31.849Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "WinShape.cs",
               "DocumentMoniker": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\WinShape.cs",
               "RelativeDocumentMoniker": "Assets\\WinShape.cs",
               "ToolTip": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\WinShape.cs",
               "RelativeToolTip": "Assets\\WinShape.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-08T11:32:23.082Z",
               "EditorCaption": ""
@@ -74,14 +74,14 @@
               "RelativeDocumentMoniker": "Assets\\BoardConsoleTester.cs",
               "ToolTip": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\BoardConsoleTester.cs",
               "RelativeToolTip": "Assets\\BoardConsoleTester.cs",
-              "ViewState": "AgIAACoAAAAAAAAAAAAowGMAAAAlAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAKIAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-08T08:45:41.99Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 2,
               "Title": "MarbleInventory.cs",
               "DocumentMoniker": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\MarbleInventory.cs",
               "RelativeDocumentMoniker": "Assets\\MarbleInventory.cs",
@@ -89,11 +89,12 @@
               "RelativeToolTip": "Assets\\MarbleInventory.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-08T08:24:07.145Z"
+              "WhenOpened": "2025-09-08T08:24:07.145Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "BoardVisualizer.cs",
               "DocumentMoniker": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\BoardVisualizer.cs",
               "RelativeDocumentMoniker": "Assets\\BoardVisualizer.cs",
@@ -101,31 +102,34 @@
               "RelativeToolTip": "Assets\\BoardVisualizer.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-06T11:58:17.117Z"
+              "WhenOpened": "2025-09-06T11:58:17.117Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "GameBoard.cs",
               "DocumentMoniker": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\GameBoard.cs",
               "RelativeDocumentMoniker": "Assets\\GameBoard.cs",
               "ToolTip": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\GameBoard.cs",
               "RelativeToolTip": "Assets\\GameBoard.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAACcAAAAvAAAAAAAAAA==",
+              "ViewState": "AgIAABkBAAAAAAAAAAAAACcBAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-06T11:57:34.061Z"
+              "WhenOpened": "2025-09-06T11:57:34.061Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "GameManager.cs",
               "DocumentMoniker": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\GameManager.cs",
               "RelativeDocumentMoniker": "Assets\\GameManager.cs",
               "ToolTip": "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\LogixGame\\Assets\\GameManager.cs",
               "RelativeToolTip": "Assets\\GameManager.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAA5wC0AAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAFQAAAAAAAAAAAAIwCsAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-06T08:59:55.614Z"
+              "WhenOpened": "2025-08-06T08:59:55.614Z",
+              "EditorCaption": ""
             }
           ]
         }
