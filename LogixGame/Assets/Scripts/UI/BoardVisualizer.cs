@@ -76,4 +76,30 @@ public class BoardVisualizer : MonoBehaviour
         Debug.Log($"Tile clicked at ({x}, {y})");
         // TODO: Notify GameManager or handle move here
     }
+
+    // After every move you update the board
+    public void Refresh()
+    {
+        int cols = board.width;
+        int rows = board.height;
+
+        int index = 0;
+        for (int y = board.height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < board.width; x++)
+            {
+                if (index >= transform.childCount) return;
+
+                Transform tileObj = transform.GetChild(index);
+                BoardTile tile = tileObj.GetComponent<BoardTile>();
+                if (tile != null)
+                {
+                    MarbleColor c = board.GetMarble(x, y);
+                    tile.UpdateMarble(c);
+                }
+
+                index++;
+            }
+        }
+    }
 }
