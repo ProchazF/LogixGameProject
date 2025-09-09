@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     private GameBoard myBoard;
     // Only the visualizer, won't have insane logic
     public BoardVisualizer boardVisualizer; // drag from scene (e.g., on Canvas or empty GO)
+    public TextMeshProUGUI cardDisplayText;
 
     void Start()
     {
@@ -45,9 +46,10 @@ public class GameManager : MonoBehaviour
             settingsDisplay.text = displayText;
         */
 
-        // TODO: create internal game board (logic)
+        // create internal game board (logic)
         GameBoard myBoard = new GameBoard(width, height); // or whatever size
 
+        // Give each player his cards while not allowing duplicates (might have to be for loop for more players)
         playerACards = GeneratePlayerCards();
         var usedShapes = new HashSet<WinShape>(playerACards.Select(c => c.Shape));
         playerBCards = GeneratePlayerCards(usedShapes);
@@ -60,6 +62,19 @@ public class GameManager : MonoBehaviour
         Debug.Log("Player B Cards:");
         foreach (var card in playerBCards)
             Debug.Log($"🃏 {card.Name} (Blocked Color: {card.AssignedColor})");
+
+
+        // Show on screen
+        if (cardDisplayText != null)
+        {
+            cardDisplayText.text = "<b>Player A Cards:</b>\n";
+            foreach (var c in playerACards)
+                cardDisplayText.text += $"{c.Name} ≠ {c.AssignedColor}\n";
+
+            cardDisplayText.text += "\n<b>Player B Cards:</b>\n";
+            foreach (var c in playerBCards)
+                cardDisplayText.text += $"{c.Name} ≠ {c.AssignedColor}\n";
+        }
 
         // TODO: initialize visual board
         if (boardVisualizer != null)
