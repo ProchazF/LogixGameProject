@@ -30,12 +30,20 @@ public class BoardVisualizer : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        // Create new tiles
-        for (int i = 0; i < cols * rows; i++)
+        // create tiles anmd assign them coordinates
+        for (int y = board.height - 1; y >= 0; y--)  // Top to bottom
         {
-            Instantiate(tilePrefab, transform);
-        }
+            for (int x = 0; x < board.width; x++)
+            {
+                GameObject tile = Instantiate(tilePrefab, transform);
 
+                BoardTile tileScript = tile.GetComponent<BoardTile>();
+                if (tileScript != null)
+                {
+                    tileScript.Init(x, y, OnTileClicked);
+                }
+            }
+        }
         ResizeGrid();
     }
 
@@ -63,10 +71,9 @@ public class BoardVisualizer : MonoBehaviour
         grid.cellSize = new Vector2(cellSize, cellSize);
     }
 
-
-    void Update()
+    private void OnTileClicked(int x, int y)
     {
-        // Resize dynamically if screen size changes
-        ResizeGrid();
+        Debug.Log($"Tile clicked at ({x}, {y})");
+        // TODO: Notify GameManager or handle move here
     }
 }
