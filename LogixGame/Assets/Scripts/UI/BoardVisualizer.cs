@@ -1,23 +1,60 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BoardVisualizer : MonoBehaviour
 {
-    public GameObject orbPrefab;
-    public Transform[,] visualTiles;
-    private GameBoard board;
+    public GameObject tilePrefab;
+    public GameBoard board;
 
-    public void Init(GameBoard logicBoard)
+    private RectTransform rectTransform;
+    private GridLayoutGroup grid;
+
+    void Awake()
     {
-        board = logicBoard;
-        visualTiles = new Transform[board.width, board.height];
-
-        // spawn visual tiles or use existing ones
+        rectTransform = GetComponent<RectTransform>();
+        grid = GetComponent<GridLayoutGroup>();
     }
 
-    public void PlaceOrbVisual(int x, int y, Color color)
+    public void Init(GameBoard gameBoard)
     {
-        Vector3 pos = visualTiles[x, y].position;
-        var orb = Instantiate(orbPrefab, pos, Quaternion.identity);
-        orb.GetComponent<Renderer>().material.color = color;
+        board = gameBoard;
+
+        int cols = board.width;
+        int rows = board.height;
+
+        grid.constraintCount = cols;
+
+        // Clear existing tiles if any
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // Create new tiles
+        for (int i = 0; i < cols * rows; i++)
+        {
+            Instantiate(tilePrefab, transform);
+        }
+
+        ResizeGrid();
+    }
+
+    private void ResizeGrid()
+    {
+        float canvasWidth = ((RectTransform)transform.parent).rect.width;
+        float canvasHeight = ((RectTransform)transform.parent).rect.height;
+
+        int cols = board.width;
+        int rows = board.height;
+
+        float cellSize = Mathf.Min(canvasWidth / cols, canvasHeight / rows);
+
+        grid.cellSize = new Vector2(cellSize, cellSize);
+    }
+
+    void Update()
+    {
+        // Resize dynamically if screen size changes
+        ResizeGrid();
     }
 }
