@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
         var usedShapes = new HashSet<WinShape>(playerACards.Select(c => c.Shape));
         playerBCards = GeneratePlayerCards(usedShapes);
 
-        // Optional: Show them in console
+        /* Optional: Show them in console
         Debug.Log("Player A Cards:");
         foreach (var card in playerACards)
             Debug.Log($"🃏 {card.Name} (Blocked Color: {card.AssignedColor})");
@@ -75,6 +75,7 @@ public class GameManager : MonoBehaviour
             foreach (var c in playerBCards)
                 cardDisplayText.text += $"{c.Name} ≠ {c.AssignedColor}\n";
         }
+        */
 
         // TODO: initialize visual board
         if (boardVisualizer != null)

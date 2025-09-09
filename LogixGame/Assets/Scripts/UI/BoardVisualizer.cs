@@ -41,8 +41,19 @@ public class BoardVisualizer : MonoBehaviour
 
     private void ResizeGrid()
     {
-        float canvasWidth = ((RectTransform)transform.parent).rect.width;
-        float canvasHeight = ((RectTransform)transform.parent).rect.height;
+        if (transform.parent == null) return;
+
+        RectTransform parentRect = transform.parent.GetComponent<RectTransform>();
+        if (parentRect == null) return;
+
+        if (grid == null)
+        {
+            Debug.LogWarning("GridLayoutGroup is not assigned!");
+            return;
+        }
+
+        float canvasWidth = parentRect.rect.width;
+        float canvasHeight = parentRect.rect.height;
 
         int cols = board.width;
         int rows = board.height;
@@ -51,6 +62,7 @@ public class BoardVisualizer : MonoBehaviour
 
         grid.cellSize = new Vector2(cellSize, cellSize);
     }
+
 
     void Update()
     {
