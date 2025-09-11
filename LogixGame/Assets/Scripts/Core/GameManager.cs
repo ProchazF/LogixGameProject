@@ -13,6 +13,11 @@ public class GameManager : MonoBehaviour
     private const int width = 7;
     private const int height = 7;
     private const int numberOfWinningCardsInHand = 2;
+
+    private MarbleColor selectedColor = MarbleColor.None;
+
+    public CursorMarble cursorMarble; // Assign in Inspector
+
     [Header("Spawns")]
     public Transform spawnP1;
     public Transform spawnP2;
@@ -189,11 +194,20 @@ public class GameManager : MonoBehaviour
         return go;
     }
 
-    public void OnMarbleSelected(MarbleColor selectedColor)
+    public void OnMarbleSelected(MarbleColor color)
     {
-        Debug.Log($"Player selected marble: {selectedColor}");
-
-        // TODO: Update game state to reflect that the player wants to place this marble
-        // E.g., store it in a field like `currentSelectedColor`
+        if (selectedColor == color)
+        {
+            // Deselect if clicking same color again
+            selectedColor = MarbleColor.None;
+            cursorMarble.Clear();
+            Debug.Log("Deselected marble");
+        }
+        else
+        {
+            selectedColor = color;
+            cursorMarble.SetColor(color);
+            Debug.Log($"Selected marble: {color}");
+        }
     }
 }
