@@ -48,6 +48,11 @@ public class InventoryItemUI : MonoBehaviour
     private void OnClicked()
     {
         Debug.Log($"Marble clicked: {color}");
-        // TODO: GameManager.Instance?.OnMarbleSelected(color);
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnMarbleSelected(color);
+        }
     }
+
 }

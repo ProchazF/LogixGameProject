@@ -37,6 +37,8 @@ public class GameManager : MonoBehaviour
     public InventoryUI inventoryUI;
     public TextMeshProUGUI cardDisplayText;
 
+    public static GameManager Instance;
+
     void Start()
     {
         // Display current config
@@ -95,6 +97,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        Instance = this;
         // 1) Read selections from PlayerPrefs (defaults are safe)
         string modeStr = PlayerPrefs.GetString("GameMode", "PvP");
         mode = ParseMode(modeStr);
@@ -184,5 +187,13 @@ public class GameManager : MonoBehaviour
         var ai = go.GetComponent<BotController>();
         if (ai != null) ai.SetDifficulty(diff);
         return go;
+    }
+
+    public void OnMarbleSelected(MarbleColor selectedColor)
+    {
+        Debug.Log($"Player selected marble: {selectedColor}");
+
+        // TODO: Update game state to reflect that the player wants to place this marble
+        // E.g., store it in a field like `currentSelectedColor`
     }
 }
