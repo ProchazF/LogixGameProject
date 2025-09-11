@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour
         */
 
         // create internal game board (logic)
-        GameBoard myBoard = new GameBoard(width, height); // or whatever size
+        myBoard = new GameBoard(width, height); // or whatever size
 
         // Give each player his cards while not allowing duplicates (might have to be for loop for more players)
         playerACards = GeneratePlayerCards();
@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour
         // TODO: initialize visual board
         if (boardVisualizer != null)
             boardVisualizer.Init(myBoard);
+        boardVisualizer.onTileClickedCallback = OnTileClicked;
 
         Debug.Log($"InventoryUI: {inventoryUI}, GameBoard: {myBoard}");
 
@@ -210,4 +211,48 @@ public class GameManager : MonoBehaviour
             Debug.Log($"Selected marble: {color}");
         }
     }
+
+    public void OnTileClicked(int x, int y)
+    {
+        Debug.Log($"[GameManager] Tile clicked at ({x},{y})");
+
+        if (myBoard == null) Debug.LogError("myBoard is NULL");
+        if (cursorMarble == null) Debug.LogError("cursorMarble is NULL");
+        if (inventoryUI == null) Debug.LogError("inventoryUI is NULL");
+
+        if (selectedColor == MarbleColor.None)
+        {
+            Debug.Log("No marble selected.");
+            return;
+        }
+
+        bool success = myBoard.PlaceMarble(x, y, selectedColor);
+        if (success)
+        {
+            Debug.Log($"Placed {selectedColor} at ({x}, {y})");
+
+            // Update visuals
+            boardVisualizer.Refresh();
+            inventoryUI.UpdateCount(selectedColor, myBoard.GetInventory()[selectedColor]);
+
+            // Clear selection (if desired)
+            selectedColor = MarbleColor.None;
+            cursorMarble.Clear();
+
+            // Optional: check win
+            /*if (myBoard.CheckWinFromBlack(allCards.ToArray(), out var matchedCard, out var positions))
+            {
+                Debug.Log($"Player won with card: {matchedCard.Name}");
+                // TODO: show win screen or end game
+            }
+            */
+            // Switch turn, update color restrictions, etc...
+            // EndTurn();
+        }
+        else
+        {
+            Debug.Log("Invalid move.");
+        }
+    }
+
 }

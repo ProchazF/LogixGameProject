@@ -6,6 +6,8 @@ public class BoardVisualizer : MonoBehaviour
     public GameObject tilePrefab;
     public GameBoard board;
 
+    public System.Action<int, int> onTileClickedCallback;
+
     private RectTransform rectTransform;
     private GridLayoutGroup grid;
 
@@ -40,7 +42,7 @@ public class BoardVisualizer : MonoBehaviour
                 BoardTile tileScript = tile.GetComponent<BoardTile>();
                 if (tileScript != null)
                 {
-                    tileScript.Init(x, y, OnTileClicked);
+                    tileScript.Init(x, y, (xPos, yPos) => onTileClickedCallback?.Invoke(xPos, yPos));
                 }
             }
         }
@@ -71,11 +73,13 @@ public class BoardVisualizer : MonoBehaviour
         grid.cellSize = new Vector2(cellSize, cellSize);
     }
 
-    private void OnTileClicked(int x, int y)
-    {
-        Debug.Log($"Tile clicked at ({x}, {y})");
-        // TODO: Notify GameManager or handle move here
-    }
+    //private void OnTileClicked(int x, int y)
+    //{
+    //    Debug.Log($"Tile clicked at ({x}, {y})");
+    //    // TODO: Notify GameManager or handle move here
+    //}
+
+
 
     // After every move you update the board
     public void Refresh()
