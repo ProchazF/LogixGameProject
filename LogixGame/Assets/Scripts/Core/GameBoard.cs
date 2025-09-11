@@ -365,6 +365,12 @@ public class GameBoard : MonoBehaviour
         return false;
     }
 
+    // Get inventory
+    public Dictionary<MarbleColor, int> GetInventory()
+    {
+        return marbleInventory.GetAllCounts();
+    }
+
     public void PrintDebugBoard()
     {
         string debug = "";

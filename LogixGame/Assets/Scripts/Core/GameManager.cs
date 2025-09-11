@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     private GameBoard myBoard;
     // Only the visualizer, won't have insane logic
     public BoardVisualizer boardVisualizer; // drag from scene (e.g., on Canvas or empty GO)
+    public InventoryUI inventoryUI;
     public TextMeshProUGUI cardDisplayText;
 
     void Start()
@@ -80,6 +81,15 @@ public class GameManager : MonoBehaviour
         // TODO: initialize visual board
         if (boardVisualizer != null)
             boardVisualizer.Init(myBoard);
+
+        Debug.Log($"InventoryUI: {inventoryUI}, GameBoard: {myBoard}");
+
+        inventoryUI.Init(myBoard.GetInventory());
+        inventoryUI.UpdateCount(MarbleColor.Red, myBoard.GetInventory()[MarbleColor.Red]);
+
+
+
+        boardVisualizer.Refresh(); // Visualize starting position
     }
 
 

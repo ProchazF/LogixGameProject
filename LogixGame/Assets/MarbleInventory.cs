@@ -9,10 +9,10 @@ public class MarbleInventory
     {
         counts = new Dictionary<MarbleColor, int>
         {
-            { MarbleColor.Red, 7 },
-            { MarbleColor.Blue, 7 },
-            { MarbleColor.Green, 7 },
-            { MarbleColor.Yellow, 7 },
+            { MarbleColor.Red, 6 },
+            { MarbleColor.Blue, 6 },
+            { MarbleColor.Green, 6 },
+            { MarbleColor.Yellow, 6 },
             { MarbleColor.Grey, 2 }
         };
     }
