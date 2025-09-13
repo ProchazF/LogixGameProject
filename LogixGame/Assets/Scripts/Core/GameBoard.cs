@@ -20,7 +20,7 @@ public enum MarbleColor
     Grey,       // joker
     Black       // fixed in center at start
 }
-public class GameBoard : MonoBehaviour
+public class GameBoard
 {
     // the board itself
     private MarbleColor[,] board;
@@ -124,6 +124,32 @@ public class GameBoard : MonoBehaviour
         RecordMoveColors(oldColor, newColor);
         return true;
     }
+
+    public bool CanReplaceMarble(int x, int y, MarbleColor newColor)
+    {
+        if (!IsValidCoord(x, y)) return false;
+
+        var existing = board[x, y];
+
+        // Can't replace if it's empty or black
+        if (existing == MarbleColor.None || existing == MarbleColor.Black)
+            return false;
+
+        // Can't replace same color
+        if (existing == newColor)
+            return false;
+
+        // You must have the new marble in inventory
+        if (!marbleInventory.Has(newColor))
+            return false;
+
+        // Color restriction rule
+        if (!IsColorAllowed(existing) || !IsColorAllowed(newColor))
+            return false;
+
+        return true;
+    }
+
     private bool IsValidCoord(int x, int y)
     {
         return x >= 0 && y >= 0 && x < width && y < height;

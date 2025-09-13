@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
 
     // Internal game board for bot and validation
     private GameBoard myBoard;
+
     // Only the visualizer, won't have insane logic
     public BoardVisualizer boardVisualizer; // drag from scene (e.g., on Canvas or empty GO)
     public InventoryUI inventoryUI;
@@ -54,8 +55,11 @@ public class GameManager : MonoBehaviour
             settingsDisplay.text = displayText;
         */
 
+
         // create internal game board (logic)
         myBoard = new GameBoard(width, height); // or whatever size
+        Debug.Log("[GameManager] myBoard initialized: " + (myBoard != null ? "✅ Not null" : "❌ NULL"));
+
 
         // Give each player his cards while not allowing duplicates (might have to be for loop for more players)
         playerACards = GeneratePlayerCards();
@@ -134,6 +138,7 @@ public class GameManager : MonoBehaviour
 
         // 3) TODO next: initialize board, set active player, etc.
         Debug.Log($"Started {mode} | BotA={botA} | BotB={botB}");
+
     }
 
     private GameMode ParseMode(string s)
@@ -216,7 +221,12 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log($"[GameManager] Tile clicked at ({x},{y})");
 
-        if (myBoard == null) Debug.LogError("myBoard is NULL");
+        //if (myBoard == null) Debug.LogError("myBoard is NULL");
+        if (myBoard == null)
+        {
+            Debug.LogError("Clicked too early — myBoard is still null!");
+            return;
+        }
         if (cursorMarble == null) Debug.LogError("cursorMarble is NULL");
         if (inventoryUI == null) Debug.LogError("inventoryUI is NULL");
 
@@ -226,6 +236,43 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        var current = myBoard.GetMarble(x, y);
+
+        if (current == MarbleColor.None)
+        {
+            // Try to place the marble
+            bool placed = myBoard.PlaceMarble(x, y, selectedColor);
+            if (placed)
+            {
+                Debug.Log($"Placed {selectedColor} at ({x}, {y})");
+                AfterMoveSuccess(selectedColor);
+            }
+            else
+            {
+                Debug.Log("Invalid placement.");
+            }
+        }
+        else if (current != selectedColor && current != MarbleColor.Black)
+        {
+            // Try to replace existing marble
+            bool replaced = myBoard.ReplaceMarble(x, y, selectedColor);
+            if (replaced)
+            {
+                Debug.Log($"Replaced {current} with {selectedColor} at ({x}, {y})");
+                AfterMoveSuccess(selectedColor);
+                inventoryUI.UpdateCount(current, myBoard.GetInventory()[current]);
+            }
+            else
+            {
+                Debug.Log("Invalid replacement.");
+            }
+        }
+        else
+        {
+            Debug.Log("Cannot place or replace marble here.");
+        }
+
+        /*
         bool success = myBoard.PlaceMarble(x, y, selectedColor);
         if (success)
         {
@@ -245,7 +292,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log($"Player won with card: {matchedCard.Name}");
                 // TODO: show win screen or end game
             }
-            */
+            *//*
             // Switch turn, update color restrictions, etc...
             // EndTurn();
         }
@@ -253,6 +300,20 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Invalid move.");
         }
+        */
     }
+    private void AfterMoveSuccess(MarbleColor usedColor)
+    {
+        boardVisualizer.Refresh();
+
+        var inventory = myBoard.GetInventory();
+        inventoryUI.UpdateCount(usedColor, inventory[usedColor]);
+
+        selectedColor = MarbleColor.None;
+        cursorMarble.Clear();
+
+        myBoard.PrintDebugBoard(); // 👈 Print board after each move
+    }
+
 
 }
