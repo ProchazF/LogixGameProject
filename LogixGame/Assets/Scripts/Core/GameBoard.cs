@@ -55,11 +55,23 @@ public class GameBoard
         int heightCenter = height / 2;
         board[widthCenter, heightCenter] = MarbleColor.Black;
     }
+    // returns the board
+    public MarbleColor[,] GetBoard()
+    {
+        return board;
+    }
+
     // Returns marble color on a specific spot
     public MarbleColor GetMarble(int x, int y)
     {
         if (!IsValidCoord(x, y)) return MarbleColor.None;
         return board[x, y];
+    }
+
+    public void SetMarble(int x, int y, MarbleColor color)
+    {
+        if (IsValidCoord(x, y))
+            board[x, y] = color;
     }
 
     // Move itself, take a Marble from "inventory" and place it to board
@@ -203,6 +215,39 @@ public class GameBoard
     {
         return !previousMoveColors.Contains(color);
     }
+
+    public bool CanPickUp(int x, int y, out MarbleColor color)
+    {
+        color = GetMarble(x, y);
+
+        // Can't pick up empty
+        if (color == MarbleColor.None)
+            return false;
+
+        if (!IsColorAllowed(color))
+            return false;
+
+        if (IsBlocked(x, y) == true)
+            return false;
+
+        return true;
+    }
+
+    public bool PickUpMarble(int x, int y, out MarbleColor pickedColor)
+    {
+        pickedColor = MarbleColor.None;
+
+        if (!CanPickUp(x, y, out var color))
+            return false;
+
+        pickedColor = color;
+        
+        // board[x, y] = MarbleColor.None;
+
+        return true;
+    }
+
+
 
     // Check if marble is blocked from all sides
     public bool IsBlocked(int x, int y)

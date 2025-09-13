@@ -98,8 +98,18 @@ public class BoardVisualizer : MonoBehaviour
                 BoardTile tile = tileObj.GetComponent<BoardTile>();
                 if (tile != null)
                 {
-                    MarbleColor c = board.GetMarble(x, y);
-                    tile.UpdateMarble(c);
+                    Vector2Int pos = new Vector2Int(x, y);
+
+                    // If this tile is where the marble was picked up, show it as empty
+                    if (GameManager.Instance != null && GameManager.Instance.IsPickedUpFrom(pos))
+                    {
+                        tile.UpdateMarble(MarbleColor.None);
+                    }
+                    else
+                    {
+                        MarbleColor c = board.GetMarble(x, y);
+                        tile.UpdateMarble(c);
+                    }
                 }
 
                 index++;

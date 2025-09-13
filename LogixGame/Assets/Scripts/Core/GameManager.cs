@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
 
     public CursorMarble cursorMarble; // Assign in Inspector
 
+    private Vector2Int? pickedUpFrom = null;
+
     [Header("Spawns")]
     public Transform spawnP1;
     public Transform spawnP2;
@@ -230,31 +232,89 @@ public class GameManager : MonoBehaviour
         if (cursorMarble == null) Debug.LogError("cursorMarble is NULL");
         if (inventoryUI == null) Debug.LogError("inventoryUI is NULL");
 
+        // -------------------------------
+        // CASE 1: Nothing selected -> Try pick up a marble
+        // -------------------------------
         if (selectedColor == MarbleColor.None)
         {
-            Debug.Log("No marble selected.");
+            bool picked = myBoard.PickUpMarble(x, y, out MarbleColor pickedColor);
+            if (picked)
+            {
+                selectedColor = pickedColor;
+                pickedUpFrom = new Vector2Int(x, y); // << Uložíš si odkud
+                cursorMarble.SetColor(pickedColor);
+                boardVisualizer.Refresh();
+            }
+            else
+            {
+                Debug.Log("Cannot pick up marble here.");
+            }
+
             return;
         }
 
         var current = myBoard.GetMarble(x, y);
 
+        // -------------------------------
+        // CASE 2: Moving a marble from one tile to another
+        // -------------------------------
+        if (pickedUpFrom != null && current == MarbleColor.None)
+        {
+            Vector2Int from = pickedUpFrom.Value;
+
+            if (myBoard.CanMoveTo(from.x, from.y, x, y))
+            {
+                bool moved = myBoard.MoveMarble(from.x, from.y, x, y);
+                if (moved)
+                {
+                    Debug.Log($"Moved {selectedColor} from ({from.x},{from.y}) to ({x},{y})");
+                    pickedUpFrom = null;
+                    AfterMoveSuccess(selectedColor);
+                }
+                else
+                {
+                    Debug.LogError("Move was allowed but failed unexpectedly.");
+                    myBoard.GetBoard()[from.x, from.y] = selectedColor; // rollback
+                    pickedUpFrom = null;
+                    ResetSelection();
+                    boardVisualizer.Refresh();
+                }
+            }
+            else
+            {
+                Debug.Log("Invalid move. Rolling back.");
+                myBoard.GetBoard()[from.x, from.y] = selectedColor; // rollback
+                pickedUpFrom = null;
+                ResetSelection();
+                boardVisualizer.Refresh();
+            }
+
+            return;
+        }
+
+        // -------------------------------
+        // CASE 3: Normal placement
+        // -------------------------------
         if (current == MarbleColor.None)
         {
-            // Try to place the marble
             bool placed = myBoard.PlaceMarble(x, y, selectedColor);
             if (placed)
             {
                 Debug.Log($"Placed {selectedColor} at ({x}, {y})");
+                pickedUpFrom = null;
                 AfterMoveSuccess(selectedColor);
             }
             else
             {
                 Debug.Log("Invalid placement.");
+                // No rollback needed
             }
         }
+        // -------------------------------
+        // CASE 4: Replacement
+        // -------------------------------
         else if (current != selectedColor && current != MarbleColor.Black)
         {
-            // Try to replace existing marble
             bool replaced = myBoard.ReplaceMarble(x, y, selectedColor);
             if (replaced)
             {
@@ -266,54 +326,44 @@ public class GameManager : MonoBehaviour
             {
                 Debug.Log("Invalid replacement.");
             }
+
+            pickedUpFrom = null;
         }
+        // -------------------------------
+        // CASE 5: Invalid target
+        // -------------------------------
         else
         {
             Debug.Log("Cannot place or replace marble here.");
+            pickedUpFrom = null;
+            ResetSelection();
         }
-
-        /*
-        bool success = myBoard.PlaceMarble(x, y, selectedColor);
-        if (success)
-        {
-            Debug.Log($"Placed {selectedColor} at ({x}, {y})");
-
-            // Update visuals
-            boardVisualizer.Refresh();
-            inventoryUI.UpdateCount(selectedColor, myBoard.GetInventory()[selectedColor]);
-
-            // Clear selection (if desired)
-            selectedColor = MarbleColor.None;
-            cursorMarble.Clear();
-
-            // Optional: check win
-            /*if (myBoard.CheckWinFromBlack(allCards.ToArray(), out var matchedCard, out var positions))
-            {
-                Debug.Log($"Player won with card: {matchedCard.Name}");
-                // TODO: show win screen or end game
-            }
-            *//*
-            // Switch turn, update color restrictions, etc...
-            // EndTurn();
-        }
-        else
-        {
-            Debug.Log("Invalid move.");
-        }
-        */
     }
     private void AfterMoveSuccess(MarbleColor usedColor)
     {
         boardVisualizer.Refresh();
 
-        var inventory = myBoard.GetInventory();
-        inventoryUI.UpdateCount(usedColor, inventory[usedColor]);
+        if (usedColor != MarbleColor.Black)
+        {
+            var inventory = myBoard.GetInventory();
+            if (inventory.ContainsKey(usedColor)) // extra bezpečnost
+                inventoryUI.UpdateCount(usedColor, inventory[usedColor]);
+        }
 
         selectedColor = MarbleColor.None;
         cursorMarble.Clear();
-
-        myBoard.PrintDebugBoard(); // 👈 Print board after each move
+        pickedUpFrom = null;
+        myBoard.PrintDebugBoard(); // Print board after each move
     }
 
+    private void ResetSelection()
+    {
+        selectedColor = MarbleColor.None;
+        cursorMarble.Clear();
+    }
+    public bool IsPickedUpFrom(Vector2Int pos)
+    {
+        return pickedUpFrom.HasValue && pickedUpFrom.Value == pos;
+    }
 
 }
