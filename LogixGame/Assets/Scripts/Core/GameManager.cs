@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     public BoardVisualizer boardVisualizer; // drag from scene (e.g., on Canvas or empty GO)
     public InventoryUI inventoryUI;
     public TextMeshProUGUI cardDisplayText;
+    public IllegalMarblesUI illegalMarblesUI; // Drag it from scene
 
     public static GameManager Instance;
 
@@ -353,6 +354,9 @@ public class GameManager : MonoBehaviour
         selectedColor = MarbleColor.None;
         cursorMarble.Clear();
         pickedUpFrom = null;
+        if (illegalMarblesUI != null)
+            illegalMarblesUI.SetIllegalMarbles(myBoard.previousMoveColors);
+
         myBoard.PrintDebugBoard(); // Print board after each move
     }
 
