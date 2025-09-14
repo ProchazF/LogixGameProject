@@ -46,6 +46,10 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI cardDisplayText;
     public IllegalMarblesUI illegalMarblesUI; // Drag it from scene
 
+    // Player cards
+    public PlayerCardUI playerAUI;
+    public PlayerCardUI playerBUI;
+
     public static GameManager Instance;
 
     void Start()
@@ -61,7 +65,8 @@ public class GameManager : MonoBehaviour
 
         // create internal game board (logic)
         myBoard = new GameBoard(width, height); // or whatever size
-        Debug.Log("[GameManager] myBoard initialized: " + (myBoard != null ? "✅ Not null" : "❌ NULL"));
+        
+        // Debug.Log("[GameManager] myBoard initialized: " + (myBoard != null ? "✅ Not null" : "❌ NULL"));
 
 
         // Give each player his cards while not allowing duplicates (might have to be for loop for more players)
@@ -69,7 +74,7 @@ public class GameManager : MonoBehaviour
         var usedShapes = new HashSet<WinShape>(playerACards.Select(c => c.Shape));
         playerBCards = GeneratePlayerCards(usedShapes);
 
-        /* Optional: Show them in console
+        // Optional: Show them in console
         Debug.Log("Player A Cards:");
         foreach (var card in playerACards)
             Debug.Log($"🃏 {card.Name} (Blocked Color: {card.AssignedColor})");
@@ -77,20 +82,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Player B Cards:");
         foreach (var card in playerBCards)
             Debug.Log($"🃏 {card.Name} (Blocked Color: {card.AssignedColor})");
-
-
-        // Show on screen
-        if (cardDisplayText != null)
-        {
-            cardDisplayText.text = "<b>Player A Cards:</b>\n";
-            foreach (var c in playerACards)
-                cardDisplayText.text += $"{c.Name} ≠ {c.AssignedColor}\n";
-
-            cardDisplayText.text += "\n<b>Player B Cards:</b>\n";
-            foreach (var c in playerBCards)
-                cardDisplayText.text += $"{c.Name} ≠ {c.AssignedColor}\n";
-        }
-        */
+        
 
         // TODO: initialize visual board
         if (boardVisualizer != null)
@@ -102,7 +94,11 @@ public class GameManager : MonoBehaviour
         inventoryUI.Init(myBoard.GetInventory());
         inventoryUI.UpdateCount(MarbleColor.Red, myBoard.GetInventory()[MarbleColor.Red]);
 
+        if (playerAUI != null)
+            playerAUI.ShowCards(playerACards);
 
+        if (playerBUI != null)
+            playerBUI.ShowCards(playerBCards);
 
         boardVisualizer.Refresh(); // Visualize starting position
     }
