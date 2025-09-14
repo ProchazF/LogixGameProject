@@ -205,9 +205,17 @@ public class GameManager : MonoBehaviour
 
     public void OnMarbleSelected(MarbleColor color)
     {
+        if (pickedUpFrom.HasValue)
+        {
+            // Return picked up marble
+            var pos = pickedUpFrom.Value;
+            myBoard.SetMarble(pos.x, pos.y, selectedColor);
+            pickedUpFrom = null;
+            Debug.Log("Cancelled move from board — marble returned to original position.");
+        }
+
         if (selectedColor == color)
         {
-            // Deselect if clicking same color again
             selectedColor = MarbleColor.None;
             cursorMarble.Clear();
             Debug.Log("Deselected marble");
@@ -216,8 +224,10 @@ public class GameManager : MonoBehaviour
         {
             selectedColor = color;
             cursorMarble.SetColor(color);
-            Debug.Log($"Selected marble: {color}");
+            Debug.Log($"Selected marble from inventory: {color}");
         }
+
+        boardVisualizer.Refresh();
     }
 
     public void OnTileClicked(int x, int y)
@@ -242,7 +252,7 @@ public class GameManager : MonoBehaviour
             if (picked)
             {
                 selectedColor = pickedColor;
-                pickedUpFrom = new Vector2Int(x, y); // << Uložíš si odkud
+                pickedUpFrom = new Vector2Int(x, y); // Save it here
                 cursorMarble.SetColor(pickedColor);
                 boardVisualizer.Refresh();
             }
@@ -255,6 +265,15 @@ public class GameManager : MonoBehaviour
         }
 
         var current = myBoard.GetMarble(x, y);
+
+        // EXTRA CASE: when picked up marble tries to go back to original position
+        if (pickedUpFrom.HasValue && pickedUpFrom.Value == new Vector2Int(x, y))
+        {
+            RollbackToOriginal();
+            Debug.Log("Move cancelled: marble returned to original position.");
+            myBoard.PrintDebugBoard();
+            return;
+        }
 
         // -------------------------------
         // CASE 2: Moving a marble from one tile to another
@@ -275,19 +294,13 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     Debug.LogError("Move was allowed but failed unexpectedly.");
-                    myBoard.GetBoard()[from.x, from.y] = selectedColor; // rollback
-                    pickedUpFrom = null;
-                    ResetSelection();
-                    boardVisualizer.Refresh();
+                    RollbackToOriginal();
                 }
             }
             else
             {
                 Debug.Log("Invalid move. Rolling back.");
-                myBoard.GetBoard()[from.x, from.y] = selectedColor; // rollback
-                pickedUpFrom = null;
-                ResetSelection();
-                boardVisualizer.Refresh();
+                RollbackToOriginal();
             }
 
             return;
@@ -316,29 +329,41 @@ public class GameManager : MonoBehaviour
         // -------------------------------
         else if (current != selectedColor && current != MarbleColor.Black)
         {
-            bool replaced = myBoard.ReplaceMarble(x, y, selectedColor);
-            if (replaced)
+            if (pickedUpFrom == null)
             {
-                Debug.Log($"Replaced {current} with {selectedColor} at ({x}, {y})");
-                AfterMoveSuccess(selectedColor);
-                inventoryUI.UpdateCount(current, myBoard.GetInventory()[current]);
+                // Only allow replacement if we selected from inventory
+                bool replaced = myBoard.ReplaceMarble(x, y, selectedColor);
+                if (replaced)
+                {
+                    Debug.Log($"Replaced {current} with {selectedColor} at ({x}, {y})");
+                    AfterMoveSuccess(selectedColor);
+                    inventoryUI.UpdateCount(current, myBoard.GetInventory()[current]);
+                }
+                else
+                {
+                    Debug.Log("Invalid replacement from inventory.");
+                    ResetSelection();
+                }
             }
             else
             {
-                Debug.Log("Invalid replacement.");
+                // We picked up a marble from the board — replacing is invalid
+                Debug.Log("Cannot replace with a marble picked up from board. Rolling back.");
+                var pos = pickedUpFrom.Value;
+                myBoard.SetMarble(pos.x, pos.y, selectedColor);
+                ResetSelection();
+                boardVisualizer.Refresh();
             }
 
             pickedUpFrom = null;
+            boardVisualizer.Refresh();
+            return;
         }
         // -------------------------------
         // CASE 5: Invalid target
         // -------------------------------
-        else
-        {
-            Debug.Log("Cannot place or replace marble here.");
-            pickedUpFrom = null;
-            ResetSelection();
-        }
+        Debug.Log("Cannot place or replace marble here.");
+        RollbackToOriginal(); // Handles both logic and visuals
     }
     private void AfterMoveSuccess(MarbleColor usedColor)
     {
@@ -358,6 +383,19 @@ public class GameManager : MonoBehaviour
             illegalMarblesUI.SetIllegalMarbles(myBoard.previousMoveColors);
 
         myBoard.PrintDebugBoard(); // Print board after each move
+    }
+
+    private void RollbackToOriginal()
+    {
+        if (pickedUpFrom.HasValue && selectedColor != MarbleColor.None)
+        {
+            var pos = pickedUpFrom.Value;
+            myBoard.SetMarble(pos.x, pos.y, selectedColor);
+            pickedUpFrom = null;
+            ResetSelection();
+            boardVisualizer.Refresh();
+            Debug.Log("Rollback: marble returned to original position.");
+        }
     }
 
     private void ResetSelection()
