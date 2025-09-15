@@ -442,7 +442,7 @@ public class GameManager : MonoBehaviour
     private bool CheckForWin()
     {
         // Check Player A
-        if (myBoard.CheckWinFromBlack(playerACards.Select(c => c.Shape).ToArray(),
+        if (myBoard.CheckWinFromBlack(playerACards,
             out WinShape matchedCardA, out List<Vector2Int> matchedPositionsA))
         {
             ShowWin("Player 1", matchedCardA.Name, matchedPositionsA);
@@ -450,7 +450,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Check Player B
-        if (myBoard.CheckWinFromBlack(playerBCards.Select(c => c.Shape).ToArray(),
+        if (myBoard.CheckWinFromBlack(playerBCards,
             out WinShape matchedCardB, out List<Vector2Int> matchedPositionsB))
         {
             string name = mode == GameMode.PvE ? "Bot" : "Player 2";

@@ -9,18 +9,19 @@ public class BoardConsoleTester : MonoBehaviour
     public TMP_InputField inputField;
     public TextMeshProUGUI boardDisplay;
 
-    public WinShape[] testPlayerCards;  // assign these in Inspector or Start()
+    public WinShapeInstance[] testPlayerCards;  // assign these in Inspector or Start()
     private void Start()
     {
         gameBoard = new GameBoard(7, 7);
         gameBoard.PlaceMarble(3, 3, MarbleColor.Black); // Start with black in center
         // Example assignment if not set in inspector:
-        if (testPlayerCards == null || testPlayerCards.Length < 2)
-        {
-            testPlayerCards = new[] {
-                WinShapeDatabase.AllShapes[0], // Line
-                WinShapeDatabase.AllShapes[1]  // T-shape
-            };
+        if(testPlayerCards == null || testPlayerCards.Length < 2)
+{
+            testPlayerCards = new[]
+            {
+        new WinShapeInstance(WinShapeDatabase.AllShapes[0], MarbleColor.Red),   // Line, blocked Red
+        new WinShapeInstance(WinShapeDatabase.AllShapes[1], MarbleColor.Blue)  // Plus, blocked Blue
+    };
         }
 
         ShowPlayerCards();

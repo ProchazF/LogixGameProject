@@ -1,4 +1,4 @@
-/*
+﻿/*
  * GameBoard.cs
  * Here is the internal structure oif the game, the board and the rules, which the marbles follow
  */
@@ -354,7 +354,7 @@ public class GameBoard
     }
 
 
-    private bool MatchesShapeWithRules(List<MarbleColor> marbles, List<Vector2Int> positions, out MarbleColor matchedColor)
+    private bool MatchesShapeWithRules(List<MarbleColor> marbles, List<Vector2Int> positions, MarbleColor blockedColor, out MarbleColor matchedColor)
     {
         matchedColor = MarbleColor.None;
 
@@ -364,8 +364,15 @@ public class GameBoard
             .Distinct()
             .ToList();
 
+        // More than one non-wild color → invalid
         if (trueColors.Count > 1) return false;
+
+        // Shape must include black
         if (!marbles.Contains(MarbleColor.Black)) return false;
+
+        // If the only real color is the blocked color → invalid
+        if (trueColors.Count == 1 && trueColors[0] == blockedColor)
+            return false;
 
         matchedColor = trueColors.Count == 1 ? trueColors[0] : MarbleColor.Grey;
 
@@ -385,7 +392,7 @@ public class GameBoard
 
         return true;
     }
-    public bool CheckWinFromBlack(WinShape[] cards, out WinShape matchedCard, out List<Vector2Int> matchedPositions)
+    public bool CheckWinFromBlack(WinShapeInstance[] cards, out WinShape matchedCard, out List<Vector2Int> matchedPositions)
     {
         matchedCard = null;
         matchedPositions = null;
@@ -406,7 +413,7 @@ public class GameBoard
         {
             foreach (var card in cards)
             {
-                foreach (var rotation in card.Rotations)
+                foreach (var rotation in card.Shape.Rotations)
                 {
                     for (int i = 0; i < rotation.Length; i++) 
                     {
@@ -422,9 +429,9 @@ public class GameBoard
 
                         if (!marbles.Contains(MarbleColor.Black)) continue;
 
-                        if (MatchesShapeWithRules(marbles, shapePositions, out MarbleColor matchedColor))
+                        if (MatchesShapeWithRules(marbles, shapePositions, card.AssignedColor, out MarbleColor matchedColor))
                         {
-                            matchedCard = card;
+                            matchedCard = card.Shape;
                             matchedPositions = shapePositions;
                             return true;
                         }
