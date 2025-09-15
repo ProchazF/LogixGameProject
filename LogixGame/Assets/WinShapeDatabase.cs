@@ -47,10 +47,10 @@ public static class WinShapeDatabase
         new WinShape("Reverse One-Shape", new[] { // 4 strainght with one sticking out in the middle (on the right on top)
             new Vector2Int(0,0), new Vector2Int(1,0), new Vector2Int(2,0), new Vector2Int(2,1), new Vector2Int(3,0)
         }),
-        new WinShape("b-shape", new[] { 
+        new WinShape("d-shape", new[] { 
             new Vector2Int(0,0), new Vector2Int(1,0), new Vector2Int(2,0), new Vector2Int(0,1), new Vector2Int(1,1)
         }),
-        new WinShape("d-shape", new[] {
+        new WinShape("b-shape", new[] {
             new Vector2Int(0,0), new Vector2Int(1,0), new Vector2Int(0,1), new Vector2Int(1,1), new Vector2Int(2,1)
         }),
         new WinShape("Snake", new[] { // 3 straight up connected to 2 straight up on the left
