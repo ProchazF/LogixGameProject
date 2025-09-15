@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -113,6 +114,25 @@ public class BoardVisualizer : MonoBehaviour
                 }
 
                 index++;
+            }
+        }
+    }
+
+    public void HighlightWin(List<Vector2Int> positions)
+    {
+        int cols = board.width;
+
+        foreach (var pos in positions)
+        {
+            // Convert (x, y) into child index
+            int index = (board.height - 1 - pos.y) * cols + pos.x;
+
+            if (index >= 0 && index < transform.childCount)
+            {
+                var tileObj = transform.GetChild(index);
+                var img = tileObj.GetComponent<Image>();
+                if (img != null)
+                    img.color = Color.yellow; // highlight
             }
         }
     }

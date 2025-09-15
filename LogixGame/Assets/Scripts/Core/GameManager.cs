@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public enum GameMode { PvP, PvE, EvE }
 public enum Difficulty { Easy, Normal, Hard }
@@ -56,6 +57,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform playerBContainer;
 
     [SerializeField] private TextMeshProUGUI turnText;
+    [SerializeField] private GameObject winPanel;
+    [SerializeField] private TextMeshProUGUI winText;
 
     public static GameManager Instance;
 
@@ -415,21 +418,79 @@ public class GameManager : MonoBehaviour
         if (usedColor != MarbleColor.Black)
         {
             var inventory = myBoard.GetInventory();
-            if (inventory.ContainsKey(usedColor)) // extra bezpečnost
+            if (inventory.ContainsKey(usedColor)) // extra safety
                 inventoryUI.UpdateCount(usedColor, inventory[usedColor]);
         }
 
         selectedColor = MarbleColor.None;
         cursorMarble.Clear();
         pickedUpFrom = null;
+
         if (illegalMarblesUI != null)
             illegalMarblesUI.SetIllegalMarbles(myBoard.previousMoveColors);
+
+        if (CheckForWin()) return;
 
         // Switch turn
         currentPlayer = 1 - currentPlayer;
         Debug.Log($"Turn ended. Now it's Player {currentPlayer + 1}'s turn.");
         UpdateTurnText();
         myBoard.PrintDebugBoard(); // Print board after each move
+    }
+
+    // CheckForWin retrns true if a player won
+    private bool CheckForWin()
+    {
+        // Check Player A
+        if (myBoard.CheckWinFromBlack(playerACards.Select(c => c.Shape).ToArray(),
+            out WinShape matchedCardA, out List<Vector2Int> matchedPositionsA))
+        {
+            ShowWin("Player 1", matchedCardA.Name, matchedPositionsA);
+            return true;
+        }
+
+        // Check Player B
+        if (myBoard.CheckWinFromBlack(playerBCards.Select(c => c.Shape).ToArray(),
+            out WinShape matchedCardB, out List<Vector2Int> matchedPositionsB))
+        {
+            string name = mode == GameMode.PvE ? "Bot" : "Player 2";
+            if (mode == GameMode.EvE) name = "Bot B";
+
+            ShowWin(name, matchedCardB.Name, matchedPositionsB);
+            return true;
+        }
+
+        return false; // no win yet
+    }
+    private void ShowWin(string playerName, string shapeName, List<Vector2Int> positions)
+    {
+        Debug.Log($"🎉 {playerName} wins with {shapeName}!");
+
+        if (winPanel != null && winText != null)
+        {
+            winPanel.SetActive(true);
+            winText.text = $"{playerName} wins!\nShape: {shapeName}";
+        }
+
+        if (boardVisualizer != null && positions != null)
+            boardVisualizer.HighlightWin(positions);
+
+        enabled = false; // stop further moves
+    }
+
+    private void ShowWinScreen(string playerName, string shapeName, List<Vector2Int> positions)
+    {
+        if (winPanel != null && winText != null)
+        {
+            winPanel.SetActive(true);
+            winText.text = $"{playerName} wins!\nShape: {shapeName}";
+        }
+
+        // You could also highlight matched positions on boardVisualizer
+        if (boardVisualizer != null && positions != null)
+        {
+            boardVisualizer.HighlightWin(positions);
+        }
     }
 
     private void RollbackToOriginal()
