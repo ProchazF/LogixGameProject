@@ -219,6 +219,13 @@ public class GameManager : MonoBehaviour
 
     public void OnMarbleSelected(MarbleColor color)
     {
+        // Prevent selecting banned colors
+        if (myBoard.previousMoveColors.Contains(color))
+        {
+            Debug.Log($"[GameManager] Cannot select {color} — it was used in the previous move.");
+            return; // ignore the click
+        }
+
         if (pickedUpFrom.HasValue)
         {
             // Return picked up marble
