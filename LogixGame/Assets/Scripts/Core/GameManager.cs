@@ -46,9 +46,10 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI cardDisplayText;
     public IllegalMarblesUI illegalMarblesUI; // Drag it from scene
 
-    // Player cards
-    public PlayerCardUI playerAUI;
-    public PlayerCardUI playerBUI;
+    [SerializeField] private CardUI cardPrefab;
+    [SerializeField] private Transform cardParent; // some UI Panel/empty object in Canvas
+    [SerializeField] private Transform playerAContainer;
+    [SerializeField] private Transform playerBContainer;
 
     public static GameManager Instance;
 
@@ -82,23 +83,40 @@ public class GameManager : MonoBehaviour
         Debug.Log("Player B Cards:");
         foreach (var card in playerBCards)
             Debug.Log($"🃏 {card.Name} (Blocked Color: {card.AssignedColor})");
-        
+
+        /* Show first playerA card
+        if (playerACards.Length > 0)
+        {
+            var card = Instantiate(cardPrefab, cardParent);
+            card.Init(playerACards[0]); // show first card
+        }
+        */
+
+        // Show Player A cards (bottom)
+        foreach (var cardInstance in playerACards)
+        {
+            var cardUI = Instantiate(cardPrefab, playerAContainer);
+            cardUI.Init(cardInstance);
+        }
+
+        // Show Player B cards (top)
+        foreach (var cardInstance in playerBCards)
+        {
+            var cardUI = Instantiate(cardPrefab, playerBContainer);
+            cardUI.Init(cardInstance);
+        }
+
 
         // TODO: initialize visual board
         if (boardVisualizer != null)
             boardVisualizer.Init(myBoard);
         boardVisualizer.onTileClickedCallback = OnTileClicked;
 
-        Debug.Log($"InventoryUI: {inventoryUI}, GameBoard: {myBoard}");
+        // Show Inventory
+        //Debug.Log($"InventoryUI: {inventoryUI}, GameBoard: {myBoard}");
 
         inventoryUI.Init(myBoard.GetInventory());
         inventoryUI.UpdateCount(MarbleColor.Red, myBoard.GetInventory()[MarbleColor.Red]);
-
-        if (playerAUI != null)
-            playerAUI.ShowCards(playerACards);
-
-        if (playerBUI != null)
-            playerBUI.ShowCards(playerBCards);
 
         boardVisualizer.Refresh(); // Visualize starting position
     }

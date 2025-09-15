@@ -18,7 +18,7 @@ public class PlayerCardUI : MonoBehaviour
             var go = Instantiate(cardPrefab, cardContainer);
             var ui = go.GetComponent<CardUI>();
             if (ui != null)
-                ui.Init(card.Name, card.AssignedColor);
+                ui.Init(card); // pass the whole WinShapeInstance
         }
     }
 }
