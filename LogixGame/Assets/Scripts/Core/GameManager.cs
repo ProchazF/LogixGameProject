@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -46,10 +47,15 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI cardDisplayText;
     public IllegalMarblesUI illegalMarblesUI; // Drag it from scene
 
+    private int currentPlayer = 0; // 0 = Player A, 1 = Player B
+    private bool isBotMoving = false;
+
     [SerializeField] private CardUI cardPrefab;
     [SerializeField] private Transform cardParent; // some UI Panel/empty object in Canvas
     [SerializeField] private Transform playerAContainer;
     [SerializeField] private Transform playerBContainer;
+
+    [SerializeField] private TextMeshProUGUI turnText;
 
     public static GameManager Instance;
 
@@ -117,6 +123,8 @@ public class GameManager : MonoBehaviour
 
         inventoryUI.Init(myBoard.GetInventory());
         inventoryUI.UpdateCount(MarbleColor.Red, myBoard.GetInventory()[MarbleColor.Red]);
+
+        UpdateTurnText();
 
         boardVisualizer.Refresh(); // Visualize starting position
     }
@@ -217,8 +225,22 @@ public class GameManager : MonoBehaviour
         return go;
     }
 
+    private bool IsBotsTurn()
+    {
+        if (mode == GameMode.PvE && currentPlayer == 1) return true; // bot is Player B
+        if (mode == GameMode.EvE) return true; // both bots
+        return false;
+    }
+
     public void OnMarbleSelected(MarbleColor color)
     {
+
+        if (IsBotsTurn() || isBotMoving)
+        {
+            Debug.Log("It’s bot’s turn — ignoring human input.");
+            return;
+        }
+
         // Prevent selecting banned colors
         if (myBoard.previousMoveColors.Contains(color))
         {
@@ -403,6 +425,10 @@ public class GameManager : MonoBehaviour
         if (illegalMarblesUI != null)
             illegalMarblesUI.SetIllegalMarbles(myBoard.previousMoveColors);
 
+        // Switch turn
+        currentPlayer = 1 - currentPlayer;
+        Debug.Log($"Turn ended. Now it's Player {currentPlayer + 1}'s turn.");
+        UpdateTurnText();
         myBoard.PrintDebugBoard(); // Print board after each move
     }
 
@@ -427,6 +453,19 @@ public class GameManager : MonoBehaviour
     public bool IsPickedUpFrom(Vector2Int pos)
     {
         return pickedUpFrom.HasValue && pickedUpFrom.Value == pos;
+    }
+
+    private void UpdateTurnText()
+    {
+        string who;
+        if (mode == GameMode.PvP)
+            who = currentPlayer == 0 ? "Player 1" : "Player 2";
+        else if (mode == GameMode.PvE)
+            who = currentPlayer == 0 ? "Player (You)" : "Bot";
+        else // EvE
+            who = currentPlayer == 0 ? "Bot A" : "Bot B";
+
+        turnText.text = $"Turn: {who}";
     }
 
 }
