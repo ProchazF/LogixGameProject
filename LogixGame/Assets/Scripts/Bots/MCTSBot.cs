@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -35,23 +35,34 @@ public class MCTSBot
         this.iterations = iterations;
     }
 
-    public Move GetBestMove(GameBoard rootBoard, WinShapeInstance[] playerACards, WinShapeInstance[] playerBCards, int forPlayer)
+    public Move GetBestMove(GameBoard rootBoard, WinShapeInstance[] playerACards, WinShapeInstance[] playerBCards, int currentPlayer)
     {
         Node root = new Node(rootBoard.Clone(), null, null);
 
         for (int i = 0; i < iterations; i++)
         {
             Node node = Select(root);
-            Node expanded = Expand(node);
-            float result = Simulate(expanded.State, playerACards, playerBCards, forPlayer);
+            Node expanded = Expand(node, playerACards, playerBCards, currentPlayer);
+            float result = Simulate(expanded.State.Clone(), playerACards, playerBCards, currentPlayer);
             Backpropagate(expanded, result);
         }
 
-        // Pick child with highest visit count
+        if (root.Children.Count == 0)
+        {
+            Debug.LogError("[MCTS] No children generated! Returning fallback move.");
+            var fallbackMoves = rootBoard.GetLegalMoves();
+            return fallbackMoves.Count > 0 ? fallbackMoves[0] : null;
+        }
+
+        // Pick child with highest visits
         Node bestChild = null;
         int bestVisits = -1;
+
         foreach (var child in root.Children)
         {
+            float winRate = child.Wins / (child.Visits + 1e-6f);
+            Debug.Log($"[MCTS] Move {child.Move} => Visits {child.Visits}, Wins {child.Wins}, WR={winRate:F2}");
+
             if (child.Visits > bestVisits)
             {
                 bestVisits = child.Visits;
@@ -59,8 +70,10 @@ public class MCTSBot
             }
         }
 
+        Debug.Log($"[MCTS] Selected: {bestChild?.Move}");
         return bestChild?.Move;
     }
+
 
     // ------------------- MCTS Steps -------------------
 
@@ -73,13 +86,39 @@ public class MCTSBot
         return node;
     }
 
-    private Node Expand(Node node)
+    // Get all tehj child nodes and check if any of them are winning/losing and play accordingly
+    private Node Expand(Node node, WinShapeInstance[] playerACards, WinShapeInstance[] playerBCards, int currentPlayer)
     {
         List<Move> legalMoves = node.State.GetLegalMoves();
+        if (legalMoves.Count == 0)
+        {
+            Debug.LogWarning("[MCTS] No legal moves available — should not happen in Expand!");
+            return node; // fail-safe, but game should never reach here
+        }
+
+        // 1. Immediate WIN check (always take it!)
         foreach (var move in legalMoves)
         {
-            // Skip if already expanded
-            if (node.Children.Exists(c => c.Move != null && c.Move.To == move.To && c.Move.Type == move.Type))
+            GameBoard testState = node.State.Clone();
+            testState.ApplyMove(move);
+
+            if (testState.CheckWinFromBlack(
+                    currentPlayer == 0 ? playerACards : playerBCards,
+                    out var _, out var _))
+            {
+                Debug.Log($"[MCTS] Forced WIN found: {move}");
+
+                // make sure it's stored as a child
+                Node winChild = new Node(testState, move, node);
+                node.Children.Add(winChild);
+                return winChild;
+            }
+        }
+
+        // 2. Expand the first unexpanded move
+        foreach (var move in legalMoves)
+        {
+            if (node.Children.Exists(c => c.Move.Equals(move)))
                 continue;
 
             GameBoard nextState = node.State.Clone();
@@ -87,42 +126,44 @@ public class MCTSBot
 
             Node child = new Node(nextState, move, node);
             node.Children.Add(child);
-            return child;
+            return child; // expand only one new child per call
         }
 
-        // If no expansion possible, return self
-        return node;
+        // 3. All expanded already → pick one randomly (no skipping!)
+        return node.Children[Random.Range(0, node.Children.Count)];
     }
 
-    private float Simulate(GameBoard simState, WinShapeInstance[] playerACards, WinShapeInstance[] playerBCards, int forPlayer)
+
+
+    private float Simulate(GameBoard simState, WinShapeInstance[] playerACards, WinShapeInstance[] playerBCards, int startingPlayer)
     {
-        // Play random moves until terminal (win or no moves)
-        int safety = 50; // prevent infinite loop
+        int player = startingPlayer;
+        int safety = 50; // limit rollout depth
+
         while (safety-- > 0)
         {
-            // Check win for both players
-            if (simState.CheckWinFromBlack(playerACards, out _, out _))
+            // Win check for current player
+            if (simState.CheckWinFromBlack(player == 0 ? playerACards : playerBCards, out _, out _))
             {
-                return forPlayer == 0 ? 1f : 0f; // Player A wins
+                return 1f; // win for this simulated player
             }
-            if (simState.CheckWinFromBlack(playerBCards, out _, out _))
+            if (simState.CheckWinFromBlack(player == 1 ? playerACards : playerBCards, out _, out _))
             {
-                return forPlayer == 1 ? 1f : 0f; // Player B wins
+                return 0f; // loss for this simulated player
             }
 
-            List<Move> moves = simState.GetLegalMoves();
+            var moves = simState.GetLegalMoves();
             if (moves.Count == 0) break;
 
-            Move move = moves[Random.Range(0, moves.Count)];
+            var move = moves[Random.Range(0, moves.Count)];
             simState.ApplyMove(move);
 
-            // Check win for either player here if you can
-            // For now, treat reaching no moves as "loss"
+            player = 1 - player; // switch turns
         }
 
-        // Simplified: random rollout outcome
-        return Random.value < 0.5f ? 1f : 0f;
+        return 0.5f; // draw/unclear
     }
+
 
     private void Backpropagate(Node node, float result)
     {
@@ -141,8 +182,11 @@ public class MCTSBot
 
         foreach (var child in node.Children)
         {
-            double uctScore = (child.Wins / (child.Visits + 1e-6)) +
-                              Mathf.Sqrt(2f * Mathf.Log(node.Visits + 1) / (child.Visits + 1e-6f));
+            double exploitation = child.Wins / (child.Visits + 1e-6);
+            double exploration = Mathf.Sqrt(2f * Mathf.Log(node.Visits + 1) / (child.Visits + 1e-6f));
+            double uctScore = exploitation + exploration;
+
+            Debug.Log($"[MCTS] Move={child.Move}, Visits={child.Visits}, Wins={child.Wins}, Score={uctScore:F3}");
 
             if (uctScore > bestScore)
             {

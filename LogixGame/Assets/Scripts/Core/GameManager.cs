@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI cardDisplayText;
     public IllegalMarblesUI illegalMarblesUI; // Drag it from scene
 
-    private int currentPlayer = 0; // 0 = Player A, 1 = Player B
+    public int currentPlayer = 0; // 0 = Player A, 1 = Player B
     private bool isBotMoving = false;
 
     private BotController botAController; // if Player 1 is a bot (EvE)
@@ -487,6 +487,7 @@ public class GameManager : MonoBehaviour
 
         // Debug: show all legal moves for the *next* player
         var legalMoves = myBoard.GetLegalMoves();
+        /*
         Debug.Log($"[LegalMoves] Found {legalMoves.Count} legal moves:");
         int placeCount = 0, moveCount = 0, replaceCount = 0;
         foreach (var move in legalMoves)
@@ -498,14 +499,17 @@ public class GameManager : MonoBehaviour
                 case MoveType.Replace: replaceCount++; break;
             }
         }
+        
         Debug.Log($"   Place: {placeCount}, Move: {moveCount}, Replace: {replaceCount}");
+        */
 
-        int counter = 0;
-        foreach (var move in legalMoves)
-        {
-            counter++;
-            Debug.Log($"   {counter}. {move}");
-        }
+        // Debug: show every move
+        //int counter = 0;
+        //foreach (var move in legalMoves)
+        //{
+        //    counter++;
+        //    Debug.Log($"   {counter}. {move}");
+        //}
 
         if (IsBotsTurn())
         {
