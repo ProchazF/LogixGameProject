@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -441,6 +442,108 @@ public class GameBoard
         }
 
         return false;
+    }
+
+    public List<Move> GetLegalMoves()
+    {
+        var moves = new List<Move>();
+
+        // --- Place moves ---
+        var inventory = marbleInventory.GetAllCounts();
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (board[x, y] != MarbleColor.None) continue;
+                if (!IsAdjacentToAnyMarble(x, y)) continue;
+
+                foreach (var kv in inventory)
+                {
+                    MarbleColor color = kv.Key;
+                    int count = kv.Value;
+
+                    if (count > 0 && IsColorAllowed(color))
+                    {
+                        moves.Add(new Move(MoveType.Place, color, null, new Vector2Int(x, y)));
+                    }
+                }
+            }
+        }
+
+        // --- Move moves ---
+        for (int fx = 0; fx < width; fx++)
+        {
+            for (int fy = 0; fy < height; fy++)
+            {
+                MarbleColor color = board[fx, fy];
+                if (color == MarbleColor.None) continue;
+                if (!IsColorAllowed(color)) continue;
+                if (IsBlocked(fx, fy)) continue;
+
+                for (int tx = 0; tx < width; tx++)
+                {
+                    for (int ty = 0; ty < height; ty++)
+                    {
+                        if (CanMoveTo(fx, fy, tx, ty))
+                        {
+                            moves.Add(new Move(MoveType.Move, color, new Vector2Int(fx, fy), new Vector2Int(tx, ty)));
+                        }
+                    }
+                }
+            }
+        }
+
+        // --- Replace moves ---
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                MarbleColor existing = board[x, y];
+                if (existing == MarbleColor.None || existing == MarbleColor.Black) continue;
+
+                foreach (var kv in inventory)
+                {
+                    MarbleColor color = kv.Key;
+                    int count = kv.Value;
+
+                    if (count > 0 && color != existing && IsColorAllowed(color))
+                    {
+                        if (CanReplaceMarble(x, y, color))
+                        {
+                            moves.Add(new Move(MoveType.Replace, color, null, new Vector2Int(x, y)));
+                        }
+                    }
+                }
+            }
+        }
+
+        return moves;
+    }
+
+    public void ApplyMove(Move move)
+    {
+        switch (move.Type)
+        {
+            case MoveType.Place:
+                PlaceMarble(move.To.x, move.To.y, move.Color);
+                break;
+            case MoveType.Move:
+                if (move.From.HasValue)
+                    MoveMarble(move.From.Value.x, move.From.Value.y, move.To.x, move.To.y);
+                break;
+            case MoveType.Replace:
+                ReplaceMarble(move.To.x, move.To.y, move.Color);
+                break;
+        }
+    }
+
+    public GameBoard Clone()
+    {
+        var copy = new GameBoard(width, height);
+        copy.board = (MarbleColor[,])this.board.Clone();
+        copy.marbleInventory = this.marbleInventory.Clone();
+        copy.previousMoveColors = new List<MarbleColor>(this.previousMoveColors);
+        return copy;
     }
 
     // Get inventory

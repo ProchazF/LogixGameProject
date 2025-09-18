@@ -51,6 +51,9 @@ public class GameManager : MonoBehaviour
     private int currentPlayer = 0; // 0 = Player A, 1 = Player B
     private bool isBotMoving = false;
 
+    private BotController botAController; // if Player 1 is a bot (EvE)
+    private BotController botBController; // if Player 2 is a bot (PvE/EvE)
+
     [SerializeField] private CardUI cardPrefab;
     [SerializeField] private Transform cardParent; // some UI Panel/empty object in Canvas
     [SerializeField] private Transform playerAContainer;
@@ -145,25 +148,23 @@ public class GameManager : MonoBehaviour
         botA = ParseDifficulty(PlayerPrefs.GetString("BotA", botA.ToString()));
         botB = ParseDifficulty(PlayerPrefs.GetString("BotB", "Normal"));
 
-        // 2) Spawn according to mode
-        switch (mode)
+        // Create bot controllers as needed
+        if (mode == GameMode.PvE || mode == GameMode.EvE)
         {
-            case GameMode.PvP:
-                SpawnHuman(spawnP1);
-                SpawnHuman(spawnP2);
-                break;
-
-            case GameMode.PvE:
-                SpawnHuman(spawnP1);
-                SpawnBot(spawnP2, botA);
-                break;
-
-            case GameMode.EvE:
-                SpawnBot(spawnP1, botA);
-                SpawnBot(spawnP2, botB);
-                break;
+            var goB = new GameObject("BotPlayer_B");
+            botBController = goB.AddComponent<BotController>();
+            botBController.SetDifficulty(botA); // using your 'botA' setting for Player B as per earlier code
+            DontDestroyOnLoad(goB);
+        }
+        if (mode == GameMode.EvE)
+        {
+            var goA = new GameObject("BotPlayer_A");
+            botAController = goA.AddComponent<BotController>();
+            botAController.SetDifficulty(botB); // Player A difficulty (use botB pref here or adjust as you want)
+            DontDestroyOnLoad(goA);
         }
 
+        Debug.Log($"Started {mode} | BotA={botA} | BotB={botB}");
         // 3) TODO next: initialize board, set active player, etc.
         Debug.Log($"Started {mode} | BotA={botA} | BotB={botB}");
 
@@ -212,27 +213,68 @@ public class GameManager : MonoBehaviour
         return assigned.ToArray();
     }
 
-    private GameObject SpawnHuman(Transform t)
-    {
-        var go = Instantiate(humanPrefab, t.position, t.rotation);
-        go.name = "HumanPlayer";
-        return go;
-    }
+    //private GameObject SpawnHuman(Transform t)
+    //{
+    //    var go = Instantiate(humanPrefab, t.position, t.rotation);
+    //    go.name = "HumanPlayer";
+    //    return go;
+    //}
     
-    private GameObject SpawnBot(Transform t, Difficulty diff)
-    {
-        var go = Instantiate(botPrefab, t.position, t.rotation);
-        go.name = $"BotPlayer_{diff}";
-        var ai = go.GetComponent<BotController>();
-        if (ai != null) ai.SetDifficulty(diff);
-        return go;
-    }
+    //private GameObject SpawnBot(Transform t, Difficulty diff)
+    //{
+    //    var go = Instantiate(botPrefab, t.position, t.rotation);
+    //    go.name = $"BotPlayer_{diff}";
+    //    var ai = go.GetComponent<BotController>();
+    //    if (ai != null) ai.SetDifficulty(diff);
+    //    return go;
+    //}
 
     private bool IsBotsTurn()
     {
         if (mode == GameMode.PvE && currentPlayer == 1) return true; // bot is Player B
         if (mode == GameMode.EvE) return true; // both bots
         return false;
+    }
+
+    private BotController GetBotForCurrentPlayer()
+    {
+        if (mode == GameMode.PvE && currentPlayer == 1) return botBController;
+        if (mode == GameMode.EvE) return currentPlayer == 0 ? botAController : botBController;
+        return null;
+    }
+
+    private IEnumerator DoBotTurn(BotController bot)
+    {
+        isBotMoving = true;
+        if (turnText) turnText.text = "Bot is thinking...";
+        yield return new WaitForSeconds(0.6f); // tiny delay
+
+        Move move = bot.GetMove(
+            myBoard,
+            playerACards,
+            playerBCards,
+            currentPlayer // tells MCTS whether bot is Player A (0) or Player B (1)
+        );
+        if (move == null)
+        {
+            Debug.Log("Bot found no legal move — skipping.");
+            isBotMoving = false;
+            // still advance turn to avoid deadlock
+            currentPlayer = 1 - currentPlayer;
+            UpdateTurnText();
+            yield break;
+        }
+
+        ApplyBotMove(move);
+        isBotMoving = false;
+    }
+
+    private void ApplyBotMove(Move move)
+    {
+        myBoard.ApplyMove(move);
+        Debug.Log($"Bot executed: {move}");
+        boardVisualizer.Refresh();
+        AfterMoveSuccess(move.Color); // this already switches turn + checks win, etc.
     }
 
     public void OnMarbleSelected(MarbleColor color)
@@ -278,6 +320,11 @@ public class GameManager : MonoBehaviour
 
     public void OnTileClicked(int x, int y)
     {
+        if (IsBotsTurn() || isBotMoving)
+        {
+            Debug.Log("It’s bot’s turn — ignoring human input.");
+            return;
+        }
         Debug.Log($"[GameManager] Tile clicked at ({x},{y})");
 
         //if (myBoard == null) Debug.LogError("myBoard is NULL");
@@ -411,6 +458,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Cannot place or replace marble here.");
         RollbackToOriginal(); // Handles both logic and visuals
     }
+
     private void AfterMoveSuccess(MarbleColor usedColor)
     {
         boardVisualizer.Refresh();
@@ -436,6 +484,34 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Turn ended. Now it's Player {currentPlayer + 1}'s turn.");
         UpdateTurnText();
         myBoard.PrintDebugBoard(); // Print board after each move
+
+        // Debug: show all legal moves for the *next* player
+        var legalMoves = myBoard.GetLegalMoves();
+        Debug.Log($"[LegalMoves] Found {legalMoves.Count} legal moves:");
+        int placeCount = 0, moveCount = 0, replaceCount = 0;
+        foreach (var move in legalMoves)
+        {
+            switch (move.Type)
+            {
+                case MoveType.Place: placeCount++; break;
+                case MoveType.Move: moveCount++; break;
+                case MoveType.Replace: replaceCount++; break;
+            }
+        }
+        Debug.Log($"   Place: {placeCount}, Move: {moveCount}, Replace: {replaceCount}");
+
+        int counter = 0;
+        foreach (var move in legalMoves)
+        {
+            counter++;
+            Debug.Log($"   {counter}. {move}");
+        }
+
+        if (IsBotsTurn())
+        {
+            var bot = GetBotForCurrentPlayer();
+            if (bot != null) StartCoroutine(DoBotTurn(bot));
+        }
     }
 
     // CheckForWin retrns true if a player won

@@ -42,6 +42,16 @@ public class MarbleInventory
         return counts.ContainsKey(color) ? counts[color] : 0;
     }
 
+    public MarbleInventory Clone()
+    {
+        var copy = new MarbleInventory();
+        foreach (var kv in counts) // whatever dictionary/list you store counts in
+        {
+            copy.counts[kv.Key] = kv.Value;
+        }
+        return copy;
+    }
+
     public Dictionary<MarbleColor, int> GetAllCounts()
     {
         return new Dictionary<MarbleColor, int>(counts);
