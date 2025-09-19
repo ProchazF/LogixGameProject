@@ -208,7 +208,7 @@ public class GameBoard
             }
         }
 
-        Debug.Log("Recorded colors used in move: " + string.Join(", ", previousMoveColors));
+        // Debug.Log("Recorded colors used in move: " + string.Join(", ", previousMoveColors));
     }
     
     // Function to check if the color was played in previous move (if so it's illegal)

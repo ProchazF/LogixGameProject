@@ -1,5 +1,7 @@
 using System.Linq;
 using System;
+using UnityEngine;
+using System.Collections.Generic;
 
 public class MCTS
 {
@@ -7,11 +9,67 @@ public class MCTS
 
     private const float C = 1.41f; // exploration constant
 
+    private int botPlayer;
+
     public Move Search(GameBoard rootState, int rootPlayer,
                        WinShapeInstance[] playerACards, WinShapeInstance[] playerBCards,
                        int iterations = 500)
     {
+        botPlayer = rootPlayer; // we are searching moves for THIS player
+        Debug.Log($"[MCTS] Starting search for bot as Player {botPlayer}");
         MCTSNode root = new MCTSNode(rootState.Clone(), rootPlayer);
+
+        // Expand all root children once
+        var legalMoves = root.State.GetLegalMoves();
+
+        // List of safe nodes
+        List<MCTSNode> safeChildren = new List<MCTSNode>();
+
+        foreach (var move in legalMoves)
+        {
+            GameBoard nextState = root.State.Clone();
+            nextState.ApplyMove(move);
+
+            // Check for immediate win
+            if (rootPlayer == 0 && nextState.CheckWinFromBlack(playerACards, out _, out _))
+            {
+                Debug.Log("[MCTS] Found instant win as Player 0!");
+                return move;
+            }
+            if (rootPlayer == 1 && nextState.CheckWinFromBlack(playerBCards, out _, out _))
+            {
+                Debug.Log("[MCTS] Found instant win as Player 1!");
+                return move;
+            }
+
+            // check If opponent wins
+            bool opponentWin = (rootPlayer == 0 && nextState.CheckWinFromBlack(playerBCards, out _, out _))
+                || (rootPlayer == 1 && nextState.CheckWinFromBlack(playerACards, out _, out _));
+
+            if (opponentWin)
+            {
+                Debug.Log($"[MCTS] Move {move} allows opponent to win immediately!");
+                // Don't add this child (unless all moves are bad)
+                continue;
+            }
+
+            // Otherwise create child node for normal search
+            var child = new MCTSNode(nextState, 1 - rootPlayer, root, move);
+            root.Children.Add(child);
+            safeChildren.Add(child);
+        }
+
+        // If *all* moves are losing, we have no choice: search anyway
+        if (safeChildren.Count == 0)
+        {
+            Debug.Log("[MCTS] All root moves are bad... searching anyway.");
+            foreach (var move in legalMoves)
+            {
+                GameBoard nextState = root.State.Clone();
+                nextState.ApplyMove(move);
+                root.Children.Add(new MCTSNode(nextState, 1 - rootPlayer, root, move));
+            }
+        }
 
         for (int i = 0; i < iterations; i++)
         {
@@ -63,15 +121,15 @@ public class MCTS
         int player = currentPlayer;
 
         // limit rollout depth
-        for (int depth = 0; depth < 50; depth++)
+        for (int depth = 0; depth < 20; depth++)
         {
             if (state.CheckWinFromBlack(aCards, out var cardA, out var posA))
             {
-                return (player == 0) ? 1 : 0;
+                return (botPlayer == 0) ? 0f : 1f; // Player A wins
             }
             if (state.CheckWinFromBlack(bCards, out var cardB, out var posB))
             {
-                return (player == 1) ? 1 : 0;
+                return (botPlayer == 1) ? 0f : 1f; // Player B wins
             }
 
             var legalMoves = state.GetLegalMoves();

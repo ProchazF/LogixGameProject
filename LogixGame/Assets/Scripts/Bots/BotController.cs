@@ -24,7 +24,7 @@ public class BotController : MonoBehaviour
 
             case Difficulty.Normal:
             case Difficulty.Hard:
-                int iterations = difficulty == Difficulty.Normal ? 200 : 1000;
+                int iterations = difficulty == Difficulty.Normal ? 500 : 1000;
                 MCTS mcts = new MCTS();
                 return mcts.Search(board, botPlayer, playerACards, playerBCards, iterations);
 
