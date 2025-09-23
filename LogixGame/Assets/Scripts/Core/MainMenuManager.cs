@@ -7,6 +7,8 @@ public class MainMenuManager : MonoBehaviour
     public GameObject modeSelectionPanel;
     public GameObject difficultyPanel;
     public GameObject botVsBotPanel;
+    public GameObject rulesPanel;
+    public GameObject aboutPanel;
 
     private string selectedMode = "";
     private string botADifficulty = "";
@@ -34,12 +36,32 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnRulesClicked()
     {
-        Debug.Log("Show rules panel or rules scene");
+        mainMenuPanel.SetActive(false);
+        rulesPanel.SetActive(true);
     }
 
     public void OnAboutClicked()
     {
-        Debug.Log("Show about panel or rules scene");
+        mainMenuPanel.SetActive(false);
+        aboutPanel.SetActive(true);
+    }
+
+    public void OnBackFromRules()
+    {
+        rulesPanel.SetActive(false);
+        mainMenuPanel.SetActive(true);
+    }
+
+    public void OnBackFromAbout()
+    {
+        aboutPanel.SetActive(false);
+        mainMenuPanel.SetActive(true);
+    }
+
+    public void OnQuitClicked()
+    {
+        Debug.Log("Quit button pressed. Exiting game...");
+        Application.Quit();
     }
 
     // Button to return to menu

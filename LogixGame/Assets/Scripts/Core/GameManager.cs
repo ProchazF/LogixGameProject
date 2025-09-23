@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
 public enum GameMode { PvP, PvE, EvE }
@@ -133,6 +135,12 @@ public class GameManager : MonoBehaviour
         UpdateTurnText();
 
         boardVisualizer.Refresh(); // Visualize starting position
+
+        if (IsBotsTurn())
+        {
+            var bot = GetBotForCurrentPlayer();
+            if (bot != null) StartCoroutine(DoBotTurn(bot));
+        }
     }
 
 
@@ -145,28 +153,37 @@ public class GameManager : MonoBehaviour
         // For PvE
         botA = ParseDifficulty(PlayerPrefs.GetString("BotA", "Normal"));
         // For EvE:
-        botA = ParseDifficulty(PlayerPrefs.GetString("BotA", botA.ToString()));
+        botA = ParseDifficulty(PlayerPrefs.GetString("BotA", "Normal"));
         botB = ParseDifficulty(PlayerPrefs.GetString("BotB", "Normal"));
 
-        // Create bot controllers as needed
-        if (mode == GameMode.PvE || mode == GameMode.EvE)
+        // --- Create bots as needed ---
+        if (mode == GameMode.PvE)
         {
+            // Player B is the bot
             var goB = new GameObject("BotPlayer_B");
             botBController = goB.AddComponent<BotController>();
-            botBController.SetDifficulty(botA); // using your 'botA' setting for Player B as per earlier code
+            botBController.SetDifficulty(botA);
             DontDestroyOnLoad(goB);
         }
-        if (mode == GameMode.EvE)
+        else if (mode == GameMode.EvE)
         {
+            // Player A is a bot
             var goA = new GameObject("BotPlayer_A");
             botAController = goA.AddComponent<BotController>();
-            botAController.SetDifficulty(botB); // Player A difficulty (use botB pref here or adjust as you want)
+            botAController.SetDifficulty(botA);   // BotA difficulty
+
+            // Player B is a bot
+            var goB = new GameObject("BotPlayer_B");
+            botBController = goB.AddComponent<BotController>();
+            botBController.SetDifficulty(botB);   // BotB difficulty
+
             DontDestroyOnLoad(goA);
+            DontDestroyOnLoad(goB);
         }
+
 
         Debug.Log($"Started {mode} | BotA={botA} | BotB={botB}");
         // 3) TODO next: initialize board, set active player, etc.
-        Debug.Log($"Started {mode} | BotA={botA} | BotB={botB}");
 
     }
 
@@ -219,7 +236,7 @@ public class GameManager : MonoBehaviour
     //    go.name = "HumanPlayer";
     //    return go;
     //}
-    
+
     //private GameObject SpawnBot(Transform t, Difficulty diff)
     //{
     //    var go = Instantiate(botPrefab, t.position, t.rotation);
@@ -228,6 +245,21 @@ public class GameManager : MonoBehaviour
     //    if (ai != null) ai.SetDifficulty(diff);
     //    return go;
     //}
+
+    public void ReturnToMainMenu()
+    {
+        Debug.Log("[GameManager] Returning to main menu...");
+
+        // Optional: clear any static state or singletons
+        Instance = null;
+
+        // If you created bot GameObjects with DontDestroyOnLoad, destroy them here
+        if (botAController != null) Destroy(botAController.gameObject);
+        if (botBController != null) Destroy(botBController.gameObject);
+
+        // Load the main menu scene (replace "MainMenu" with your actual scene name)
+        SceneManager.LoadScene("SampleScene");
+    }
 
     private bool IsBotsTurn()
     {
@@ -320,6 +352,10 @@ public class GameManager : MonoBehaviour
 
     public void OnTileClicked(int x, int y)
     {
+        // Ignore if the click was on a UI element
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
         if (IsBotsTurn() || isBotMoving)
         {
             Debug.Log("It’s bot’s turn — ignoring human input.");

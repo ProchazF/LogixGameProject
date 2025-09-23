@@ -4,6 +4,8 @@ using UnityEngine;
 public class BotController : MonoBehaviour
 {
     private Difficulty difficulty;
+    private const int normalDifficultyIterations = 300;
+    private const int highDifficultyIterations = 1000;
     // private MCTSBot mctsBot;  // for Normal/Hard
     private MCTS mcts;
 
@@ -24,7 +26,7 @@ public class BotController : MonoBehaviour
 
             case Difficulty.Normal:
             case Difficulty.Hard:
-                int iterations = difficulty == Difficulty.Normal ? 500 : 1000;
+                int iterations = difficulty == Difficulty.Normal ? normalDifficultyIterations : highDifficultyIterations;
                 MCTS mcts = new MCTS();
                 return mcts.Search(board, botPlayer, playerACards, playerBCards, iterations);
 
