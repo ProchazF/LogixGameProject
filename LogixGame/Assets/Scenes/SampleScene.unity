@@ -2006,10 +2006,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 57223621}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1000, y: 1000}
+  m_SizeDelta: {x: -960, y: -58}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &538295250
 MonoBehaviour:
@@ -2032,16 +2032,17 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "LOGIX \u2013 RULES\n\nThe board is a 7\xD77 grid. At the start, one black
-    marble is placed in the center.\n\nPlayers take turns. On your turn, you may:\n\nPlace
-    a marble from your inventory next to an existing marble (orthogonally).\n\nMove
-    a marble on the board to an empty adjacent valid spot (unless blocked).\n\nReplace
-    an opponent\u2019s marble with one from your inventory.\n\nYou cannot use the
-    same color (or colors) your opponent used in their last move.\n\nGrey marbles
-    are jokers and count as any color.\n\nBlack marble must always be part of a winning
-    shape.\n\nA winning shape is five connected marbles that match one of your two
-    shape cards.\n\nShapes may be rotated but not mirrored.\n\nThe shape must be
-    built from one consistent color (except black/grey).\n\nThe card\u2019s blocked
-    color may not be used.\n\nThe first player to complete one of their shapes wins."
+    marble is placed in the center.\n\nPlayers take turns. On your turn, you may:\n\n-
+    Place a marble from your inventory next to an existing marble (orthogonally).\n\n-
+    Move a marble on the board to an empty adjacent valid spot (unless blocked).\n\n-
+    Replace an opponent\u2019s marble with one from your inventory.\n\nYou cannot
+    use the same color (or colors) your opponent used in their last move.\n\nGrey
+    marbles are jokers and count as any color.\n\nBlack marble must always be part
+    of a winning shape.\n\nA winning shape is five connected marbles that match one
+    of your two shape cards.\n\nShapes may be rotated but not mirrored.\n\nThe shape
+    must be built from one consistent color (except black/grey).\n\nThe card\u2019s
+    blocked color may not be used.\n\nThe first player to complete one of their shapes
+    wins."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4689,9 +4690,9 @@ RectTransform:
   - {fileID: 265324369}
   m_Father: {fileID: 57223621}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 777, y: -500}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -203, y: 29}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1199503389
@@ -4953,10 +4954,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 976693909}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1000, y: 1000}
+  m_SizeDelta: {x: -960, y: -58}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1266497859
 MonoBehaviour:
@@ -7437,9 +7438,9 @@ RectTransform:
   - {fileID: 48198306}
   m_Father: {fileID: 976693909}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 777, y: -500}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -203, y: 29}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2013638329
