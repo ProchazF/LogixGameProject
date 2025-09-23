@@ -1,93 +1,101 @@
-# František Procházka
+# Logix
+
+Logix is a strategic board game implemented in Unity.  
+Players compete by placing, moving, and replacing marbles on a 7×7 board, aiming to form specific 5-marble winning shapes (Pentominos).  
+
+This project was created as part of a university coursework in game development and artificial intelligence.
+
+---
+
+## Features
+
+- 7×7 interactive board with drag-and-drop marble placement.
+- Multiple game modes:
+  - **PvP**: Player vs Player (local multiplayer).
+  - **PvE**: Player vs AI (bot with adjustable difficulty).
+  - **EvE**: Bot vs Bot (AI vs AI).
+- AI powered by **Monte Carlo Tree Search (MCTS)**.
+- Color restrictions: cannot reuse opponent’s last color(s).
+- Inventory system with limited marbles (including grey jokers).
+- Shape cards: each player has two shapes that determine their win condition.
+- Rules and About panels included in the main menu.
+- UI built with Unity’s Canvas + TextMeshPro.
+
+---
+
+## Download & Installation
+
+### Windows
+1. Download the latest release:  
+   [Logix_Windows.zip] in /Builds/Logix_Windows.zip
+2. Extract the `.zip` file anywhere.  
+3. Run `Logix.exe` to start the game.  
+4. No installation required.
+
+---
+
+## How to Play
+
+- The board starts with a **black marble** in the center.
+- Players take turns. On your turn, you may:
+  - Place a marble from shared inventory **orthogonally adjacent** to an existing marble.
+  - Move a marble on the board to an empty adjacent valid spot (if not blocked).
+  - Replace an opponent’s marble with one from inventory.
+- Restrictions:
+  - You **cannot use the same color(s)** your opponent used in their last move.
+  - Grey marbles = jokers (wildcards, count as any color).
+  - Black marble must always be part of a winning shape.
+- Winning condition:
+  - Form a **five-marble shape** that matches one of your two shape cards.
+  - Shapes may be rotated, but **not mirrored**.
+  - The shape must be made from **one consistent color** (except black/grey).
+  - The card’s **blocked color** cannot be used.
+  - The winning shape must be **exactly five connected marbles of the same color**, meaning no extra marbles of that color may be connected to the shape (grey is fine)
+
+---
+
+## Controls
+
+- **Click marble in inventory** → select it.  
+- **Click board tile** → place or move marble.  
+- **Click opponent marble** → replace it (if legal).  
+- **Back button** (Rules/About) → return to menu.  
+- **Main Menu button** (GameScene) → exit to menu.  
+
+---
+
+## AI
+
+- AI difficulty is adjustable:
+  - **Easy** → random playout (fast, weaker).  
+  - **Normal** → ~500 simulations (balanced).  
+  - **Hard** → ~2000 simulations (stronger, slower).  
+- AI uses **Monte Carlo Tree Search (MCTS)** with random simulations and immediate win detection.
+
+---
+
+## Development Info
+
+- **Engine**: Unity 6 (6000.x)  
+- **Language**: C# 
+- **UI**: Unity Canvas + TextMeshPro 
+- **AI**: Monte Carlo Tree Search
+
+### Project Structure
+- **Core Components**: GameManager, GameBoard, Move, WinShape, etc.  
+- **AI Components**: BotController, MCTSBot.  
+- **UI Components**: BoardVisualizer, InventoryUI, CardUI, CursorMarble, etc.  
+
+---
+
+## License / Credits
+
+- Developed by *František Procházka*.  
+- University coursework project.  
+- Free to use for educational or entertainment purposes.  
+
+---
+
+## Screenshots
 
 
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.mff.cuni.cz/teaching/nprg045/majerech/frantisek-prochazka.git
-git branch -M master
-git push -uf origin master
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.mff.cuni.cz/teaching/nprg045/majerech/frantisek-prochazka/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
