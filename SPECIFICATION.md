@@ -33,14 +33,12 @@ The project aims to design and implement a **digital version of the board game *
 
 ### User Interface
 - Main menu with mode selection
-- Interactive game board (highlighting legal moves, input handling)
+- Interactive game board
 - Game status display (turn indicator, winner notification)
 - Restart/exit options
-- Animations and UI polish for better UX
 
 ### Spectator Features
 - Bot vs Bot mode with live updates
-- Optional rule variations (timers, score modes)
 
 ---
 
@@ -58,7 +56,7 @@ The project aims to design and implement a **digital version of the board game *
 - **AI bot** capable of playing competently
 - **Polished UI and UX**
 - **Fully implemented game modes**: PvP, PvE, Bot-vs-Bot
-- **Codebase** with documentation and unit tests
+- **Codebase** with documentation
 - **Project presentation/demo-ready build**
 
 ---

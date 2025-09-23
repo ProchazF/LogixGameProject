@@ -19,7 +19,6 @@ public class BoardTile : MonoBehaviour
             button.onClick.AddListener(() => onClick?.Invoke(x, y));
         }
 
-        // Najdeme child objekt s Image komponentou
         Transform child = transform.Find("MarbleVisual");
         if (child != null)
             marbleImage = child.GetComponent<Image>();

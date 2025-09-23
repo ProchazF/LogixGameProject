@@ -352,10 +352,7 @@ public class GameManager : MonoBehaviour
 
     public void OnTileClicked(int x, int y)
     {
-        // Ignore if the click was on a UI element
-        if (EventSystem.current.IsPointerOverGameObject())
-            return;
-
+        
         if (IsBotsTurn() || isBotMoving)
         {
             Debug.Log("It’s bot’s turn — ignoring human input.");
