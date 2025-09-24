@@ -278,7 +278,11 @@ public class GameManager : MonoBehaviour
     private IEnumerator DoBotTurn(BotController bot)
     {
         isBotMoving = true;
-        if (turnText) turnText.text = "Bot is thinking...";
+        string who = (mode == GameMode.EvE)
+        ? (currentPlayer == 0 ? "Bot A" : "Bot B")
+        : "Bot";
+
+        if (turnText) turnText.text = $"{who} is thinking...";
         yield return new WaitForSeconds(0.6f); // tiny delay
 
         Move move = bot.GetMove(
