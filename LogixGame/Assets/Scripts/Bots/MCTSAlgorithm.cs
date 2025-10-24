@@ -125,11 +125,11 @@ public class MCTS
         {
             if (state.CheckWinFromBlack(aCards, out var cardA, out var posA))
             {
-                return (botPlayer == 0) ? 0f : 1f; // Player A wins
+                return (botPlayer == 0) ? 1f : 0f; // Player A wins
             }
             if (state.CheckWinFromBlack(bCards, out var cardB, out var posB))
             {
-                return (botPlayer == 1) ? 0f : 1f; // Player B wins
+                return (botPlayer == 1) ? 1f : 0f; // Player B wins
             }
 
             var legalMoves = state.GetLegalMoves();
