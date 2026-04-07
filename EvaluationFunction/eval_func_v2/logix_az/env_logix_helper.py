@@ -2,6 +2,7 @@ import os
 import random
 from dataclasses import dataclass
 from typing import List, Tuple, Dict, Optional, Iterable
+from collections import deque
 
 import numpy as np
 
@@ -123,8 +124,8 @@ os.makedirs(CFG.ckpt_dir, exist_ok=True)
 # Board encoding:
 # 0 empty
 # 1 R, 2 G, 3 B, 4 Y, 5 Gray, 9 Black
-COLOR_CODE = {"R":1, "G":2, "B":3, "Y":4, "Gray":5}
-IDX_TO_COLOR = {1:"R", 2:"G", 3:"B", 4:"Y", 5:"Gray"}
+COLOR_CODE = {"R":1, "G":2, "B":3, "Y":4, "Gray":5, "Black":9}
+IDX_TO_COLOR = {1:"R", 2:"G", 3:"B", 4:"Y", 5:"Gray", 9:"Black"}
 
 InventoryDict = Dict[str, int]
 
@@ -145,13 +146,11 @@ class LogixShapeEnv:
         self.black[c, c] = 1
         self.center = (c, c)
 
-        # Last color played (ban source) per player; now Gray also sets bans
-        self.last_color_played: Dict[int, Optional[str]] = {+1: None, -1: None}
+        # Last color played
+        self.last_colors_played = set()
 
-        # Per-player inventories
-        def make_inv() -> InventoryDict:
-            return {"R":6, "G":6, "B":6, "Y":6, "Gray":2}
-        self.inventory: Dict[int, InventoryDict] = {+1: make_inv(), -1: make_inv()}
+        # inventory
+        self.inventory = {"R": 6, "G": 6, "B": 6, "Y": 6, "Gray": 2}
 
         # Per-episode objectives
         self.objectives = assign_player_objectives()
@@ -186,10 +185,11 @@ class LogixShapeEnv:
                     mask[rr, cc2] = 1
         return mask
 
-    def banned_color_for_current_player(self) -> Optional[str]:
-        """Ban equals opponent's last color (including Gray)."""
-        opp = -self.player
-        return self.last_color_played[opp]
+    def banned_colors(self) -> set[str]:
+        """
+        Global ban set produced by the immediately previous move.
+        """
+        return set(self.last_colors_played)
 
     def _is_blocked_piece(self, r: int, c: int) -> bool:
         """Blocked if all 4 neighbors are occupied (board or black)."""
@@ -198,6 +198,92 @@ class LogixShapeEnv:
             if self.inside(rr, cc) and self.board[rr, cc] == 0 and self.black[rr, cc] == 0:
                 return False
         return True
+    
+    def _can_reach(self, r1: int, c1: int, r2: int, c2: int) -> bool:
+        """
+        Returns True if a marble picked up from (r1, c1) can reach (r2, c2)
+        by moving through empty cells using only 4-neighborhood moves.
+
+        Important:
+        - destination must also be empty in the current position
+        - black and normal marbles both block movement
+        """
+        if not self.inside(r1, c1) or not self.inside(r2, c2):
+            return False
+
+        if (r1, c1) == (r2, c2):
+            return False
+
+        # destination must be empty right now
+        if self.board[r2, c2] != 0 or self.black[r2, c2] == 1:
+            return False
+
+        visited = np.zeros((self.n, self.n), dtype=bool)
+        q = deque()
+
+        # start from the source square, treated as empty after lifting the marble
+        q.append((r1, c1))
+        visited[r1, c1] = True
+
+        while q:
+            r, c = q.popleft()
+
+            if (r, c) == (r2, c2):
+                return True
+
+            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                rr, cc = r + dr, c + dc
+
+                if not self.inside(rr, cc):
+                    continue
+                if visited[rr, cc]:
+                    continue
+
+                # the source square is treated as empty
+                if (rr, cc) == (r1, c1):
+                    visited[rr, cc] = True
+                    q.append((rr, cc))
+                    continue
+
+                # otherwise only empty cells are traversable
+                if self.board[rr, cc] == 0 and self.black[rr, cc] == 0:
+                    visited[rr, cc] = True
+                    q.append((rr, cc))
+
+        return False
+    
+    # return adjacent marbles without source
+    def _adjacent_mask_without_source(self, sr: int, sc: int) -> np.ndarray:
+        """
+        Cells orthogonally adjacent to any occupied cell, but treat (sr, sc)
+        as empty because that marble is being lifted for a move.
+        """
+        mask = np.zeros_like(self.board, dtype=np.int8)
+
+        for r in range(self.n):
+            for c in range(self.n):
+                # treat source as empty
+                if (r, c) == (sr, sc):
+                    occupied = False
+                else:
+                    occupied = (self.board[r, c] != 0) or (self.black[r, c] == 1)
+
+                if not occupied:
+                    continue
+
+                for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                    rr, cc = r + dr, c + dc
+                    if not self.inside(rr, cc):
+                        continue
+
+                    # destination cell itself must currently be empty,
+                    # except source which we also treat as empty
+                    if (rr, cc) == (sr, sc):
+                        mask[rr, cc] = 1
+                    elif self.board[rr, cc] == 0 and self.black[rr, cc] == 0:
+                        mask[rr, cc] = 1
+
+        return mask
 
     # ------------- Actions listing -------------
 
@@ -205,43 +291,55 @@ class LogixShapeEnv:
         """
         Returns a list of *action tuples*:
           - ('place', r, c, color)
-          - ('move', r1, c1, r2, c2)          # cannot move black; source must not be fully blocked
+          - ('move', r1, c1, r2, c2)          # source must not be fully blocked
           - ('replace', r, c, color)          # replace board cell with a color from inventory
         All obey the banned-color rule (including Gray).
         Placement/move destinations must be adjacent to any occupied (proximity rule).
         """
         acts = []
-        banned = self.banned_color_for_current_player()
+        banned = self.banned_colors()
         adj = self._adjacent_mask()
 
-        inv = self.inventory[self.player]
+        inv = self.inventory
 
         # --- PLACE: from inventory to empty adj cell ---
         for r in range(self.n):
             for c in range(self.n):
                 if adj[r, c] != 1: continue
-                if self.board[r, c] != 0: continue
+                if self.board[r, c] != 0 or self.black[r, c] == 1: continue
                 for col in ("R","G","B","Y","Gray"):
-                    if col == banned: continue
+                    if col in banned: continue
                     if inv[col] <= 0: continue
                     acts.append(("place", r, c, col))
 
-        # --- MOVE: move an existing non-black marble to empty adj cell ---
+        # --- MOVE: move an existing marble to empty adj cell ---
         for r1 in range(self.n):
             for c1 in range(self.n):
                 v = self.board[r1, c1]
-                if v == 0: continue
-                if v == 9 or self.black[r1, c1] == 1: continue  # can't move black
+                has_normal_piece = self.board[r1, c1] != 0
+                has_black_piece = self.black[r1, c1] == 1
+
+                move_adj = self._adjacent_mask_without_source(r1, c1)
+
+                if not has_normal_piece and not has_black_piece:
+                    continue
                 # require not fully blocked (simplified rule)
                 if self._is_blocked_piece(r1, c1):
                     continue
-                moved_color = IDX_TO_COLOR.get(v, "Gray") if v in (1,2,3,4) else "Gray"
-                if moved_color == banned:
+                if has_black_piece:
+                    moved_color = "Black"
+                else:
+                    v = self.board[r1, c1]
+                    moved_color = IDX_TO_COLOR[v]
+                if moved_color in banned:
                     continue
                 for r2 in range(self.n):
                     for c2 in range(self.n):
+                        if r1 == r2 and c1 == c2: continue # cant move in place
                         if self.board[r2, c2] != 0: continue
-                        if adj[r2, c2] != 1: continue
+                        if self.black[r2, c2] == 1:continue
+                        if move_adj[r2, c2] != 1: continue
+                        if not self._can_reach(r1, c1, r2, c2): continue
                         acts.append(("move", r1, c1, r2, c2))
 
         # --- REPLACE: swap board cell with inventory color (no dest proximity check needed) ---
@@ -251,8 +349,9 @@ class LogixShapeEnv:
                 if v == 0: continue
                 if self.black[r, c] == 1: continue  # cannot replace black
                 cur_color = IDX_TO_COLOR.get(v, "Gray") if v in (1,2,3,4) else "Gray"
+                if cur_color in banned: continue # cannot replace banned color
                 for col in ("R","G","B","Y","Gray"):
-                    if col == banned: continue
+                    if col in banned: continue
                     if inv[col] <= 0: continue
                     if col == cur_color: continue  # replacing by same color is pointless
                     acts.append(("replace", r, c, col))
@@ -328,18 +427,18 @@ class LogixShapeEnv:
           ('replace', r, c, color)
         """
         typ = action[0]
-        banned = self.banned_color_for_current_player()
-        inv = self.inventory[self.player]
+        banned = self.banned_colors()
+        inv = self.inventory
 
         if typ == "place":
             _, r, c, col = action
             assert self.board[r, c] == 0, "Illegal: occupied"
             assert self._adjacent_mask()[r, c] == 1, "Illegal: not adjacent for placement"
-            assert col != banned, f"Illegal: color {col} is banned"
+            assert col not in banned, f"Illegal: color {col} is banned"
             assert inv[col] > 0, f"No inventory for {col}"
             self.board[r, c] = COLOR_CODE[col]
             inv[col] -= 1
-            self.last_color_played[self.player] = col
+            self.last_colors_played = {col}
 
         elif typ == "move":
             _, r1, c1, r2, c2 = action
@@ -347,13 +446,14 @@ class LogixShapeEnv:
             assert v != 0 and self.black[r1, c1] == 0, "Illegal: no piece or black at source"
             assert not self._is_blocked_piece(r1, c1), "Illegal: source piece is fully blocked"
             moved_color = IDX_TO_COLOR.get(v, "Gray") if v in (1,2,3,4) else "Gray"
-            assert moved_color != banned, f"Illegal: color {moved_color} is banned"
+            assert moved_color not in banned, f"Illegal: color {moved_color} is banned"
             assert self.board[r2, c2] == 0, "Illegal: destination occupied"
             assert self._adjacent_mask()[r2, c2] == 1, "Illegal: destination not adjacent"
+            assert self._can_reach(r1, c1, r2, c2), "Illegal: destination not reachable"
             # perform move
             self.board[r1, c1] = 0
             self.board[r2, c2] = v
-            self.last_color_played[self.player] = moved_color
+            self.last_colors_played = {moved_color}
 
         elif typ == "replace":
             _, r, c, col = action
@@ -361,7 +461,7 @@ class LogixShapeEnv:
             assert v != 0 and self.black[r, c] == 0, "Illegal: cannot replace empty or black"
             cur_color = IDX_TO_COLOR.get(v, "Gray") if v in (1,2,3,4) else "Gray"
             assert col != cur_color, "Illegal: replacing by same color is pointless"
-            assert col != banned, f"Illegal: color {col} is banned"
+            assert col not in banned, f"Illegal: color {col} is banned"
             assert inv[col] > 0, f"No inventory for {col}"
             # do swap: take board piece into inventory, place chosen color from inventory
             # removal:
@@ -372,7 +472,7 @@ class LogixShapeEnv:
             # placement:
             self.board[r, c] = COLOR_CODE[col]
             inv[col] -= 1
-            self.last_color_played[self.player] = col
+            self.last_colors_played = {cur_color, col}
 
         else:
             raise ValueError("Unknown action type")
@@ -404,12 +504,9 @@ class LogixShapeEnv:
         new_env.turn = self.turn
         new_env.black = self.black.copy()
         new_env.center = self.center
-        new_env.last_color_played = {+1: self.last_color_played[+1], -1: self.last_color_played[-1]}
+        new_env.last_colors_played = set(self.last_colors_played)
         # deep copy inventories
-        new_env.inventory = {
-            +1: dict(self.inventory[+1]),
-            -1: dict(self.inventory[-1]),
-        }
+        new_env.inventory = dict(self.inventory)
         # deep copy objectives
         new_env.objectives = {
             +1: [dict(o) for o in self.objectives[+1]],
@@ -434,10 +531,11 @@ class LogixShapeEnv:
         planes.append(self._adjacent_mask().astype(np.float32))
         # banned color one-hot (R,G,B,Y), tiled across board (Gray ban isn't a separate plane;
         # gray participation in ban is handled in action legality)
-        banned = self.banned_color_for_current_player()
+        banned = self.banned_colors()
         bvec = np.zeros(4, dtype=np.float32)
-        if banned in COLOR_TO_IDX:
-            bvec[COLOR_TO_IDX[banned]] = 1.0
+        for col in banned:
+            if col in COLOR_TO_IDX:
+                bvec[COLOR_TO_IDX[col]] = 1.0
         for i in range(4):
             planes.append(np.full_like(planes[0], bvec[i], dtype=np.float32))
         # parity plane

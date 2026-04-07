@@ -20,10 +20,8 @@ class LogixState:
     board: np.ndarray                  # (7,7) int8, with black encoded as 9
     player: int                        # +1 or -1 (same as helper)
     turn: int
-    last_color_p1: Optional[str]       # last color played by +1
-    last_color_p2: Optional[str]       # last color played by -1
-    inv_p1: np.ndarray                 # (5,) counts for +1 in COLOR_ORDER
-    inv_p2: np.ndarray                 # (5,) counts for -1 in COLOR_ORDER
+    banned: np.ndarray                 # shape (5,) bool
+    inventory: np.ndarray              # shape (5,)
     objectives: Any                    # whatever helper uses; should be picklable (dict with WinShape, strings, tuples)
 
     @property
@@ -32,7 +30,7 @@ class LogixState:
         Bool mask (5,) for [R,G,B,Y,Gray] banned for CURRENT player.
         Rule in helper: banned = opponent's last color (including Gray).
         """
-        opp_last = self.last_color_p2 if self.player == +1 else self.last_color_p1
+        opp_last = self.banned
         mask = np.zeros((len(COLOR_ORDER),), dtype=bool)
         if opp_last is not None and opp_last in COLOR_TO_BANNED_IDX:
             mask[COLOR_TO_BANNED_IDX[opp_last]] = True
