@@ -54,12 +54,19 @@ def main():
 
     os.makedirs("checkpoints", exist_ok=True)
 
-    num_iterations = 1_000_000
-    num_sims = 200
+    # num_iterations = 1_000_000
+    # num_sims = 200
+    # tau_moves = 10
+    # min_buffer_to_train = 2_000
+    # train_steps_per_iteration = 300
+    # batch_size = 64
+
+    num_iterations = 10
+    num_sims = 25
     tau_moves = 10
-    min_buffer_to_train = 2_000
-    train_steps_per_iteration = 300
-    batch_size = 64
+    train_steps_per_iteration = 10
+    min_buffer_to_train = 10
+    batch_size = 10
 
     for iteration in range(num_iterations):
         # ------------------------------
