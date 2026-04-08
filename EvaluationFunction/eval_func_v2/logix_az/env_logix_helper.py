@@ -442,18 +442,31 @@ class LogixShapeEnv:
 
         elif typ == "move":
             _, r1, c1, r2, c2 = action
-            v = self.board[r1, c1]
-            assert v != 0 and self.black[r1, c1] == 0, "Illegal: no piece or black at source"
+
+            has_normal_piece = self.board[r1, c1] != 0
+            has_black_piece = self.black[r1, c1] == 1
+
+            assert has_normal_piece or has_black_piece, "Illegal: no piece at source"
             assert not self._is_blocked_piece(r1, c1), "Illegal: source piece is fully blocked"
-            moved_color = IDX_TO_COLOR.get(v, "Gray") if v in (1,2,3,4) else "Gray"
-            assert moved_color not in banned, f"Illegal: color {moved_color} is banned"
             assert self.board[r2, c2] == 0, "Illegal: destination occupied"
-            assert self._adjacent_mask_without_source(r1,c1)[r2, c2] == 1, "Illegal: destination not adjacent"
+            assert self.black[r2, c2] == 0, "Illegal: destination has black"
+            assert self._adjacent_mask_without_source(r1, c1)[r2, c2] == 1, "Illegal: destination not adjacent"
             assert self._can_reach(r1, c1, r2, c2), "Illegal: destination not reachable"
-            # perform move
-            self.board[r1, c1] = 0
-            self.board[r2, c2] = v
-            self.last_colors_played = {moved_color}
+
+            if has_black_piece:
+                assert "Black" not in banned, "Illegal: black is banned"
+                self.black[r1, c1] = 0
+                self.black[r2, c2] = 1
+                self.center = (r2, c2)
+                self.last_colors_played = {"Black"}
+            else:
+                v = self.board[r1, c1]
+                moved_color = IDX_TO_COLOR[v]
+                assert moved_color not in banned, f"Illegal: color {moved_color} is banned"
+
+                self.board[r1, c1] = 0
+                self.board[r2, c2] = v
+                self.last_colors_played = {moved_color}
 
         elif typ == "replace":
             _, r, c, col = action
