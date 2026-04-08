@@ -100,8 +100,9 @@ class MCTS:
         best_score = -1e9
 
         for a in np.where(node.legal_mask)[0]:
-            Q = (node.W[a] / node.N[a]) if node.N[a] > 0 else 0.0
-            U = self.c_puct * node.P[a] * np.sqrt(Nsum + 1e-8) / (1 + node.N[a])
+            # PUCT formula
+            Q = (node.W[a] / node.N[a]) if node.N[a] > 0 else 0.0 # how good the move is on average - Q
+            U = self.c_puct * node.P[a] * np.sqrt(Nsum + 1e-8) / (1 + node.N[a]) # exploration bonus - if low visits and good eval by net or when we search a lot elsewhere
             score = Q + U
 
             if score > best_score:
