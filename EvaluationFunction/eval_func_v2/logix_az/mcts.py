@@ -2,13 +2,15 @@
 import numpy as np
 import torch
 
+from .state_encoding import encode_state
+
 class Node:
     __slots__ = ("P","N","W","children","is_expanded","legal_mask","value")
     def __init__(self, A):
-        self.P = np.zeros(A, dtype=np.float32)
-        self.N = np.zeros(A, dtype=np.int32)
-        self.W = np.zeros(A, dtype=np.float32)
-        self.children = {}               # action -> next_state (or child node id)
+        self.P = np.zeros(A, dtype=np.float32)   # prior probabilities
+        self.N = np.zeros(A, dtype=np.int32)     # visit counts
+        self.W = np.zeros(A, dtype=np.float32)   # total value
+        self.children = {}
         self.is_expanded = False
         self.legal_mask = None
         self.value = 0.0
@@ -29,15 +31,25 @@ class MCTS:
         self.A = A
         self.c_puct = c_puct
         self.device = device
-        self.nodes = {}   # hash(state) -> Node
+        self.nodes = {}  # hash(state) -> Node
 
     def _hash(self, state):
-        # TODO: implement stable hash
-        return hash(state.board.tobytes() + state.banned.tobytes() + state.cards.tobytes())
+        """
+        Build a stable hash from the actual current LogixState fields.
+        """
+        obj_repr = repr(state.objectives).encode("utf-8")
+
+        return hash((
+            state.board.tobytes(),
+            int(state.player),
+            int(state.turn),
+            state.banned.tobytes(),
+            state.inventory.tobytes(),
+            obj_repr,
+        ))
 
     @torch.no_grad()
     def _eval(self, state):
-        from state_encoding import encode_state
         bp, feat = encode_state(state)
         bp = bp.unsqueeze(0).to(self.device)
         feat = feat.unsqueeze(0).to(self.device)
@@ -51,10 +63,9 @@ class MCTS:
         for _ in range(num_sims):
             self._simulate(root_state)
 
-        # return improved policy from visit counts
         visits = root.N.astype(np.float32)
         if root.legal_mask is not None:
-            visits[~root.legal_mask] = 0
+            visits[~root.legal_mask] = 0.0
         return visits
 
     def _get_node(self, state):
@@ -67,37 +78,47 @@ class MCTS:
         state = self.env.canonicalize(state)
         node = self._get_node(state)
 
-        # Terminal?
+        # terminal node
         if self.env.is_terminal(state):
-            return self.env.outcome(state)  # z for player-to-move
+            return self.env.outcome(state)
 
-        # Expand?
+        # expansion
         if not node.is_expanded:
             legal = self.env.legal_actions_mask(state)
             logits, v = self._eval(state)
             P = masked_softmax(logits, legal)
+
             node.P = P
             node.legal_mask = legal
             node.is_expanded = True
+            node.value = v
             return v
 
-        # Select
+        # selection
         Nsum = node.N.sum()
-        best_a, best_score = -1, -1e9
+        best_a = -1
+        best_score = -1e9
+
         for a in np.where(node.legal_mask)[0]:
             Q = (node.W[a] / node.N[a]) if node.N[a] > 0 else 0.0
             U = self.c_puct * node.P[a] * np.sqrt(Nsum + 1e-8) / (1 + node.N[a])
             score = Q + U
-            if score > best_score:
-                best_score, best_a = score, a
 
-        # Step
+            if score > best_score:
+                best_score = score
+                best_a = a
+
+        if best_a == -1:
+            # should not happen if legal mask is correct
+            return 0.0
+
+        # transition
         next_state = self.env.step(state, best_a)
 
-        # Recurse (note the negation for alternating players)
+        # recursive evaluation from opponent perspective
         v = -self._simulate(next_state)
 
-        # Backup
+        # backup
         node.N[best_a] += 1
         node.W[best_a] += v
         return v
