@@ -448,7 +448,7 @@ class LogixShapeEnv:
             moved_color = IDX_TO_COLOR.get(v, "Gray") if v in (1,2,3,4) else "Gray"
             assert moved_color not in banned, f"Illegal: color {moved_color} is banned"
             assert self.board[r2, c2] == 0, "Illegal: destination occupied"
-            assert self._adjacent_mask()[r2, c2] == 1, "Illegal: destination not adjacent"
+            assert self._adjacent_mask_without_source(r1,c1)[r2, c2] == 1, "Illegal: destination not adjacent"
             assert self._can_reach(r1, c1, r2, c2), "Illegal: destination not reachable"
             # perform move
             self.board[r1, c1] = 0
@@ -503,7 +503,7 @@ class LogixShapeEnv:
         new_env.player = self.player
         new_env.turn = self.turn
         new_env.black = self.black.copy()
-        new_env.center = self.center
+        new_env.center = tuple(self.center)
         new_env.last_colors_played = set(self.last_colors_played)
         # deep copy inventories
         new_env.inventory = dict(self.inventory)
