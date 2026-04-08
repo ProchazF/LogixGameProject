@@ -70,25 +70,22 @@ def decode_action(a: int):
 
 
 def encode_action(move) -> int:
-    """
-    Convert helper-compatible tuple -> integer action id.
-    """
-    type = move[0]
+    typ = move[0]
 
-    if type == "place":
+    if typ == "place":
         _, r, c, color = move
         cell = _cell_to_idx(r, c)
         return PLACE_OFFSET + cell * len(COLORS) + COLOR_TO_IDX[color]
 
-    if type == "move":
+    if typ == "move":
         _, r1, c1, r2, c2 = move
         from_idx = _cell_to_idx(r1, c1)
         to_idx = _cell_to_idx(r2, c2)
         return MOVE_OFFSET + from_idx * (N * N) + to_idx
 
-    if type == "replace":
+    if typ == "replace":
         _, r, c, color = move
         cell = _cell_to_idx(r, c)
         return REPLACE_OFFSET + cell * len(COLORS) + COLOR_TO_IDX[color]
 
-    raise ValueError(f"unknown move type: {type}")
+    raise ValueError(f"unknown move type: {typ}")
