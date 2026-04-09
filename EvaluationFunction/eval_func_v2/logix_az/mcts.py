@@ -16,13 +16,32 @@ class Node:
         self.value = 0.0
 
 def masked_softmax(logits: np.ndarray, mask: np.ndarray):
-    x = logits.copy()
+    mask = mask.astype(bool)
+
+    if mask.sum() == 0:
+        raise ValueError("masked_softmax received no legal actions.")
+
+    x = np.array(logits, dtype=np.float32, copy=True)
+
+    if not np.all(np.isfinite(x)):
+        # fallback to uniform over legal actions
+        p = np.zeros_like(x, dtype=np.float32)
+        p[mask] = 1.0 / mask.sum()
+        return p
+
     x[~mask] = -1e9
     x = x - np.max(x)
+
     e = np.exp(x)
     e[~mask] = 0.0
     s = e.sum()
-    return e / (s + 1e-8)
+
+    if not np.isfinite(s) or s <= 0:
+        p = np.zeros_like(x, dtype=np.float32)
+        p[mask] = 1.0 / mask.sum()
+        return p
+
+    return e / s
 
 class MCTS:
     def __init__(self, env, net, A, c_puct=1.5, device="cpu"):

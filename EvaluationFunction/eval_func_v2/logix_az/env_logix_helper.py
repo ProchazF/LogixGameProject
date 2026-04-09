@@ -130,7 +130,7 @@ IDX_TO_COLOR = {1:"R", 2:"G", 3:"B", 4:"Y", 5:"Gray", 9:"Black"}
 InventoryDict = Dict[str, int]
 
 class LogixShapeEnv:
-    def __init__(self, n=7, max_game_len=90):
+    def __init__(self, n=7, max_game_len=100):
         self.n = n
         self.max_game_len = max_game_len
         self.reset()

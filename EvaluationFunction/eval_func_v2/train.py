@@ -54,19 +54,29 @@ def main():
 
     os.makedirs("checkpoints", exist_ok=True)
 
+    # original values
     # num_iterations = 1_000_000
     # num_sims = 200
     # tau_moves = 10
     # min_buffer_to_train = 2_000
-    # train_steps_per_iteration = 300
+    # train_steps_per_iteration = 200
     # batch_size = 64
 
-    num_iterations = 10
-    num_sims = 25
+    # mid values
+    num_iterations = 1_000_000
+    num_sims = 50
     tau_moves = 10
-    train_steps_per_iteration = 10
-    min_buffer_to_train = 10
-    batch_size = 10
+    min_buffer_to_train = 500
+    train_steps_per_iteration = 50
+    batch_size = 64
+
+    # test values
+    # num_iterations = 10
+    # num_sims = 25
+    # tau_moves = 10
+    # train_steps_per_iteration = 10
+    # min_buffer_to_train = 10
+    # batch_size = 10
 
     for iteration in range(num_iterations):
         # ------------------------------
@@ -101,6 +111,11 @@ def main():
 
             logits, v = net(boards, feats)
 
+            if not torch.isfinite(logits).all():
+                raise ValueError("NaN or Inf detected in policy logits during training.")
+            if not torch.isfinite(v).all():
+                raise ValueError("NaN or Inf detected in value head during training.")
+
             # policy loss: cross-entropy with soft targets
             logp = F.log_softmax(logits, dim=1)
             policy_loss = -(target_pi * logp).sum(dim=1).mean()
@@ -111,6 +126,10 @@ def main():
             loss = policy_loss + value_loss
 
             opt.zero_grad()
+            
+            if not torch.isfinite(loss):
+                raise ValueError("NaN or Inf detected in total loss.")
+
             loss.backward()
             opt.step()
 
@@ -131,7 +150,7 @@ def main():
         # ------------------------------
         # Save checkpoint periodically
         # ------------------------------
-        if iteration % 250 == 0:
+        if iteration % 50 == 0:
             path = f"checkpoints/net_{iteration:06d}.pt"
             torch.save(
                 {
