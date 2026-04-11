@@ -38,7 +38,7 @@ class LogixState:
 
 
 class LogixEnv:
-    def __init__(self, seed: int | None = None, n: int = 7, max_game_len: int = 90):
+    def __init__(self, seed: int | None = None, n: int = 7, max_game_len: int = 100):
         self.rng = np.random.default_rng(seed)
         self.n = n
         self.max_game_len = max_game_len

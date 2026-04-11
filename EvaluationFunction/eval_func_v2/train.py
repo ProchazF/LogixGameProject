@@ -71,12 +71,12 @@ def main():
     batch_size = 64
 
     # test values
-    # num_iterations = 10
-    # num_sims = 25
-    # tau_moves = 10
-    # train_steps_per_iteration = 10
-    # min_buffer_to_train = 10
-    # batch_size = 10
+    num_iterations = 10
+    num_sims = 25
+    tau_moves = 10
+    train_steps_per_iteration = 10
+    min_buffer_to_train = 10
+    batch_size = 10
 
     for iteration in range(num_iterations):
         # ------------------------------
