@@ -154,7 +154,7 @@ def banned_color_sanity_check(env):
 
 
 def main():
-    env = LogixShapeEnv(n=7, max_game_len=90)
+    env = LogixShapeEnv(n=7, max_game_len=100)
     env.reset()
 
     print("=== INITIAL STATE ===")

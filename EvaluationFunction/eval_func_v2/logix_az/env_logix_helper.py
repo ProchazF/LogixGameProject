@@ -102,7 +102,7 @@ class Config:
     lr: float = 1e-3
     save_every_secs: int = 3600
     print_every_episodes: int = 100
-    max_game_len: int = 90
+    max_game_len: int = 100
     epsilon_start: float = 0.60
     epsilon_end: float = 0.08
     epsilon_anneal_episodes: int = 25_000
@@ -375,43 +375,67 @@ class LogixShapeEnv:
     def _check_win_for_player(self, who: int) -> bool:
         """
         Win if ANY of the player's two objectives is satisfied:
-        - shape completed around the center black with a single base color (R/G/B/Y)
+        - shape completed somewhere around black
+        - black may occupy ANY one of the shape's 5 cells
+        - a single base color (R/G/B/Y) defines the shape
         - Gray and Black are wildcards
-        - base color != that objective's assigned color
-        - and NO adjacent same-colored marbles touch the finished shape (4-neighborhood).
+        - base color != assigned color
+        - no adjacent same-colored marbles touch the finished shape
         """
         objectives = self.objectives[who]
+        br, bc = self.center
 
         for obj in objectives:
             assigned = obj["assigned_color"]
             shape = obj["shape"]
 
             for shp in iter_rotations(shape):
-                cells = shape_world_positions(self.center, shp)
-                if any(not self.inside(r,c) for (r,c) in cells):
-                    continue
+                offs = shp.offsets
 
-                vals = [(9 if self.black[r,c]==1 else self.board[r,c]) for (r,c) in cells]
-                if any(v == 0 for v in vals):
-                    continue
+                # Try every cell of the shape as the one occupied by black
+                for anchor_idx, (adr, adc) in enumerate(offs):
+                    # Translate so that this chosen shape cell lands on black center
+                    cells = []
+                    for dr, dc in offs:
+                        rr = br + (dr - adr)
+                        cc = bc + (dc - adc)
+                        cells.append((rr, cc))
 
-                present_base = [v for v in vals if v in (1,2,3,4)]
-                if len(present_base) == 0:
-                    continue
-                base_code = present_base[0]
+                    if any(not self.inside(r, c) for (r, c) in cells):
+                        continue
 
-                if not all(v in (base_code, 5, 9) for v in vals):
-                    continue
+                    vals = []
+                    for (r, c) in cells:
+                        if self.black[r, c] == 1:
+                            vals.append(9)
+                        else:
+                            vals.append(self.board[r, c])
 
-                base_color = IDX_TO_COLOR[base_code]
-                if base_color == assigned:
-                    continue
+                    if any(v == 0 for v in vals):
+                        continue
 
-                if not self._check_no_adjacent_same_color(cells, base_code):
-                    continue
+                    # Need at least one real base color among the 5 cells
+                    present_base = [v for v in vals if v in (1, 2, 3, 4)]
+                    if len(present_base) == 0:
+                        continue
 
-                # this objective is satisfied
-                return True
+                    base_code = present_base[0]
+
+                    # All occupied cells in the shape must be either:
+                    # - that base color
+                    # - Gray
+                    # - Black
+                    if not all(v in (base_code, 5, 9) for v in vals):
+                        continue
+
+                    base_color = IDX_TO_COLOR[base_code]
+                    if base_color == assigned:
+                        continue
+
+                    if not self._check_no_adjacent_same_color(cells, base_code):
+                        continue
+
+                    return True
 
         return False
 
@@ -492,10 +516,18 @@ class LogixShapeEnv:
 
         self.turn += 1
 
-        # terminal check
-        if self._check_win_for_player(self.player):
+        current_wins = self._check_win_for_player(self.player)
+        opponent_wins = self._check_win_for_player(-self.player)
+
+        if current_wins and opponent_wins:
+            done = True
+            result_abs = 0   # or choose a rule here if simultaneous wins should not be a draw
+        elif current_wins:
             done = True
             result_abs = +1 if self.player == +1 else -1
+        elif opponent_wins:
+            done = True
+            result_abs = -1 if self.player == +1 else +1
         elif self.turn >= self.max_game_len:
             done = True
             result_abs = 0
