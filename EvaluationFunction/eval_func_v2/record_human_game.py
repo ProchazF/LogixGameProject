@@ -140,7 +140,7 @@ def normalize_move(move):
 
 
 def record_one_game():
-    env = LogixShapeEnv(n=7, max_game_len=100)
+    env = LogixShapeEnv(n=7, max_game_len=100, seed=None)
     env.reset()
 
     game_record = {

@@ -1,5 +1,6 @@
 import os
 import random
+import json
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -52,6 +53,13 @@ def main():
 
     buffer = ReplayBuffer(max_size=200_000)
 
+    from logix_az.human_loader import load_recorded_games
+
+    human_examples = load_recorded_games("recorded_games")
+    buffer.add_game(human_examples)
+
+    print("Human examples added to replay buffer:", len(human_examples))
+
     os.makedirs("checkpoints", exist_ok=True)
 
     # original values
@@ -64,19 +72,19 @@ def main():
 
     # mid values
     num_iterations = 1_000_000
-    num_sims = 50
+    num_sims = 100
     tau_moves = 10
     min_buffer_to_train = 500
     train_steps_per_iteration = 50
     batch_size = 64
 
     # test values
-    num_iterations = 10
-    num_sims = 25
-    tau_moves = 10
-    train_steps_per_iteration = 10
-    min_buffer_to_train = 10
-    batch_size = 10
+    # num_iterations = 10
+    # num_sims = 25
+    # tau_moves = 10
+    # train_steps_per_iteration = 10
+    # min_buffer_to_train = 10
+    # batch_size = 10
 
     for iteration in range(num_iterations):
         # ------------------------------

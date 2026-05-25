@@ -71,6 +71,48 @@ class LogixEnv:
             inventory=inventory,
             objectives=env.objectives,
         )
+    
+    def _pack_state_from_json(self, data):
+        """
+        Reconstruct LogixState-compatible info from saved JSON.
+        """
+        from .env_logix_helper import WinShape
+
+        helper = LogixShapeEnv(n=data["board_size"],
+                            max_game_len=data["max_game_len"])
+
+        helper.board = np.array(data["board"], dtype=np.int8)
+        helper.black = np.array(data["black"], dtype=np.int8)
+
+        helper.player = int(data["player"])
+        helper.turn = int(data["turn"])
+
+        helper.center = tuple(data["center"])
+
+        helper.last_colors_played = set(data["last_colors_played"])
+
+        helper.inventory = dict(data["inventory"])
+
+        objectives = {}
+
+        for who_str, objs in data["objectives"].items():
+            who = int(who_str)
+
+            objectives[who] = []
+
+            for obj in objs:
+                objectives[who].append({
+                    "shape": WinShape(
+                        obj["shape_name"],
+                        tuple(tuple(x) for x in obj["shape_offsets"])
+                    ),
+                    "assigned_color": obj["assigned_color"],
+                    "allowed_win_colors": tuple(obj["allowed_win_colors"]),
+                })
+
+        helper.objectives = objectives
+
+        return self._pack_state(helper)
 
     def _unpack_state(self, state: LogixState) -> LogixShapeEnv:
         """
