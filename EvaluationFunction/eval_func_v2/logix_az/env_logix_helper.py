@@ -53,23 +53,26 @@ ALL_SHAPES: Tuple[WinShape, ...] = (
 
 def assign_player_objectives(rng: random.Random = random) -> Dict[int, List[Dict[str, object]]]:
     """
-    Give each player two objectives. Each objective has:
-      - shape (with a random rotation)
-      - assigned_color
-      - allowed_win_colors (all base colors except the assigned one)
+    Give each player two objectives.
+
+    Across the whole game, all 4 base shapes are different.
+    Rotations may differ, but the base shape names cannot repeat.
     """
-    def sample_two():
-        # pick two *different* base shapes (rotations applied after)
-        s1, s2 = rng.sample(list(ALL_SHAPES), 2)
-        o1 = rotate(s1, rng.randrange(4))
-        o2 = rotate(s2, rng.randrange(4))
-        a1 = rng.choice(COLORS)
-        a2 = rng.choice(COLORS)
-        return [
-            {"shape": o1, "assigned_color": a1, "allowed_win_colors": tuple(c for c in COLORS if c != a1)},
-            {"shape": o2, "assigned_color": a2, "allowed_win_colors": tuple(c for c in COLORS if c != a2)},
-        ]
-    return {+1: sample_two(), -1: sample_two()}
+    picked_shapes = rng.sample(list(ALL_SHAPES), 4)
+
+    def make_obj(shape):
+        rotated = rotate(shape, rng.randrange(4))
+        assigned = rng.choice(COLORS)
+        return {
+            "shape": rotated,
+            "assigned_color": assigned,
+            "allowed_win_colors": tuple(c for c in COLORS if c != assigned),
+        }
+
+    return {
+        +1: [make_obj(picked_shapes[0]), make_obj(picked_shapes[1])],
+        -1: [make_obj(picked_shapes[2]), make_obj(picked_shapes[3])],
+    }
 
 def iter_rotations(shape: WinShape) -> Iterable[WinShape]:
     for k in range(4):
@@ -130,9 +133,10 @@ IDX_TO_COLOR = {1:"R", 2:"G", 3:"B", 4:"Y", 5:"Gray", 9:"Black"}
 InventoryDict = Dict[str, int]
 
 class LogixShapeEnv:
-    def __init__(self, n=7, max_game_len=100):
+    def __init__(self, n=7, max_game_len=100, seed=None):
         self.n = n
         self.max_game_len = max_game_len
+        self.rng = random.Random(seed)
         self.reset()
 
     def reset(self):
@@ -153,7 +157,7 @@ class LogixShapeEnv:
         self.inventory = {"R": 6, "G": 6, "B": 6, "Y": 6, "Gray": 2}
 
         # Per-episode objectives
-        self.objectives = assign_player_objectives()
+        self.objectives = assign_player_objectives(self.rng)
 
         return self._obs()
 
