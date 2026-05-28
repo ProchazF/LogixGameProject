@@ -60,6 +60,35 @@ def main():
 
     print("Human examples added to replay buffer:", len(human_examples))
 
+    print("Pretraining on human games...")
+
+    net.train()
+    for step in range(1000):
+        batch = random.sample(human_examples, min(batch_size, len(human_examples)))
+        boards, feats, target_pi, target_z = batch_encode(batch, device)
+
+        logits, v = net(boards, feats)
+
+        logp = F.log_softmax(logits, dim=1)
+        policy_loss = -(target_pi * logp).sum(dim=1).mean()
+        value_loss = F.mse_loss(v, target_z)
+
+        loss = policy_loss + value_loss
+
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+
+        if step % 100 == 0:
+            print(
+                f"pretrain step={step} "
+                f"loss={loss.item():.4f} "
+                f"policy={policy_loss.item():.4f} "
+                f"value={value_loss.item():.4f}"
+            )
+
+    net.eval()
+
     os.makedirs("checkpoints", exist_ok=True)
 
     # original values

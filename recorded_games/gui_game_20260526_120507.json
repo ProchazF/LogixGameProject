@@ -1,0 +1,367 @@
+{
+  "format_version": 1,
+  "created_at": "2026-05-26T12:05:07.214255",
+  "initial_state": {
+    "board": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "black": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "player": 1,
+    "turn": 0,
+    "center": [
+      3,
+      3
+    ],
+    "last_colors_played": [],
+    "inventory": {
+      "R": 6,
+      "G": 6,
+      "B": 6,
+      "Y": 6,
+      "Gray": 2
+    },
+    "objectives": {
+      "1": [
+        {
+          "shape_name": "Reverse Snake@90",
+          "shape_offsets": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              -1,
+              2
+            ],
+            [
+              -1,
+              3
+            ]
+          ],
+          "assigned_color": "R",
+          "allowed_win_colors": [
+            "G",
+            "B",
+            "Y"
+          ]
+        },
+        {
+          "shape_name": "Mirrored Seven-Shape@90",
+          "shape_offsets": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              -1,
+              2
+            ]
+          ],
+          "assigned_color": "R",
+          "allowed_win_colors": [
+            "G",
+            "B",
+            "Y"
+          ]
+        }
+      ],
+      "-1": [
+        {
+          "shape_name": "Reverse One-Shape@90",
+          "shape_offsets": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              -1,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "assigned_color": "B",
+          "allowed_win_colors": [
+            "R",
+            "G",
+            "Y"
+          ]
+        },
+        {
+          "shape_name": "b-shape@180",
+          "shape_offsets": [
+            [
+              0,
+              0
+            ],
+            [
+              -1,
+              0
+            ],
+            [
+              0,
+              -1
+            ],
+            [
+              -1,
+              -1
+            ],
+            [
+              -2,
+              -1
+            ]
+          ],
+          "assigned_color": "R",
+          "allowed_win_colors": [
+            "G",
+            "B",
+            "Y"
+          ]
+        }
+      ]
+    },
+    "board_size": 7,
+    "max_game_len": 100
+  },
+  "moves": [
+    {
+      "player": 1,
+      "move": [
+        "place",
+        3,
+        4,
+        "B"
+      ]
+    },
+    {
+      "player": -1,
+      "move": [
+        "place",
+        3,
+        2,
+        "Y"
+      ]
+    },
+    {
+      "player": 1,
+      "move": [
+        "place",
+        3,
+        5,
+        "B"
+      ]
+    },
+    {
+      "player": -1,
+      "move": [
+        "place",
+        2,
+        2,
+        "Y"
+      ]
+    },
+    {
+      "player": 1,
+      "move": [
+        "place",
+        4,
+        2,
+        "B"
+      ]
+    },
+    {
+      "player": -1,
+      "move": [
+        "place",
+        4,
+        3,
+        "G"
+      ]
+    },
+    {
+      "player": 1,
+      "move": [
+        "place",
+        5,
+        3,
+        "Y"
+      ]
+    },
+    {
+      "player": -1,
+      "move": [
+        "place",
+        2,
+        3,
+        "Gray"
+      ]
+    },
+    {
+      "player": 1,
+      "move": [
+        "replace",
+        4,
+        3,
+        "B"
+      ]
+    }
+  ],
+  "winner": 1,
+  "finished": true
+}
