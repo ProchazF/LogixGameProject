@@ -75,9 +75,17 @@ class MCTS:
         logits, v = self.net(bp, feat)
         return logits.squeeze(0).cpu().numpy(), float(v.item())
 
-    def run(self, root_state, num_sims: int):
+    def run(self, root_state, num_sims: int, add_noise=True):
         root_state = self.env.canonicalize(root_state)
         root = self._get_node(root_state)
+
+        if not root.is_expanded:
+            self._simulate(root_state)
+
+        if add_noise and root.legal_mask is not None:
+            legal_actions = np.where(root.legal_mask)[0]
+            noise = np.random.dirichlet([0.3] * len(legal_actions))
+            root.P[legal_actions] = 0.75 * root.P[legal_actions] + 0.25 * noise
 
         for _ in range(num_sims):
             self._simulate(root_state)

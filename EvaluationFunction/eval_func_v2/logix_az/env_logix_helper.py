@@ -105,7 +105,7 @@ class Config:
     lr: float = 1e-3
     save_every_secs: int = 3600
     print_every_episodes: int = 100
-    max_game_len: int = 100
+    max_game_len: int = 50
     epsilon_start: float = 0.60
     epsilon_end: float = 0.08
     epsilon_anneal_episodes: int = 25_000
@@ -133,7 +133,7 @@ IDX_TO_COLOR = {1:"R", 2:"G", 3:"B", 4:"Y", 5:"Gray", 9:"Black"}
 InventoryDict = Dict[str, int]
 
 class LogixShapeEnv:
-    def __init__(self, n=7, max_game_len=100, seed=None):
+    def __init__(self, n=7, max_game_len=50, seed=None):
         self.n = n
         self.max_game_len = max_game_len
         self.rng = random.Random(seed)
