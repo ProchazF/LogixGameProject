@@ -9,62 +9,72 @@
 \def\ThesisType{bc}
 
 % Název práce v jazyce práce (přesně podle zadání)
-\def\ThesisTitle{\xxx{Název práce}}
+\def\ThesisTitle{{Herní prostředí pro hru inspirovanou hrou Logix a tvorba ukázkových botů, s důrazem na trénování ohodnocovací funkce pro MCTS}}
 
 % Název práce v angličtině
-\def\ThesisTitleEN{\xxx{Thesis title}}
+\def\ThesisTitleEN{{Game environment for a game inspired by the game Logix and development of sample bots with emphasis on training of evaluation function for MCTS}}
 
 % Jméno autora (vy)
-\def\ThesisAuthor{\xxx{Jméno Příjmení}}
+\def\ThesisAuthor{{František Procházka}}
 
 % Rok odevzdání
-\def\YearSubmitted{\xxx{ROK}}
+\def\YearSubmitted{{2026}}
 
 % Název katedry nebo ústavu, kde byla práce oficiálně zadána
 % (dle Organizační struktury MFF UK:
 % https://www.mff.cuni.cz/cs/fakulta/organizacni-struktura,
 % případně plný název pracoviště mimo MFF)
-\def\Department{\xxx{Název katedry nebo ústavu}}
-\def\DepartmentEN{\xxx{Name of the department}}
+\def\Department{{Katedra teoretické informatiky a matematické logiky}}
+\def\DepartmentEN{{Department of Theoretical Computer Science and Mathematical Logic}}
 
 % Jedná se o katedru (department) nebo o ústav (institute)?
-\def\DeptType{\xxx{Katedra}}
-\def\DeptTypeEN{\xxx{Department}}
+\def\DeptType{{Katedra}}
+\def\DeptTypeEN{{Department}}
 
 % Vedoucí práce: Jméno a příjmení s~tituly
-\def\Supervisor{\xxx{Vedoucí práce}}
+\def\Supervisor{{Mgr. Vladan Majerech, Dr.}}
 
 % Pracoviště vedoucího (opět dle Organizační struktury MFF)
-\def\SupervisorsDepartment{\xxx{katedra}}
-\def\SupervisorsDepartmentEN{\xxx{department}}
+\def\SupervisorsDepartment{{Katedra teoretické informatiky a matematické logiky}}
+\def\SupervisorsDepartmentEN{{Department of Theoretical Computer Science and Mathematical Logic}}
 
 % Studijní program (kromě rigorozních prací)
-\def\StudyProgramme{\xxx{studijní program}}
+\def\StudyProgramme{{Umělá inteligence}}
 
 % Nepovinné poděkování (vedoucímu práce, konzultantovi, tomu, kdo
 % vám nosil pizzu a vařil čaj apod.)
 \def\Dedication{%
-\xxx{Poděkování.}
+{Rád bych poděkoval svému vedoucímu práce Mgr. Vladanu Majerechovi, Dr., za odborné vedení, cenné připomínky a vstřícnost při směřování této práce.}
 }
 
 % Abstrakt (doporučený rozsah cca 80-200 slov; nejedná se o zadání práce)
 \def\Abstract{%
-\xxx{Abstrakt.}
+{Tato práce se zabývá návrhem a implementací herního prostředí pro abstraktní deskovou hru inspirovanou hrou Logix a tvorbou 
+ukázkových botů pro toto prostředí. Součástí práce je formální popis pravidel hry, reprezentace herního stavu, návrh množiny legálních 
+akcí a implementace prostředí umožňujícího simulaci partií. Dále práce popisuje návrh botů založených na jednoduchých heuristikách, 
+metodě Monte Carlo Tree Search a algoritmu Alfa-beta ořezávání. Zvláštní důraz je kladen na přípravu trénovací pipeline pro ohodnocovací funkci, 
+která může být využita při řízení prohledávání v MCTS. Výsledkem práce je funkční prostředí vhodné pro experimentování s různými strategiemi 
+a základ pro další vývoj silnějších hráčů založených na metodách strojového učení.}
 }
 
 % Anglická verze abstraktu
 \def\AbstractEN{%
-\xxx{Abstract.}
+{This thesis focuses on the design and implementation of a game environment for an abstract board game inspired by Logix and on the
+ development of sample bots for this environment. The work includes a formal description of the game rules, representation of the game state,
+ design of the set of legal actions, and implementation of an environment capable of simulating complete games. The thesis also describes sample
+  bots based on simple heuristics, Monte Carlo Tree Search and Alpha-Beta pruning. Special emphasis is placed on the preparation of a training 
+  pipeline for an evaluation function that can be used to guide the MCTS search. The result is a functional environment suitable for experimenting
+   with different strategies and a foundation for further development of stronger players based on machine learning methods.}
 }
 
 % 3 až 5 klíčových slov (doporučeno) oddělených \sep
 % Hodí se pro nalezení práce podle tématu.
 \def\ThesisKeywords{%
-\xxx{klíčové slovo\sep složitější fráze}
+{desková hra\sep herní prostředí\sep Monte Carlo Tree Search\sep ohodnocovací funkce\sep strojové učení}
 }
 
 \def\ThesisKeywordsEN{
-\xxx{key\sep words}
+{board game\sep game environment\sep Monte Carlo Tree Search\sep evaluation function\sep machine learning}
 }
 
 % Pokud některá z položek metadat obsahuje TeXové řídící sekvence, je potřeba
