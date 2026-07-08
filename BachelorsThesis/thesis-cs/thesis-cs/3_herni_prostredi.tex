@@ -1,41 +1,92 @@
 \chapter{Implementace herního prostředí}
 
-\section{Architektura implementace}
+\section{Přehled implementace}
 
-\section{Reprezentace herního stavu}
+Implementace projektu je rozdělena do dvou částí. První část tvoří herní aplikace vytvořená v prostředí Unity pomocí jazyka C\#,
+která slouží pro vizualizaci hry, lokální hru dvou hráčů a hraní proti implementovaným agentům. Druhou část tvoří pythonové prostředí určené 
+především pro implementaci samotných botů, generování trénovacích dat a experimenty. Obě části vycházejí ze 
+stejných pravidel hry, ale liší se svým účelem a použitými technologiemi.
 
-\subsection{Herní deska}
+\section{Unity aplikace}
 
-\subsection{Inventář kamenů}
+Část projektu zaměřená na jednoduchou grafickou implementaci a hratelnou verzi hry byla implementována v herním enginu Unity v jazyce C\#.
+Cílem bylo umožnit uživateli hru zobrazit, spustit, vizuálně sledovat a dle pravidel hrát. Hru je možno spustit jako lokální hru dvou hráčů u jedné obrazovky,
+Hra proti jednomu z botů, případně i jednoduchou vizualizaci partie různých botů. Primárně tedy aplikace slouží jako uživatelské rozhraní 
+a jako demonstrace navržené hry.
 
-\subsection{Zakázané barvy}
+Aplikace v herním režimu zobrazuje herní desku, její aktuální stav, inventář a cílové tvary obou hráčů. Během svého tahu může uživatel 
+jednoduše provádět jednu z podporovaných akcí a to pomocí interaktivního rozhraní. Po každém provedeném tahu aplikace ověří jeho legalitu, 
+aktualizuje herní stav a následně zkontroluje, zda byly splněny podmínky pro ukončení partie.
 
-\subsection{Aktivní hráč}
+\subsection{Uživatelské rozhraní}
 
-\subsection{Cílové tvary}
+Uživatelské rozhraní bylo navrženo s důrazem na jednoduchost a přehlednost, ne však s důrazem na grafiku. Hlavní část obrazovky tvoří samotné herní pole
+7~$\times$~7, na kterém je vidět aktuální stav pozice. Napravo od hrací desky lze vidět společný inventář a nad ním barvu nebo barvy, které jsou pro stávající 
+tah zakázány. Nalevo od herního pole pak vidíme graficky znázorněné tvary pro prvního i druhého hráče, obarveny barvou, ze které ten daný tvar nesmí být složen.
 
-\section{Reprezentace akcí}
+Ovládání je implementováno pomocí myši. Akce jsou prováděny výběrem kamene, kterým chceme hrát, ať už z inventáře nebo hrací desky. Vybraná kámen následně 
+položíme tam,
+kam ho chceme umístit, případně vyměnit. Hra detekuje, zda je tento tah legální a pokud ano, aktualizuje stav hry a zkontroluje, zda některý z hráčů nedosáhl
+podmínek vítězství.
 
-\subsection{Umístění kamene}
+Součástí celé aplikace je také hlavní menu, ve kterém si uživatel může znovu přečíst pravidla, přečíst si o projektu nebo zahájit hru. V herním menu si
+může zvolit herní mód, případně obtížnost bota, proti kterému chce hrát. Po skončení partie je zobrazen výsledek a je možný návrat do hlavní nabídky.
 
-\subsection{Přesun kamene}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/unity_gui.png}
+    \caption{Grafické uživatelské rozhraní aplikace implementované v prostředí Unity. Obrázek vytvořen autorem.}
+    \label{fig:unity_gui}
+\end{figure}
 
-\subsection{Nahrazení kamene}
+\subsection{Reprezentace herního stavu}
 
-\subsection{Kódování akcí}
+Veškerá logika hry je soustředěna do třídy \texttt{GameBoard}. Ta představuje kompletní reprezentaci aktuálního stavu partie. Uchovává stav hrací desky,
+společného inventáře, informace o zakázaných barvách a poskytuje metody pro ověřování a provádění jednotlivách akcí. Je oddělena od grafické části, ta pouze třídu
+vezme a aktuální stav zobrazí uživateli.
 
-\section{Implementace herních pravidel}
+Samotná hrací deska je reprezentována dvourozměrným polem o velikosti $7 \times 7$, jehož prvky obsahují informaci o barvě kamene, který je na daných souřadnicích
+umístěn. Pro reprezentaci barev je využit výčtový typ (\texttt{enum}), který zahrnuje všechny barvy dříve zmíněné (viz sekce~\ref{sec:colors}).
 
-\subsection{Generování legálních tahů}
+Jednotlivé tahy jsou reprezentovány třídou \texttt{Move}. Ta uchovává typ tahu, použitou barvu či barvy, cílovou pozici kamene a v případě posunutí i pozici
+počáteční. Tato reprezentace umožňuje zpracovávat všechny typy akcí jednotným způsobem.
 
-\subsection{Provádění akcí}
+Podrobnější dokumentace jednotlivých tříd a kompletní zdrojové kódy Unity aplikace jsou dostupné v repozitáři projektu~\cite{logix_gitlab}.
 
-\subsection{Detekce vítězství}
+\subsection{Implementace pravidel}
 
-\subsection{Ukončení partie}
+Implementace pravidel navazuje přímo na reprezentaci herního stavu ve třídě \texttt{GameBoard}. Každá akce je nejprve ověřena, zda splňuje pravidla a teprve
+pokud projde tímto ověřením se provede změna pozice. Tento postup zabraňuje vzniku nelegálních pozic a umožňuje tahy zpracovávat jednotně,
+ať jsou provedeny hráčem nebo botem.
 
-\section{Reprezentace stavu pro algoritmy umělé inteligence}
+Ověřování pravidel zahrnuje hned několik věcí, jak je vysvětleno v sekci ~\ref{sec:rules}. Mezi ty patří kontrola obsazenosti cílového pole, 
+dostupnosti kamenů v inventáři, zakázaných barev a dalších podmínek jednotlivých typů akcí. U umístění kamene se kontroluje zejména sousednost 
+s již existujícím kamenem. U přesunu je navíc nutné ověřit, zda je cílové pole dosažitelné souvislou cestou. U nahrazení se zejména kontroluje dostupnost
+v inventáři a zákaz nahrazení černého kamene.
 
-\subsection{Kódování vstupu pro neuronovou síť}
+Po úspěšném provedení tahu se aktualizuje hrací deska, inventář a množina zakázaných barev pro následující tah soupeře. Následně je provedena 
+kontrola vítězné podmínky a případně je partie ukončena.
 
-\subsection{Maskování legálních akcí}
+\subsection{Herní režimy}
+
+Unity aplikace nabízí tři herní režimy. Ty slouží jak pro běžné hraní, tak pro demonstraci vzorových botů. Základním režimem je lokální hra 
+dvou hráčů, při které hráči střídavě provádějí tahy na jednom zařízení. Tento režim slouží především k ověření pravidel - zda byla implementována
+korektně.
+
+Dalším režimem je hra proti počítačovému soupeři. Před zahájením samotné hry si uživatel může zvolit obtížnost bota, proti kterému chce hrát. Jednotlivé
+úrovně obtížnosti implementují odlišné algoritmy pro výběr akce a jsou podrobněji popsány v kapitole, která se herním agentům přímo věnuje.
+
+Posledním režimem je automatická partie dvou botů. V tomto režimu aplikace vizualizuje průběh partie, zatímco samotné tahy jsou prováděny počítačem.
+Tento režim slouží k demonstraci agentů, jejich chování a k porovnávání výkonnosti.
+
+\subsection{Implementace botů}
+
+Nemalou součástí Unity aplikace je také implementace počítačových botů. Aplikace pak uživateli umožňuje proti nim v grafickém prostředí hrát. Všichni boti 
+využívají stejné rozhraní pro výběr tahu, takže je lze jednoduše zaměňovat bez modifikace jiných částí aplikace. Samotný výběr tahu pak probíhá tak, že 
+aplikace předá danému botovi herní stav a ten vrátí, dle svého algoritmu, tah, který považuje za nejlepší.
+
+Pro účely demonstrace byly implementovány tři různé obtížnosti. Úroveň \emph{Easy} využívá náhodného agenta, který z množiny legálních tahů vybere jeden náhodně.
+Úroveň \emph{Normal} využívá algoritmu minimax s alfa-beta ořezáváním za využití natrénované ohodnocovací funkce do omezené hloubky. Poslední obtížností je
+\emph{Hard}, která už implementuje MCTS doplněný o tu samou ohodnocovací funkci. Ta má pak stanovený výpočetní limit na počet simulací, které může provést.
+
+Detailní implementace jednotlivých botů, použitých algoritmů i naučené ohodnocovací funkce je popsána v následujících kapitolách.

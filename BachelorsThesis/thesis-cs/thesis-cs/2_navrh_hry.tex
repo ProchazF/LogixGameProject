@@ -2,30 +2,219 @@
 
 \section{Inspirace hrou Logix}
 
+Samotná hra, které se věnuje tato práce, je inspirována deskovou hrou Logix. Základním principem je skládání herních kamenů různých
+barev na hrací desku s cílem složit celistvý tvar stejné barvy, který je hráči přidělen na začátku hry. Pravidla hry jsou vesměs jednoduchá,
+avšak poskytují velmi zajímavé strategické možnosti, vhodné pro implementaci agentů.
+
 \section{Cíle návrhu hry}
+
+Cílem práce však nebylo vytvořit přesnou digitální kopii původní hry. Tím bylo navrhnout verzi hry, která bude co nejvhodnější 
+pro navrhování agentů umělé inteligence. Samotná pravidla tahů, tvary, barvy a počet herních kamenů zůstaly zachovány, jelikož nepředstavovaly
+překážku pro návrh herních agentů. Hlavní změnou byla transformace hry na hru s úplnou informací. V originální hře je 
+totiž skryto, jaký tvar má který hráč stavět.
+Tato vlastnost však znemožňuje, aby se jednalo o hru s úplnou informací. Proto v této verzi hry již od začátku víme, které tvary má soupeř skládat.
+
+Další požadavky na návrh hry byly již přirozeně splněny pravidly původní hry. Zaprvé dostatečně velký stavový prostor. Rozsáhlý stavový prostor byl 
+jedním z hlavních důvodů pro využití moderních metod, jako je MCTS, namísto klasických
+algoritmů úplného prohledávání. Dalším požadavkem byla jednoznačná a jednoduchá pravidla,
+díky kterým je implementace prostředí i následné experimentování s agenty prosté. V neposlední řadě ještě vhodnost pro neuronové sítě, aby bylo možné převést herní
+stav na pevně danou reprezentaci vhodnou jako vstup pro neuronovou síť.
 
 \section{Herní komponenty}
 
 \subsection{Herní deska}
 
+Herní deska představuje hlavní herní prostor, na kterém se odehrává celá partie. Je tvořena mřížkou o velikosti 7~$\times$~7 polí, přičemž každé pole může být 
+buď prázdné nebo obsahovat právě jeden herní kámen. Pole jsou jednoznačně dány souřadnicemi, což umožňuje snadnou reprezentaci herního stavu a následnou
+implementaci herních akcí.
+
 \subsection{Herní kameny}
 
+Herní kámen představuje základní herní komponentu. Každý kámen je reprezentován svou barvou a případně pozicí. V průběhu partie může být umístěn
+ze společného inventáře na herní desku, na samotné herní desce přemístěn či nahrazen kamenem jiné barvy z inventáře. 
+Podrobnější popis jednotlivých akcí je uveden v následující sekci. Celkový počet
+kamenů dané barvy je omezen, což přidává další strategický faktor.
+
 \subsection{Barvy}
+\label{sec:colors}
+
+Ve hře je celkem 6 barev kamenů. 4 základní - modrá, červená, žlutá a zelená - plus 2 univerzální - černá a šedá. Černá je na hrací ploše již od začátku hry,
+nelze ji z desky žádným způsobem odebrat a musí být součástí výherního tvaru. Černá i šedá představují univerzální kameny, které mohou při vytváření cílového 
+tvaru zastoupit libovolnou ze čtyř základních barev. Barvy mohou být během partie omezeny předchozím tahem soupeře, což dále ovlivňuje výslednou strategii hráčů.
+
+\subsection{Inventář}
+
+Inventář představuje společnou zásobu dosud nevyužitých herních kamenů. Pro každou barvu je určen počet kamenů, které jsou během partie stále k dispozici. 
+Při umístění nového kamene nebo jeho nahrazení je příslušný kámen z inventáře odebrán, zatímco odstraněný kámen je do inventáře vrácen. Stav inventáře je 
+součástí herního stavu a přímo ovlivňuje množinu legálních tahů i strategická rozhodnutí hráčů. Klasicky je v inventáři na začátku hry 6 kamenů od každé
+základní barvy a 2 šedé kameny. Černý kámen, jak již bylo zmíněno, začíná na ploše a do inventáře se vrátit nemůže.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{img/Logix_Herni_Deska.png}
+    \caption{Ukázka herní desky a inventáře hráče v navržené hře. Obrázek vytvořen autorem.}
+    \label{fig:game_board}
+\end{figure}
 
 \subsection{Cílové tvary}
 
-\section{Pravidla hry}
+Cílové tvary určují vítěznou podmínku hry. Oproti základní verzi Logixu, kdy má každý hráč jeden skrytý tvar, v této verzi se hráč snaží o složení jednoho ze 
+svých dvou tvarů, které jsou ale známy protihráči. Každý tvar je tvořen pěti propojenými poli a odpovídá tzv. \emph{pentominu}. Hráč vyhraje, povede-li
+se mu složit jeden ze svých herních tvarů na herní ploše z jedné celistvé barvy, s tím, že jeden libovolný kámen té barvy musí být základní černý kámen. 
+Každému cílovému tvaru je navíc přiřazena jedna základní barva. Z kamenů této barvy tvar \emph{nesmí} být složen, což vytváří další strategické 
+možnosti při blokování protivníka a hře celkově přidává další vrstvu strategie.
 
-\subsection{Průběh tahu}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/all_shapes.png}
+    \caption{Přehled všech 18 cílových tvarů použitých ve hře. Každý tvar je tvořen pěti kameny stejné barvy. Obrázek vytvořen autorem.}
+    \label{fig:all_shapes}
+\end{figure}
+
+\section{Pravidla hry}  
+\label{sec:rules}
+
+Originální verze hry umožňuje hru až pro 4 hráče. V této práci se ovšem zabýváme pouze verzí pro dva hráče. Důvodem je skutečnost, že většina 
+algoritmů popsaných v teoretické části práce, jako například minimax nebo MCTS v jejich standardní podobě, je určena pro dvouhráčové hry s nulovým 
+součtem. Rozšíření na více hráčů by vyžadovalo odlišné algoritmy a tudíž není předmětem této práce.
+
+\subsection{Průběh partie}
+
+Na začátku partie jsou oběma hráčům přiřazeny dva cílové tvary, které jsou známé oběma stranám. Každému tvaru je navíc přiřazena barva, ze které
+tvar \emph{nesmí} být složen. Hrací deska je prázdná s výjimkou prostředního pole, kde je umístěn černý hrací kámen.
+
+První tah provádí hráč 1 a po provedení jedné z legálních akcí hraje hráč 2. Takto se hráči střídají až do koncového stavu, kterým je buď složení cílového tvaru
+nebo dosažení maximálního povoleného počtu tahů. V každém tahu může hráč provést právě jednu z akcí popsaných v následujících podkapitolách.
 
 \subsection{Typy akcí}
 
+V každém tahu může hráč provést právě jednu ze tří základních akcí: umístění kamene, přesun kamene nebo nahrazení kamene. 
+Dostupnost jednotlivých akcí závisí na aktuálním stavu hry a musí splňovat všechna pravidla popsaná v následujících podkapitolách. 
+Hráč není povinen využívat všechny typy akcí rovnoměrně a může během partie opakovaně provádět stejný typ akce, pokud je v daném okamžiku legální.
+
 \subsection{Umístění kamene}
+
+Akce umístění kamene umožňuje hráči na hrací plochu přidat kámen ze společného inventáře. Hráč si zvolí jednu ze základních nebo univerzálních barev, 
+která není v daném tahu zakázána, a umístí odpovídající kámen na libovolné prázdné pole splňující podmínky pro umístění.
+
+Podmínkou pro umístění kamene je, aby cílové pole sousedilo alespoň s jedním již umístěným kamenem. Za sousední jsou považována pouze pole sdílející 
+společnou hranu, nikoli pole dotýkající se rohem.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/ValidPlace.png}
+    \caption{Ukázka akce umístění kamene. Vlevo je stav před tahem, vpravo stav po umístění nového kamene na legální pozici. Obrázek vytvořen autorem.}
+    \label{fig:placement_move}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/InvalidPlace.png}
+    \caption{Příklad neplatného umístění kamene. Nový kámen není umístěn na pole sousedící alespoň s jedním již existujícím kamenem, a proto není tah legální. Obrázek vytvořen autorem.}
+    \label{fig:invalid_placement}
+\end{figure}
 
 \subsection{Přesun kamene}
 
+Akce přesun kamene umožňuje hráči posunout kámen na hrací ploše z jeho stávajícího místa na jiné. Počet kamenů v inventáři se tudíž nemění. Přesouvat lze
+kameny libovolné barvy, včetně černé.
+
+Podmínek na posunutí je více. Zaprvé, pole na které kámen přesouváme musí být prázdné a opět musí mít alespoň jeden sousední kámen. Druhou podmínkou je
+dosažitelnost cílového pole z dosavadního místa cestou tvořenou prázdnými poli. Cesta je tvořena pouze ortogonálně sousedními poli; diagonální pohyb není 
+povolen. Při hledání této cesty se původní pozice přesouvaného kamene považuje za prázdné pole. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/ValidMove.png}
+    \caption{Ukázka akce přesunu kamene. Vlevo je stav před tahem, vpravo stav po přesunutí kamene na novou legální pozici. Obrázek vytvořen autorem.}
+    \label{fig:move_stone}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/InvalidMove1.png}
+    \caption{Ukázka neplatné akce přesunu kamene. Kámen nemá volnou cestu k poli, na které se chce dostat. Obrázek vytvořen autorem.}
+    \label{fig:invalid_move_stone_1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/InvalidMove2.png}
+    \caption{Ukázka neplatné akce přesunu kamene. Přesunutý kámen není umístěn na pole s alespoň jedním sousedem. Obrázek vytvořen autorem.}
+    \label{fig:invalid_move_stone_2}
+\end{figure}
+
 \subsection{Nahrazení kamene}
+
+Poslední akcí je nahrazení kamene, které umožňuje hráči změnit barvu již umístěného kamene na hrací desce. Hráč zvolí libovolný kámen kromě základního černého 
+kamene a nahradí jej kamenem jiné barvy ze společného inventáře. Nahrazení lze provést pouze tehdy, pokud inventář obsahuje alespoň jeden kámen nově zvolené barvy.
+
+Po provedení akce je použitý kámen z inventáře odebrán a původní kámen z hrací plochy naopak do inventáře vrácen.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/ValidReplace.png}
+    \caption{Ukázka akce nahrazení kamene. Původní kámen je nahrazen kamenem jiné barvy ze společného inventáře. Obrázek vytvořen autorem.}
+    \label{fig:replace_stone}
+\end{figure}
+
+\subsection{Omezení tahů}
+
+Při každém tahu (vyjma prvního) se jedna nebo více barev stávají pro následující tah soupeře zakázanými. Hráč nesmí během svého tahu použít kámen zakázané barvy
+při žádné z dostupných akcí. U akce nahrazení kamene nesmí být zakázaná jak barva kamene z hrací desky, tak barva kamene z inventáře. 
+Zakázané barvy jsou určeny použitými barvami v předchozím tahu.
+
+\begin{table}[H]
+\centering
+\caption{Zakázané barvy po provedení jednotlivých akcí}
+\label{tab:banned_colors}
+\begin{tabular}{ll}
+\toprule
+\textbf{Akce} & \textbf{Zakázané barvy pro následující tah soupeře} \\
+\midrule
+Umístění kamene & Barva nově umístěného kamene \\
+\midrule
+Přesun kamene & Barva přesunutého kamene \\
+\midrule
+Nahrazení kamene & Barva původního i nově vloženého kamene \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Zakázané barvy platí pouze pro bezprostředně následující tah soupeře. Po jeho dokončení jsou nahrazeny novou množinou zakázaných barev vyplývající z právě provedené akce.
 
 \section{Ukončení hry}
 
+Partie končí okamžitě v moment, kdy některý z hráčů vytvoří na hrací desce jeden ze svých nebo soupeřových cílových tvarů v souladu se všemi pravidly hry. 
+Hráč tedy může po svém tahu prohrát, složí-li svým tahem cílový tvar soupeře. Hráč se složeným cílovým tvarem je pak prohlášen vítězem.
+
+Aby byl cílový tvar považován za platně vytvořený, musí být splněno několik podmínek. Všechny kameny tvořící tvar musí mít stejnou barvu, přičemž jeden
+z nich musí být nahrazen základním černým kamenem. Současně musí vytvořená konfigurace přesně odpovídat jednomu z cílových tvarů nebo jeho libovolné rotaci.
+Zrcadlené varianty tvarů se za totožné nepovažují a jsou ve hře reprezentovány jako samostatné cílové tvary. 
+Přítomnost dalších kamenů stejné barvy bezprostředně navazujících na vítězný tvar není přípustná, tvar musí být takzvaně \emph{jednolitý}. Univerzální kameny
+se do nadbytečných nepočítají.
+
+Pokud žádný z hráčů nedosáhne vítězné podmínky před dosažením maximálního povoleného počtu tahů, partie končí remízou.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/VyherniPozice.png}
+    \caption{Ukázka platné i neplatné vyhrávající pozice pro tvar \emph{seven}. Neplatná pozice je z důvodu nadbytečného kamene stejné barvy.
+     Obrázek vytvořen autorem.}
+    \label{fig:winning_position}
+\end{figure}
+
 \section{Analýza hry}
+
+Hra je deterministická. Neobsahuje žádný prvek náhody a stejná posloupnost tahů vždy vede ke stejnému výslednému stavu.
+
+Oba hráči mají úplnou informaci v každé části hry. Tudíž mají dostupné veškeré prostředky pro rozhodování.
+
+Hra se řadí mezi hry s nulovým součtem, neboli vítězství jednoho z hráčů znamená prohru druhého.
+
+V každém tahu má hráč k dispozici velké množství legálních akcí. Jejich počet závisí na aktuálním stavu partie, 
+avšak v prostřední fázi hry se pohybuje v řádu stovek možných tahů. Faktor větvení je proto poměrně vysoký a herní strom tudíž také.
+Kombinace velikosti hrací desky, sdíleného inventáře, šesti barev kamenů a osmnácti cílových tvarů vede k velmi rozsáhlému stavovému prostoru.
+
+Všechna tato fakta ukazují na to, že hra je vhodná pro algoritmy založené na selektivním prohledávání, zejména MCTS. 
+Současně lze herní stav jednoduše reprezentovat a převést na reprezentaci vhodnou pro vstup neuronové sítě.

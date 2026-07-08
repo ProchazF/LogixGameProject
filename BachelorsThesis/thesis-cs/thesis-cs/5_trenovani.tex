@@ -1,35 +1,232 @@
 \chapter{Trénování ohodnocovací funkce}
 
+V této sekci je popsán vývoj a architektura ohodnocovací funkce, která se využívá ve výsledné implementaci herních agentů. Podrobnější informace o samotné
+architekruře lze najít v dokumentaci v repozitáři~\cite{logix_gitlab}.
+
 \section{Přehled trénovacího procesu}
+
+Cílem procesu je naučit neuronovou síť odhadnout kvalitu stavu herních pozic a současně byhodnotit kvalitu možných tahů z ní. Natrénovaná síť je pak využívána
+algoritmem MCTS i minimax s alfa-beta ořezáváním.
+
+Proces je inspirován metodou, kterou využívá AlphaZero. Na rozdíl od AlphaZero, které využívá data čistě generované pomocí self-play, tak použitá implementace
+navíc používá předpřipravené lidské hry, aby algoritmus nezařínal úplně s ničím.
+Odehrané hry se ukládají do \emph{Reply Bufferu}, ze kterého jsou vybírány trénovací data pro samotné 
+učení neuronové sítě. Po aktualizaci parametrů z učení je nově vzniklá síť použita na generování dalších partií a proces se opakuje až do zastavení.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/Treninkovy_Proces.png}
+    \caption{Schéma trénovacího procesu použitého v této práci. Obrázek vytvořen autorem.}
+    \label{fig:training_pipeline}
+\end{figure}
 
 \section{Reprezentace vstupu}
 
+Neuronová síť sama nedokáže převést herní stav na parametry, se kterými je schopna pracovat. Proto je nutné před samotným ohodnocením převést informace 
+o pozici na data, které následně neuronová síť dokáže zpracovat. Stav byl převeden na numerické hodnoty, vhodné pro zpracování konvolucí, kterou naurovnová
+síť používá. Reprezentace převádí všechny informace, které mohou mít nějaká vliv na finální vyhodnocení pozice.
+
 \subsection{Kódování herního stavu}
+
+Neuronová síť používá dva kanály vstupních informací.
+
+První je kanál, kde se přenáší informace spojené se samotnou hrací deskou. Každá barva kamenů na desce je převedena na binární rovinu, která udává, na kterých 
+pozicích se dané barva nachází. Tím nám vznikne 6 masek, pro každou ze základních barev, šedou univerzální a černou.
+
+Druhý je pak s informacemi o globálních hodnotách, které se neváží přímo na desku. Mezi ty patří množina aktuálně zakázaných barev, informace o inventáři - kolik
+jakých druhů kamený je ještě k dispozici - cílové tvary obou hráčů a informace o hráči, jenž je právě na řadě.
+
+Takto lze rozdělit prostorové informace vhodné pro konvoluci od informací, který popisují celkový stav partie.
+
+\begin{table}[H]
+\centering
+\caption{Informace tvořící vstup neuronové sítě}
+\label{tab:input_encoding}
+
+\begin{tabular}{p{5cm}p{8cm}}
+\toprule
+\textbf{Informace} & \textbf{Reprezentace} \\
+\midrule
+Červené kameny & Binární rovina $7 \times 7$ \\
+
+Zelené kameny & Binární rovina $7 \times 7$ \\
+
+Modré kameny & Binární rovina $7 \times 7$ \\
+
+Žluté kameny & Binární rovina $7 \times 7$ \\
+
+Univerzální kameny & Binární rovina $7 \times 7$ \\
+
+Černý kámen & Binární rovina $7 \times 7$ \\
+
+Zakázané barvy & Binární vektor \\
+
+Stav společného inventáře & Celočíselný vektor \\
+
+Cílové tvary obou hráčů & One-hot reprezentace \\
+
+Aktivní hráč & Binární hodnota \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Vstupní tenzor}
 
+Vstup, jak již bylo zmíněno, je rozdělen na dvě části. První je reprezentace desky pomocí šesti binárních rovin rozměrově $7 \times 7$. Hodnota 1 
+na dané pozici značí, že se tam kámen dané barvy nachází, v opačném případě 0.
+
+Druhou tvoří jednorozměrný vektor globálních informací o délce 99. Sem se řadí výherní tvary o velikosti 88 - 4 váherní tvary, každý je jedníém z 18 a má
+určenou jednu ze 4 barev. Dále zakázané barvy (velikost 5), informace o inventáři(velikost 5) a informace kdo hraje (velikost 1). 
+
+Tyto části se nejdříve zpracovávají odděleně, reprezentace hrací desky je zpracována konvolucí, zatímco globální vektor je převeden do skryté reprezentace
+za pomoci plně propojené vrstvy. Obě reprezentace jsou následně spojeny a tvoří vstup pro výpočet policy a value výstupů.
+
+
 \section{Architektura neuronové sítě}
+
+Samotná neuronová síť tedy přijímá dva vstupy a vrací dva výstupy. První představuje pravděpodobnostní rozdělení tahů z této pozice (policy) a druhý
+odhad výsledku pozice (value). Oba výstupy sdílí společnou část sítě, která zpracovává  vnitřní reprezentaci herního stavu.
+
+\subsection{Společná část sítě}
+
+Reprezentace herníé desky je zpracována dvěma konvolučními vrstvami s jádrem velikosti $3 \times 3$. Konvoluce umožňuje zachytit prostorové vztahy
+mezi kameny a rozpoznávat lokální vzory či tvary na hrací ploše. Po druhé konvoluci je aplikována operace Global Average Pooling, která převádí 
+prostorovou reprezentaci na jednorozměrný vektor dané délky.
 
 \subsection{Policy Head}
 
+Policy head slouží k odhadu kvality jednotlivých akcí. Ze společné reprezentace vypočítá logity, neboli hodnotu, kterou neuronová síť přidělí každému tahu.
+Ty jsou následně během algoritmu MCTS převedeny na pravděpodobnostní rozdělení, pomocí algoritmu softmax. Využití u alfa-beta ořezávání je rozdílné,
+tam se berou hned hodnoty bez softmaxového převedení na pravděpodobnostní rozdělení.
+
 \subsection{Value Head}
+
+Value head vrací číslo z intervalu $<-1,1>$. Čísla blížící se k $1$ odpovídají pozici, které jsou váhodné pro hráče na tahu, hodnota blízká $-1$ naopak 
+značí pozici výhodnou pro soupeře. K výpočtu používá neuronová síť dvě plně propojené vrstvy. První vrstva převádí společnou reprezentaci do skryté vrstvy
+a využívá aktivační funkce ReLU. Ta síti umožňuje modelovat vztahy mezi jednotlivými složkami a je klasicky využívána v mnoha neuronovách sítích. 
+Druhá vrstva pka vypočítává samotnou výstupní hodnotu. To dělá pomocí aktivačční funkce \texttt{tanh}. Díky ní je vástup omezen na interval $<-1,1>$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/Neuronova_Sit.png}
+    \caption{Schéma vstupu a výstupu neuronové sítě. Obrázek vytvořen autorem.}
+    \label{fig:neural_network_pipeline}
+\end{figure}
 
 \section{Generování trénovacích dat}
 
+Hlavním zdrojem trénovacích dat nejsou předpřipravené příklady, ale hry, které jsou generovány přímo při učení. Celá množina trénovacích dat je 
+spojením několika lidských partií a následně partií vytvořených metodou self-play. Každá pozice z každé partie obsahuje informace o 
+herním stavu, policy distribuci a především konečný výsledek partie. Data se pak ukládají do Replay Bufferu, ze kterého
+si neuronová síť bere data pro učeíní.
+
 \subsection{Self-play}
 
-\subsection{Monte Carlo Tree Search jako učitel}
+Po předtrénování sítě na lidských partiích generuje trénovací pipeline partie metodou self-play. U té proti sobě hrají dvě instance stejného
+agenta využívající aktuální neuronovou síť. Kvalita generovaných dat se pak postupně zvyšuje s kvalitou natrénovaného modelu.
 
-\subsection{Ukládání partií}
+Partie jsou odehrány až do koncového stavu nebo do maximálního počtu tahů. V případě, že self-play partie skončí remízou, je  uložena jen
+třetina všech stavů z té dané partie. Toto opatření existuje z důvodu, že remízy nám moc neřeknou a zbytečně zamlžují ostatní partie
+v Replay Bufferu. V případě normálního výsledku partie se uloží všechny stavy, které se ve hře udály a je jim přiřazeno, který z hráčů
+vyhrál.
 
-\section{Proces učení}
+\subsection{Monte Carlo Tree Search pro self-play}
+
+Při výběru tahů v self-play se používá také MCTS, není využíván pouze výstup policy části neuronové sítě. Nad aktuální pozicí
+je spuštěno vyhledávání podle algoritmu MCTS, který navíc využívá informace z neuronové sítě, jak již bylo nastíněno v 
+kapitole~\ref{sec:mcts}.
+
+Díky využití MCTS v self-play zvedáme efektivitu učení, jelikož self-play partie budou častěji končit v koncových stavech, než 
+v remíze. Zároveň s tím je neuronová síť díky tomu trénována přímo na MCTS, takže samotné využití u agenta je o to lepší.
+
+\subsection{Lidské partie}
+
+Před zahájením self-play jsou do trénovací množiny nahrána data partií, které byly odehrány lidskými hráči. Ty slouží k předtrénování 
+neuronové sítě a umožňují modelu, aby nezačínal od nuly, ale osvojil si hned nějaká jednoduchá pravidla.
+
+Díky použití lidských partií v předtrénování zamezíme, aby síť generovala čistě náhodná data na začátku trénování. Tím bychom nezískali
+mnoho informací a tréninkový proces by se zpomalil. Postupem času se ale k lidským partiím přihlíží méně s rostoucí velikostí 
+Replay Bufferu.
+
+Jelikož tato hra nemá řádnou databázi odehraných her (není známá), tak všechna data lidských partií byla vytvořena autorem.
+Jako hráč s velkou zkušeností v této hře je kvalita dat na nejvyšší dostupné úrovni.
 
 \subsection{Replay Buffer}
 
+Všechna data o partiích, ať už lidských nebo těmi vytvořenými v self-play, jsou ukládána do Replay Bufferu. Každý záznam obsahuje reprezentaci stavu, cílovou
+policy distribuci, která byla získána za pomoci MCTS a konečný výsledek partie.
+
+Replay Buffer umožňuje neuronové síti se současně učit ze starších i nově vytvořených dat a upravovat váhy podle nich. Při každé iteraci jsou 
+z Replay Bufferu náhodně vybrány dávky příkladů, což zabraňuje neuronové síti učit se jen na pár špatných hrách. Po dosažení maximální kapacity 
+Replay Bufferu jsou nejstarší partie vyhozeny a jsou nahrazeny nově vytvořenými.
+
+\section{Proces učení}
+
+Tato sekce popisuje samotné učení a upravování parametrů neuronové sítě. Po výběru vygenerovaných dat z Replay Bufferu je na nich
+vypočtena ztrátová funkce. Na jejím základě jsou pak pomocí gradientního sestupu aktualizovány váhy neuronové sítě.
+
 \subsection{Ztrátová funkce}
+
+Trénování neuronové sítě probíhá na dvou úlohách. První je aproximace policy distribuce pomocí MCTS algoritmu, druhou je odhad konečného výsledku
+partie z dané pozice. Celková ztrátová funkce je pak součtem policy ztráty a value ztráty~\cite{silver2017alphazero}.
+
+\begin{equation}
+L = L_{\mathrm{policy}} + L_{\mathrm{value}}.
+\end{equation}
+
+Policy část se vypočítá pomocí křížové entropie mezi policy distribucí z MCTS a výstupem policy části neuronové sítě
+
+\begin{equation}
+L_{\mathrm{policy}}
+=
+-\sum_{a}\pi(a)\log p(a),
+\end{equation}
+
+kde $\pi(a)$ představuje cílovou pravděpodobnost akce z MCTS a $p(a)$ pravděpodobnost odhadovaná neuronovou sítí~\cite{goodfellow2016deep}.
+
+Value část naopak využívá střední kvadratickou chybu mezi výsledkem partie a hodnotou, kterou odhadla neuronová síť
+
+\begin{equation}
+L_{\mathrm{value}}
+=
+(z-v)^2,
+\end{equation}
+
+kde $z\in<-1,1>$ označuje skutečný výsledek partie a $v$ hodnotu vrácenou value částí neuronové sítě.
+
+Použití těchto dvou složek umožňuje síti se učit jak vracet správné pravděpodobnostní rozdělení tahů, tak kvalitně odhadovat
+kvalitu pozic. 
 
 \subsection{Optimalizace parametrů}
 
-\subsection{Trénovací iterace}
+Optimalizace je prováděna pomocí algoritmu Adam~\cite{kingma2015adam}. Ten byl zvolen díky stabilitě při trénování neuronových sítí. 
 
-\section{Integrace s Monte Carlo Tree Search}
+Při trénování je použita počáteční rychlost učení (learning rate) $10^{-3}$ a regularizace parametrů pomocí hodnoty \emph{weight decay} rovné $10^{-4}$.
+Aktualizace vah probíhá dávkami o velikosti 64 příkladů. Po výpočtu ztrátové funkce jsou spočteny gradienty parametrů sítě a pomocí algoritmu Adam a 
+algoritmu zpětné propagace chyby jsou aktualizovány váhy neuronové sítě.
+
+Veškerá implementace neuronové sítě i procesu učení byla realizována pomocí knihovny PyTorch, která poskytuje automatický výpočet gradientů i 
+efektivní využití grafických procesorů při trénování.
+
+\section{Využití natrénované sítě}
+
+Po dokončení trénovacího procesu jsou parametry neuronové sítě uloženy do souboru typu \emph{checkpoint}. Ten obsahuje váhy natrénované sítě plus informace pro 
+opětovné načtení. Díky tomu není nutné síť při každém spuštění znovu trénovat a může být přímo využita jednotlivými herními agenty.
+
+Síť je v této práci používána dvěma způsoby. Prvním je agent založený na algoritmu minimax s alfa-beta ořezáváním. Ten používá value část sítě jako ohodnocovací 
+funkci při dosažení maximální hloubky prohledávání. Využívá i policy část sítě a to tak, že seřadí možné tahy v prohledávané pozici a dále prohledá
+pouze nejlepší kandidáty.
+
+Agent využívající algoritmus Monte Carlo Tree Search používá taktéž obě části neuronové sítě, ale jinak. Policy část dá algoritmu apriorní 
+pravděpodobnostní rozdělení jednotlivých tahů, které jsou využity algoritmem PUCT při výběru uzlu. Value část nahrazuje konečné simulace 
+klasického MCTS a poskytuje odhad kvality pozice bez dalšího rozvádění.
+
+Jedna natrénovaná neuronová síť tak slouží jako společná ohodnocovací funkce pro dva odlišné algoritmy. Umožňuje to tak jejich přímé porovnání.
+
+\section{Výpočetní prostředí}
+
+Trénování neuronové sítě probíhalo na několika různých výpočetních prostředích. Byla testována i trénována na lokálně na osobním ale výkoném
+počítači. Dalším bylo prostředí Parallel Laboratory (ParLab) Matematicko-Fyzikální fakulty Univerzity Karlovy, kde probíhal zejména trénink.
+Posledním pak bylo prostředí Google Colaboratory, které poskytuje přístup ke grafickým akcelerátorům pomocí cloutu.
+
+Trénování probíhalo trhavě v průběhu jednoho měsíce, kdy celkový čistý čas strávený trénováním dosahval dvou týdnů.

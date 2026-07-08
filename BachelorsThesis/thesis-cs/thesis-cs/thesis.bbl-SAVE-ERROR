@@ -1,0 +1,133 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{russell2021aima}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=143fa183327d9fcd9de18eec99d6ca97}{%
+           family={Russell},
+           familyi={R\bibinitperiod},
+           given={Stuart},
+           giveni={S\bibinitperiod}}}%
+        {{hash=5de798d5fa3c0236c0478134cd23f52a}{%
+           family={Norvig},
+           familyi={N\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Pearson}%
+      }
+      \strng{namehash}{b280605b721b4ebcba5395298499f924}
+      \strng{fullhash}{b280605b721b4ebcba5395298499f924}
+      \strng{fullhashraw}{b280605b721b4ebcba5395298499f924}
+      \strng{bibnamehash}{b280605b721b4ebcba5395298499f924}
+      \strng{authorbibnamehash}{b280605b721b4ebcba5395298499f924}
+      \strng{authornamehash}{b280605b721b4ebcba5395298499f924}
+      \strng{authorfullhash}{b280605b721b4ebcba5395298499f924}
+      \strng{authorfullhashraw}{b280605b721b4ebcba5395298499f924}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{4}
+      \field{title}{Artificial Intelligence: A Modern Approach}
+      \field{year}{2021}
+    \endentry
+    \entry{browne2012mcts}{article}{}{}
+      \name{author}{10}{}{%
+        {{hash=ce6f895ac0424268bef0881e4166fa82}{%
+           family={Browne},
+           familyi={B\bibinitperiod},
+           given={Cameron\bibnamedelima B.},
+           giveni={C\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=c1a26ecb3139d18d34c458bf5fe9e71c}{%
+           family={Powley},
+           familyi={P\bibinitperiod},
+           given={Edward},
+           giveni={E\bibinitperiod}}}%
+        {{hash=9ab2b5bb949824f14be455bce9b948ec}{%
+           family={Whitehouse},
+           familyi={W\bibinitperiod},
+           given={Daniel},
+           giveni={D\bibinitperiod}}}%
+        {{hash=96c14bf82b5e245648d824afab085394}{%
+           family={Lucas},
+           familyi={L\bibinitperiod},
+           given={Simon\bibnamedelima M.},
+           giveni={S\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=0471b1002b0c374cbbed5b49bd7d829c}{%
+           family={Cowling},
+           familyi={C\bibinitperiod},
+           given={Peter\bibnamedelima I.},
+           giveni={P\bibinitperiod\bibinitdelim I\bibinitperiod}}}%
+        {{hash=e87d15b2bb47cebb489787fa61acbbbe}{%
+           family={Rohlfshagen},
+           familyi={R\bibinitperiod},
+           given={Philipp},
+           giveni={P\bibinitperiod}}}%
+        {{hash=75dfb204413ce36b60d1ff2414626d3d}{%
+           family={Tavener},
+           familyi={T\bibinitperiod},
+           given={Stephen},
+           giveni={S\bibinitperiod}}}%
+        {{hash=42c980efeec8020f7cf98a48a304be80}{%
+           family={Perez},
+           familyi={P\bibinitperiod},
+           given={Diego},
+           giveni={D\bibinitperiod}}}%
+        {{hash=f8dd9c2a40d96ae3b9877256744f0384}{%
+           family={Samothrakis},
+           familyi={S\bibinitperiod},
+           given={Spyridon},
+           giveni={S\bibinitperiod}}}%
+        {{hash=3cc72753508ea031bbab98dfcaf1d385}{%
+           family={Colton},
+           familyi={C\bibinitperiod},
+           given={Simon},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{43c9f6dc72d7ece49d8acb51752a0a5c}
+      \strng{fullhash}{161d5e5c6faa9e8595ececf7587b5fbc}
+      \strng{fullhashraw}{161d5e5c6faa9e8595ececf7587b5fbc}
+      \strng{bibnamehash}{161d5e5c6faa9e8595ececf7587b5fbc}
+      \strng{authorbibnamehash}{161d5e5c6faa9e8595ececf7587b5fbc}
+      \strng{authornamehash}{43c9f6dc72d7ece49d8acb51752a0a5c}
+      \strng{authorfullhash}{161d5e5c6faa9e8595ececf7587b5fbc}
+      \strng{authorfullhashraw}{161d5e5c6faa9e8595ececf7587b5fbc}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Transactions on Computational Intelligence and AI in Games}
+      \field{number}{1}
+      \field{title}{A Survey of Monte Carlo Tree Search Methods}
+      \field{volume}{4}
+      \field{year}{2012}
+      \field{pages}{1\bibrangedash 43}
+      \range{pages}{43}
+      \verb{doi}
+      \verb 10.1109/TCIAIG.2012.2186810
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
