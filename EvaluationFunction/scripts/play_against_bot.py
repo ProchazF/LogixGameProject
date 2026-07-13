@@ -3,6 +3,11 @@ import pygame
 import torch
 import numpy as np
 
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
 from logix_az.env_logix_helper import LogixShapeEnv
 from logix_az.env_logix import LogixEnv
 from logix_az.net import LogixNet
