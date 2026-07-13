@@ -1,101 +1,134 @@
 # Logix
 
-Logix is a strategic board game implemented in Unity.  
-Players compete by placing, moving, and replacing marbles on a 7×7 board, aiming to form specific 5-marble winning shapes (Pentominos).  
+> A complete framework for the implementation, training, and evaluation of artificial intelligence agents for the board game Logix.
 
-This project was created as part of a university coursework in game development and artificial intelligence.
+(screenshot)
 
 ---
+
+## Overview
+
+This repository contains the complete implementation developed as part of a bachelor's thesis focused on artificial intelligence for the board game **Logix**.
+
+The project consists of four main components:
+
+- a Unity implementation of the game,
+- a Python framework for training neural-network-based evaluation functions,
+- an experimental framework for benchmarking AI agents,
+- the accompanying bachelor's thesis.
+
+Together, these components provide a complete workflow covering game implementation, reinforcement learning, search algorithms, experimental evaluation, and documentation.
+
+## Repository Structure
+
+```
+.
+├── LogixGame/              # Unity implementation
+├── EvaluationFunction/     # Neural network training
+├── BotExperiments/         # Tournament framework
+├── Builds/                 # Compiled game builds
+├── BachelorsThesis/        # Thesis source
+└── README.md
+```
 
 ## Features
 
-- 7×7 interactive board with drag-and-drop marble placement.
-- Multiple game modes:
-  - **PvP**: Player vs Player (local multiplayer).
-  - **PvE**: Player vs AI (bot with adjustable difficulty).
-  - **EvE**: Bot vs Bot (AI vs AI).
-- AI powered by **Monte Carlo Tree Search (MCTS)**.
-- Color restrictions: cannot reuse opponent’s last color(s).
-- Inventory system with limited marbles (including grey jokers).
-- Shape cards: each player has two shapes that determine their win condition.
-- Rules and About panels included in the main menu.
-- UI built with Unity’s Canvas + TextMeshPro.
-
----
-
-## Download & Installation
-
-### Windows
-1. Download the latest release:  
-   [Logix_Windows.zip] in /Builds/Logix_Windows.zip
-2. Extract the `.zip` file anywhere.  
-3. Run `Logix.exe` to start the game.  
-4. No installation required.
-
----
-
-## How to Play
-
-- The board starts with a **black marble** in the center.
-- Players take turns. On your turn, you may:
-  - Place a marble from shared inventory **orthogonally adjacent** to an existing marble.
-  - Move a marble on the board to an empty adjacent valid spot (if not blocked).
-  - Replace an opponent’s marble with one from inventory.
-- Restrictions:
-  - You **cannot use the same color(s)** your opponent used in their last move.
-  - Grey marbles = jokers (wildcards, count as any color).
-  - Black marble must always be part of a winning shape.
-- Winning condition:
-  - Form a **five-marble shape** that matches one of your two shape cards.
-  - Shapes may be rotated, but **not mirrored**.
-  - The shape must be made from **one consistent color** (except black/grey).
-  - The card’s **blocked color** cannot be used.
-  - The winning shape must be **exactly five connected marbles of the same color**, meaning no extra marbles of that color may be connected to the shape (grey is fine)
-
----
-
-## Controls
-
-- **Click marble in inventory** → select it.  
-- **Click board tile** → place or move marble.  
-- **Click opponent marble** → replace it (if legal).  
-- **Back button** (Rules/About) → return to menu.  
-- **Main Menu button** (GameScene) → exit to menu.  
-
----
-
-## AI
-
-- AI difficulty is adjustable:
-  - **Easy** → random playout (fast, weaker).  
-  - **Normal** → ~500 simulations (balanced).  
-  - **Hard** → ~2000 simulations (stronger, slower).  
-- AI uses **Monte Carlo Tree Search (MCTS)** with random simulations and immediate win detection.
-
----
-
-## Development Info
-
-- **Engine**: Unity 6 (6000.x)  
-- **Language**: C# 
-- **UI**: Unity Canvas + TextMeshPro 
-- **AI**: Monte Carlo Tree Search
-
-### Project Structure
-- **Core Components**: GameManager, GameBoard, Move, WinShape, etc.  
-- **AI Components**: BotController, MCTSBot.  
-- **UI Components**: BoardVisualizer, InventoryUI, CardUI, CursorMarble, etc.  
-
----
-
-## License / Credits
-
-- Developed by *František Procházka*.  
-- University coursework project.  
-- Free to use for educational or entertainment purposes.  
-
----
+- Unity implementation of the Logix board game
+- Human vs Human, Human vs AI, and AI vs AI gameplay
+- Alpha-Beta and Monte Carlo Tree Search agents
+- AlphaZero-inspired reinforcement learning framework
+- Neural-network-based position evaluation
+- ONNX export for Unity integration
+- Automated tournament framework
+- Experimental result visualization
+- Complete bachelor's thesis
 
 ## Screenshots
 
+## Quick Start
 
+### Play the game
+
+Open the Unity project located in `LogixGame/` or download a pre-built executable from the `Builds/` directory.
+
+### Train a neural network
+
+```
+cd EvaluationFunction
+python train.py
+```
+
+### Run tournaments
+
+```
+cd BotExperiments
+python play_tournament.py
+```
+
+## Components
+
+### LogixGame
+
+A Unity implementation of the Logix board game featuring an interactive graphical interface and support for Human vs Human, Human vs AI, and AI vs AI gameplay. The project integrates several search-based artificial intelligence agents, including neural-network-assisted opponents.
+
+For more information, see **`LogixGame/README.md`**.
+
+---
+
+### EvaluationFunction
+
+A Python framework implementing an AlphaZero-inspired reinforcement learning pipeline for training neural-network-based evaluation functions. It includes self-play generation, Monte Carlo Tree Search, replay buffer management, checkpointing, and ONNX model export.
+
+For more information, see **`EvaluationFunction/README.md`**.
+
+---
+
+### BotExperiments
+
+A benchmarking framework used to evaluate and compare different game-playing agents through automated tournaments. It collects detailed performance statistics and generates visualizations used during experimental evaluation.
+
+For more information, see **`BotExperiments/README.md`**.
+
+---
+
+### BachelorsThesis
+
+Contains the complete LaTeX source of the accompanying bachelor's thesis describing the design, implementation, training process, and experimental evaluation of the project.
+
+## Technologies
+
+The project combines several technologies across game development, artificial intelligence, and scientific computing.
+
+| Technology | Purpose |
+|------------|---------|
+| **Unity 6** | Game implementation and graphical user interface |
+| **C#** | Gameplay logic and AI integration |
+| **Python** | Reinforcement learning framework and experimental evaluation |
+| **PyTorch** | Neural network implementation and training |
+| **ONNX** | Neural network export for Unity deployment |
+| **NumPy** | Numerical computations |
+| **Matplotlib** | Visualization of experimental results |
+| **Git** | Version control |
+| **LaTeX** | Bachelor's thesis preparation |
+
+## Future Work
+
+Although the project provides a complete implementation of the game and several AI agents, there remain numerous opportunities for future development.
+
+Potential directions include:
+
+- stronger neural network architectures,
+- distributed self-play training,
+- optimization of Monte Carlo Tree Search,
+- additional AI agents based on alternative search or learning algorithms,
+- online multiplayer support,
+- enhanced graphical interface and user experience,
+- larger-scale experimental evaluation and automated hyperparameter optimization.
+
+## Author
+
+**František Procházka**
+
+Bachelor's thesis project developed at the Faculty of Mathematics and Physics, Charles University.
+
+The project combines game development, artificial intelligence, reinforcement learning, and experimental evaluation to create a complete environment for developing and benchmarking AI agents for the board game **Logix**.
