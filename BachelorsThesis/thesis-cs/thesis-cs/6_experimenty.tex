@@ -1,6 +1,6 @@
 \chapter{Experimenty}
 
-Cílem závěrečné kapitoly je ověřit vlastnosti implementovanách agentů pomocí experimentů a zhodnotit kvalitu natrénované
+Cílem závěrečné kapitoly je ověřit vlastnosti implementovaných agentů pomocí experimentů a zhodnotit kvalitu natrénované
 neuronové sítě. Nejprve je popsáno prostředí, v němž se experimenty konaly, následně je popsán turnaj implementovaných
 agentů a jejich porovnání. Na závěr je pak diskutována kvalita natrénované neuronové sítě a porovnání botů mezi sebou
 a proti lidskému hráči.
@@ -10,9 +10,9 @@ a proti lidskému hráči.
 \subsection{Hardwarová a Softwarová konfigurace}
 
 Experimenty byly prováděny na osobním počítači s procesorem Intel Core i7-14700KF, grafickou kartou NVIDIA GeForce RTX 4060 Ti a 32 GB operační paměti.
-Experimenty kvality botů probíhaly zejména v prostředí napsaném v jazyce Python, v jazyce C\# je pouze graifcká aplikace.
+Experimenty kvality botů probíhaly zejména v prostředí napsaném v jazyce Python, v jazyce C\# je pouze grafická aplikace.
 
-Všechny experimenty byly provedeny nad stejnámi pravidly a stejnou implementací herního prostředí. Díky tomu jsou
+Všechny experimenty byly provedeny nad stejnými pravidly a stejnou implementací herního prostředí. Díky tomu jsou
 rozdíly mezi jednotlivými agenty založeny čistě na jejich algoritmech. Více implementačních detailů v repozitáři~\cite{logix_gitlab}.
 
 \subsection{Nastavení experimentů}
@@ -23,14 +23,14 @@ delší hry z praxe moc neexistují. Po každé odehrané partii byly ukládány
 přerušit a znovu spustit bez ztráty odehraných partií.
 
 V turnaji bylo porovnáno 5 agentů. Jednalo se o agenty popsané v sekci~\ref{sec:agents}: náhodného agenta, heuristického agenta,
-agenta využívající minimax s alfa-beta ořezáváním a dvě varianty MCTS algoritmus. Ty se lišily použítím verze neuronové sítě, 
+agenta využívající minimax s alfa-beta ořezáváním a dvě varianty MCTS algoritmu. Ty se lišily použitím verze neuronové sítě, 
 přičemž obě využívaly stejnou hloubku prohledávání.
 
 \section{Porovnání herních agentů}
 
 \subsection{Metodika}
 
-Cílem experimentu bylo porovnat sílu všech implementovaných herních agentů při vzájemných partiích. Každý agent odehrál sérii 50 partií 
+Cílem experimentu bylo porovnat sílu všech implementovaných herních agentů při vzájemných partiích. Každý agent odehrál sérii 500 partií 
 proti všem ostatním agentům. 
 
 V turnaji bylo porovnáváno pět různých agentů představujících odlišné přístupy k rozhodování. Přehled použitých agentů je uveden v tabulce~\ref{tab:agents}.
@@ -67,9 +67,9 @@ Obrázek~\ref{fig:heatmap} ukazuje procento vítězství jednotlivých agentů p
 \end{figure}
 
 Z výsledků lze vidět, že náhodný agent představuje nejslabší verzi umělého agenta. Naopak heuristický agent dosáhl nejvyšší 
-úspěšnosti proti všem ostatním agentům a zvítězil ve všech vzájemných soubojích. Druhám nejelpším agentem byl pak agent
+úspěšnosti proti všem ostatním agentům a zvítězil ve všech vzájemných soubojích. Druhým nejlepším agentem byl pak agent
 využívající MCTS, jen proti heuristickému agentovi byl celkem neúspěšný. Verze staré a nové ohodnocovací funkce měly 
-velmi podobné výsledky, ale novější verze o nšco lepší. Nejhorším z uměle inteligentních agentů byl agent využívající
+velmi podobné výsledky, kdy starší verze byla dokonce lepší ve vzájemných partiích. Nejhorším z uměle inteligentních agentů byl agent využívající
 minimax a alfa-beta ořezávání.
 
 Celkové bodové hodnocení agentů je znázorněno na obrázku~\ref{fig:tournament_score}.
@@ -84,7 +84,7 @@ Celkové bodové hodnocení agentů je znázorněno na obrázku~\ref{fig:tournam
 Tady je tedy dobře vidět porovnání agentů:
 
 \[
-\mathrm{Heuristic} > \mathrm{MCTS}_{\mathrm{new}} > \mathrm{MCTS}_{\mathrm{old}} > \mathrm{AlphaBeta} > \mathrm{Random}
+\mathrm{Heuristic} > \mathrm{MCTS}_{\mathrm{new}} \approx \mathrm{MCTS}_{\mathrm{old}} > \mathrm{AlphaBeta} > \mathrm{Random}
 \]
 
 Obrázek~\ref{fig:game_length} porovnává průměrnou délku partií jednotlivých agentů.
@@ -101,7 +101,7 @@ Heuristický agent končí partie nejrychleji, zatímco agent MCTS nejpomaleji.
 \subsection{Diskuze}
 
 Přestože se očekávalo, že agent využívající algoritmus MCTS dosáhne nejlepších výsledků, tak experimenty ukázaly odlišné výsledky.
-Nejlépe hrál heuristický agent, který hrál velmi podobně lidskému hráči, jelikož jeho heuristika byla navrhnuta subjektivně autorem,
+Nejlépe hrál heuristický agent, který hrál velmi podobně lidskému hráči, jelikož jeho heuristika byla nevržena subjektivně autorem,
 podle jeho mínění o samotné hře. MCTS a alfa-beta boti nedosáhli dobrých výsledků, nejspíš kvůli několika faktorům.
 Prvním a tím nejdůležitějším je kvalita neuronové sítě. Oba agenti ji využívají velmi silně a jsou na ní tudíž 
 závislí. Nedostatečná kvalita neuronové sítě tedy vede k podprůměrnému chování agenta. Mezi další důvody patří 
@@ -120,14 +120,19 @@ agentů nehraje větší roli než samotná neuronová síť. Podle dalších me
 
 \subsection{Diskuze a možnosti dalšího zlepšení}
 
-Dobrou zprávou je, že porovnání agentů algoritmu MCTS s odlišně natrénovanými neuronovými sítěmi ukazuje, že pozdější verze jsou o něco
-lepší než starší verze. To vede k myšlence, že další trénování by mohlo neuronovou síť zlepšit. Kromě dalšího trénování u této verze nelze najít
-mnoho dalších metod zlepšení.
+Nepříjemnou zprávou je, že porovnání agentů algoritmu MCTS s odlišně natrénovanými neuronovými sítěmi ukazuje, že obě verze jsou srovnatelné 
+a ve vzájemných partiích je starší verze dokonce lepší. To vede k myšlence, že neuronová síť není dobře navržena a že delší trénování 
+by neuronovou síť nezlepšilo. Možností také je, že původní síť je o něco lepší, protože původní trénování se soustředilo na začátky partií
+a jednoduché strategie na ukončení hry, tak byla lepší než neuronová síť trénována pro složité partie.
 
-Druhou variantou by bylo celou neuronovou síť zahodit a její implementaci přehodnotit a jinak implementovat. V této práci byla zvolena jednoduchá
+Nejlepší variantou by bylo tedy celou neuronovou síť zahodit a její implementaci přehodnotit a jinak implementovat. V této práci byla zvolena jednoduchá
 architektura inspirovaná sítí AlphaZero. Odlišná neuronová síť by se mohla zaměřit na lepší konvoluční architekturu, využití reziduálních bloků
 nebo jiných modernějších architektur. Současně by mohlo být vhodné změnit reprezentaci herního stavu či jiným způsobem kódovat vstupní data,
 což by mohlo síti pomoci zachytit strategické vlastnosti hry.
+
+Jedním z možných rozšíření trénovací pipeline je využití geometrických symetrií hrací desky. Jelikož otočení (nikoliv však zrcadlení) pozice nemění strategický 
+význam hry, bylo by možné z každého trénovacího příkladu vytvořit několik dalších ekvivalentních variant. Tento postup by efektivně zvětšil trénovací množinu 
+bez nutnosti generovat další self-play partie.
 
 \section{Porovnání s lidským hráčem}
 
@@ -136,18 +141,18 @@ herní styly samotných agentů.
 
 \subsection{Metodika}
 
-Proti každému agentovi bylo sehráno mezi pěti a deseti hrami. U agentů, u kterách bylo jasné po prvních parttiích, jak se chovají, nebylo více her nutných.
+Proti každému agentovi bylo sehráno mezi pěti a deseti hrami. U agentů, u kterých bylo jasné po prvních partiích, jak se chovají, nebylo více her nutných.
 
 \subsection{Pozorování}
 
 Výsledky jsou podobné jako při turnaji, co se subjektivního ohodnocení týče, ale ani jeden z agentů nedokázal konzistentně vyhrávat.
 
-Náhodný agent, jak bylo očekáváno, byl nejjednoduším protivníkem. Hra většinou konšila před desátým tahem, jelikož se agent nesnaží bránit ani útočit.
+Náhodný agent, jak bylo očekáváno, byl nejjednoduším protivníkem. Hra většinou končila před desátým tahem, jelikož se agent nesnaží bránit ani útočit.
 Náhodný agent tedy nezaznamenal jediné vítězství.
 
 Alfa-beta agent a agenti využívající MCTS už byli o něco lepší. Partie trvaly kolem 12 tahů. Agenti si lépe hlídali, zda se protivník neblíží vítězství
 a zároveň i vlastní tvary tvořili. Na strategie lidského protivníka ale nestačili a vždy se našla výherní cesta, kterou agent nezaznamenal. Ani tito
-agenti nezaznamenali jediné vítšzství proti autorovi.
+agenti nezaznamenali jediné vítězství proti autorovi.
 
 Nejlepším agentem byl heuristický. Ten, jak bylo dříve popsáno, hrál velmi podobně lidskému protivníkovi. Ze zkušeností autora s touto hrou vychází pozorování,
 že tahy, které agent provádí, jsou velmi často ty, které by sám udělal. Z deseti sehraných partií autor vyhrál 8. 2 partie, které se botovi podařilo vyhrát,
@@ -155,12 +160,12 @@ byly z nepozornosti autora, neboli lidskou chybou.
 
 \section{Shrnutí experimentů}
 
-Experimenty ukázaly funkčnost nacržených agentů a jejich kvalitu. Všichni agenti byli schopní odehrát partii až do konce a jejich výkony bylo možné 
-porovnávat pomoí turnaje.
+Experimenty ukázaly funkčnost navržených agentů a jejich kvalitu. Všichni agenti byli schopní odehrát partii až do konce a jejich výkony bylo možné 
+porovnávat pomocí turnaje.
 
 Nejlepších výsledků dosahoval heuristický agent, jehož ručně navržená ohodnocovací funkce se ukázala být pro současnou verzi hry velmi účinná.
 Agenti využívající neuronovou síť nebyli schopni heuristického agenta porazit, přesto však měli lepší výsledky, než agent náhodný. Porovnání
-různých verzí neuronové sítě navíc ukázalo, že se s časem trénování zlepšuje.
+různých verzí neuronové sítě ukázalo, že se s časem trénování nezlepšuje a tudíž by měla být předělaná architektura.
 
-Z výsledků se dá odvodit, že navržená trénovací pipeline je funkční a bylo by ji možné používat jako základ pro další vývoj. Budoucí práce na toto téma
+Navržená trénovací pipeline je ale s velkou pravděpodobností funkční a bylo by ji možné používat jako základ pro další vývoj. Budoucí práce na toto téma
 by se měla hlavně zaměřit na kvalitnější architekturu neuronové sítě.

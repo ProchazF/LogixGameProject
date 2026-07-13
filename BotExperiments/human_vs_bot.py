@@ -21,7 +21,7 @@ from logix_az.env_logix_helper import LogixShapeEnv
 # CONFIG
 # ============================================================
 
-BOT_TO_PLAY_AGAINST = "MCTS-new-100"
+BOT_TO_PLAY_AGAINST = "Heuristic"
 # Options:
 # "Random"
 # "Heuristic"

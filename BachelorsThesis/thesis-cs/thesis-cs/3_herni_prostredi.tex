@@ -3,7 +3,7 @@
 \section{Přehled implementace}
 
 Implementace projektu je rozdělena do dvou částí. První část tvoří herní aplikace vytvořená v prostředí Unity pomocí jazyka C\#,
-která slouží pro vizualizaci hry, lokální hru dvou hráčů a hraní proti implementovaným agentům. Druhou část tvoří pythonové prostředí určené 
+která slouží pro vizualizaci hry, lokální hru dvou hráčů a hraní proti implementovaným agentům. Druhou část tvoří prostředí v jazyce Python určené 
 především pro implementaci samotných botů, generování trénovacích dat a experimenty. Obě části vycházejí ze 
 stejných pravidel hry, ale liší se svým účelem a použitými technologiemi.
 
@@ -11,7 +11,7 @@ stejných pravidel hry, ale liší se svým účelem a použitými technologiemi
 
 Část projektu zaměřená na jednoduchou grafickou implementaci a hratelnou verzi hry byla implementována v herním enginu Unity v jazyce C\#.
 Cílem bylo umožnit uživateli hru zobrazit, spustit, vizuálně sledovat a dle pravidel hrát. Hru je možno spustit jako lokální hru dvou hráčů u jedné obrazovky,
-Hra proti jednomu z botů, případně i jednoduchou vizualizaci partie různých botů. Primárně tedy aplikace slouží jako uživatelské rozhraní 
+hra proti jednomu z botů, případně i jednoduchou vizualizaci partie různých botů. Primárně tedy aplikace slouží jako uživatelské rozhraní 
 a jako demonstrace navržené hry.
 
 Aplikace v herním režimu zobrazuje herní desku, její aktuální stav, inventář a cílové tvary obou hráčů. Během svého tahu může uživatel 
@@ -24,7 +24,7 @@ Uživatelské rozhraní bylo navrženo s důrazem na jednoduchost a přehlednost
 7~$\times$~7, na kterém je vidět aktuální stav pozice. Napravo od hrací desky lze vidět společný inventář a nad ním barvu nebo barvy, které jsou pro stávající 
 tah zakázány. Nalevo od herního pole pak vidíme graficky znázorněné tvary pro prvního i druhého hráče, obarveny barvou, ze které ten daný tvar nesmí být složen.
 
-Ovládání je implementováno pomocí myši. Akce jsou prováděny výběrem kamene, kterým chceme hrát, ať už z inventáře nebo hrací desky. Vybraná kámen následně 
+Ovládání je implementováno pomocí myši. Akce jsou prováděny výběrem kamene, kterým chceme hrát, ať už z inventáře nebo hrací desky. Vybraný kámen následně 
 položíme tam,
 kam ho chceme umístit, případně vyměnit. Hra detekuje, zda je tento tah legální a pokud ano, aktualizuje stav hry a zkontroluje, zda některý z hráčů nedosáhl
 podmínek vítězství.
@@ -42,7 +42,7 @@ může zvolit herní mód, případně obtížnost bota, proti kterému chce hr�
 \subsection{Reprezentace herního stavu}
 
 Veškerá logika hry je soustředěna do třídy \texttt{GameBoard}. Ta představuje kompletní reprezentaci aktuálního stavu partie. Uchovává stav hrací desky,
-společného inventáře, informace o zakázaných barvách a poskytuje metody pro ověřování a provádění jednotlivách akcí. Je oddělena od grafické části, ta pouze třídu
+společného inventáře, informace o zakázaných barvách a poskytuje metody pro ověřování a provádění jednotlivých akcí. Je oddělena od grafické části, ta pouze třídu
 vezme a aktuální stav zobrazí uživateli.
 
 Samotná hrací deska je reprezentována dvourozměrným polem o velikosti $7 \times 7$, jehož prvky obsahují informaci o barvě kamene, který je na daných souřadnicích
@@ -59,7 +59,7 @@ Implementace pravidel navazuje přímo na reprezentaci herního stavu ve tříd�
 pokud projde tímto ověřením se provede změna pozice. Tento postup zabraňuje vzniku nelegálních pozic a umožňuje tahy zpracovávat jednotně,
 ať jsou provedeny hráčem nebo botem.
 
-Ověřování pravidel zahrnuje hned několik věcí, jak je vysvětleno v sekci ~\ref{sec:rules}. Mezi ty patří kontrola obsazenosti cílového pole, 
+Ověřování pravidel zahrnuje hned několik věcí, jak je vysvětleno v sekci~\ref{sec:rules}. Mezi ty patří kontrola obsazenosti cílového pole, 
 dostupnosti kamenů v inventáři, zakázaných barev a dalších podmínek jednotlivých typů akcí. U umístění kamene se kontroluje zejména sousednost 
 s již existujícím kamenem. U přesunu je navíc nutné ověřit, zda je cílové pole dosažitelné souvislou cestou. U nahrazení se zejména kontroluje dostupnost
 v inventáři a zákaz nahrazení černého kamene.
@@ -74,7 +74,7 @@ dvou hráčů, při které hráči střídavě provádějí tahy na jednom zař�
 korektně.
 
 Dalším režimem je hra proti počítačovému soupeři. Před zahájením samotné hry si uživatel může zvolit obtížnost bota, proti kterému chce hrát. Jednotlivé
-úrovně obtížnosti implementují odlišné algoritmy pro výběr akce a jsou podrobněji popsány v kapitole, která se herním agentům přímo věnuje.
+úrovně obtížnosti implementují odlišné algoritmy pro výběr akce a jsou podrobněji popsány později v práci, která se herním agentům přímo věnuje.
 
 Posledním režimem je automatická partie dvou botů. V tomto režimu aplikace vizualizuje průběh partie, zatímco samotné tahy jsou prováděny počítačem.
 Tento režim slouží k demonstraci agentů, jejich chování a k porovnávání výkonnosti.
@@ -83,10 +83,8 @@ Tento režim slouží k demonstraci agentů, jejich chování a k porovnávání
 
 Nemalou součástí Unity aplikace je také implementace počítačových botů. Aplikace pak uživateli umožňuje proti nim v grafickém prostředí hrát. Všichni boti 
 využívají stejné rozhraní pro výběr tahu, takže je lze jednoduše zaměňovat bez modifikace jiných částí aplikace. Samotný výběr tahu pak probíhá tak, že 
-aplikace předá danému botovi herní stav a ten vrátí, dle svého algoritmu, tah, který považuje za nejlepší.
+aplikace předá danému botovi herní stav a ten vrátí podle svého algoritmu, tah, který považuje za nejlepší.
 
 Pro účely demonstrace byly implementovány tři různé obtížnosti. Úroveň \emph{Easy} využívá náhodného agenta, který z množiny legálních tahů vybere jeden náhodně.
 Úroveň \emph{Normal} využívá algoritmu minimax s alfa-beta ořezáváním za využití natrénované ohodnocovací funkce do omezené hloubky. Poslední obtížností je
 \emph{Hard}, která už implementuje MCTS doplněný o tu samou ohodnocovací funkci. Ta má pak stanovený výpočetní limit na počet simulací, které může provést.
-
-Detailní implementace jednotlivých botů, použitých algoritmů i naučené ohodnocovací funkce je popsána v následujících kapitolách.

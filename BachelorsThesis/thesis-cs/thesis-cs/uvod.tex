@@ -12,31 +12,18 @@
 \section*{Motivace}
 \addcontentsline{toc}{section}{Motivace}
 
-Deskové hry představují významnou oblast výzkumu umělé inteligence již po několik desetiletí. 
+Deskové hry představují již dlouhou dobu významnou oblast výzkumu umělé inteligence.
 Díky deterministickému prostředí a jednoznačně určeným pravidlům a podmínkám vítězství 
 poskytují vhodné prostředí pro návrh, implementaci a porovnávání algoritmů určených 
-pro rozhodování. Výzkum v této oblasti vedl ke vzniku různých metod pro prohledávání herních stromů 
-a v posledních letech i propojení s technikami ze strojového učení.
+pro rozhodování. Mezi nejvýznamnější přístupy patří algoritmy prohledávání herního stromu,
+jako například minimax, alfa-beta ořezávání nebo Monte Carlo Tree Search (MCTS).
+Moderní přístupy tyto algoritmy často kombinují s neuronovými sítěmi, které umožňují efektivně
+hodnotit herní pozice i pro hry s velkým stavovým prostorem.
 
-Mezi tradiční přístupy pro řešení stavového prostoru deskových her patří algoritmy založené na 
-prohledávání herního stromu. Mezi příklady patří algoritmus minimax nebo alfa-beta ořezávání.
-Tyto metody jsou stálicí pro hry s relativně omezeným stavovým prostorem, jejich efektivita a
-použitelnost ale rychle klesají s rostoucí složitostí hry. V posledních letech se právě proto
-do popředí dostaly algoritmy založené na metodě Monte Carlo Tree Search (MCTS), která umožňuje efektivně prohledat
-i velký stavový prostor a v kombinaci s neuronovými sítěmi dosahují skvělých výsledků i ve velmi komplexních hrách.
-
-Přestože existuje již nespočet úspěšných algoritmů pro klasické deskové hry, jejich vývoj je velmi úzce spjat 
-s konkrétními pravidly dané hry. U nových či méně známých her proto povětšinou neexistuje žádné herní prostředí
-ani implementace referenčních botů, díky kterým by bylo možné experimentovat s dalšími algoritmy a s referencí
-je pak porovnávat. Vytvoření takového prostředí tedy představuje důležitý předpoklad pro další výzkum a vývoj 
+Přestože existuje již nespočet úspěšných algoritmů pro klasické deskové hry, u nových či méně známých her ale 
+zpravidla neexistuje žádné herní prostředí ani implementace referenčních botů, díky kterým by bylo možné experimentovat 
+s dalšími algoritmy. Vytvoření takového prostředí tedy představuje důležitý předpoklad pro další výzkum a vývoj 
 umělé inteligence. 
-
-Tato práce se zaměřuje na návrh a implementaci herního prostředí pro abstraktní deskovou hru inspirovanou hrou s názvem Logix.
-Součástí je taktéž vývoj několika herních botů využívajících různé algoritmy pro rozhodování, od jednoduchých 
-heuristik až po algoritmus MCTS. Významná část práce je věnována návrhu a implementaci pipeline
-pro trénování ohodnocovací funkce založené na neuronové síti. Výsledné dílo má tedy sloužit jako experimentální
-platforma pro testování různých dalších přístupů k řešení této hry.
-
 
 \section*{Cíle práce}
 \addcontentsline{toc}{section}{Cíle práce}
@@ -57,3 +44,14 @@ během hry.
 
 \section*{Struktura práce}
 \addcontentsline{toc}{section}{Struktura práce}
+
+Práce je dále rozdělena do šesti kapitol. Druhá kapitola slouží k představení teoretického pozadí, potřebného pro pochopení použitých algoritmů
+a různých metod umělé inteligence. Následující kapitola popisuje návrh hry, její pravidla a vysvětlení cílů, kterých se návrhem snažíme docílit.
+
+Čtvrtá kapitola se věnuje implementaci herního prostředí, grafické aplikace a reprezentaci hry v elektronické podobě. V kapitole páté se popisují 
+implementovaní herní agenti využívající různé rozhodovací přístupy, od náhodného tahu až po algoritmy využívající neuronovou síť.
+
+Šestá kapitola popisuje návrh, implementaci a proces trénování ohodnocovací funkce založené na neuronové síti. Sedmá kapitola pak prezentuje
+experimenty, porovnání herních agentů a vyhodnocení dosažených výsledků.
+
+

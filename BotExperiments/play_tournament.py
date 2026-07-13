@@ -27,12 +27,12 @@ from logix_az.env_logix_helper import LogixShapeEnv
 # CONFIG
 # ============================================================
 
-GAMES_PER_PAIR = 50
+GAMES_PER_PAIR = 250
 MAX_GAME_LEN = 50
 
 # Keep this the same to resume.
 # Change it when you want a completely new tournament.
-TOURNAMENT_NAME = "main_tournament_resume"
+TOURNAMENT_NAME = "main_tournament_resume_3"
 
 # If True, existing games.csv is loaded and completed games are skipped.
 RESUME = True

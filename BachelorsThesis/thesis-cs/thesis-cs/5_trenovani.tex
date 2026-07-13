@@ -1,16 +1,17 @@
 \chapter{Trénování ohodnocovací funkce}
+\label{sec:neural_network}
 
 V této sekci je popsán vývoj a architektura ohodnocovací funkce, která se využívá ve výsledné implementaci herních agentů. Podrobnější informace o samotné
-architekruře lze najít v dokumentaci v repozitáři~\cite{logix_gitlab}.
+architektuře lze najít v dokumentaci v repozitáři~\cite{logix_gitlab}.
 
 \section{Přehled trénovacího procesu}
 
-Cílem procesu je naučit neuronovou síť odhadnout kvalitu stavu herních pozic a současně byhodnotit kvalitu možných tahů z ní. Natrénovaná síť je pak využívána
+Cílem procesu je naučit neuronovou síť odhadnout kvalitu stavu herních pozic a současně vyhodnotit kvalitu možných tahů z ní. Natrénovaná síť je pak využívána
 algoritmem MCTS i minimax s alfa-beta ořezáváním.
 
-Proces je inspirován metodou, kterou využívá AlphaZero. Na rozdíl od AlphaZero, které využívá data čistě generované pomocí self-play, tak použitá implementace
-navíc používá předpřipravené lidské hry, aby algoritmus nezařínal úplně s ničím.
-Odehrané hry se ukládají do \emph{Reply Bufferu}, ze kterého jsou vybírány trénovací data pro samotné 
+Proces je inspirován metodou, kterou využívá AlphaZero. Na rozdíl od AlphaZero, které využívá data čistě generovaná pomocí self-play, tak použitá implementace
+navíc používá předpřipravené lidské hry, aby algoritmus nezačínal úplně s ničím.
+Odehrané hry se ukládají do \emph{Replay Bufferu}, ze kterého jsou vybírány trénovací data pro samotné 
 učení neuronové sítě. Po aktualizaci parametrů z učení je nově vzniklá síť použita na generování dalších partií a proces se opakuje až do zastavení.
 
 \begin{figure}[H]
@@ -23,20 +24,20 @@ učení neuronové sítě. Po aktualizaci parametrů z učení je nově vzniklá
 \section{Reprezentace vstupu}
 
 Neuronová síť sama nedokáže převést herní stav na parametry, se kterými je schopna pracovat. Proto je nutné před samotným ohodnocením převést informace 
-o pozici na data, které následně neuronová síť dokáže zpracovat. Stav byl převeden na numerické hodnoty, vhodné pro zpracování konvolucí, kterou naurovnová
-síť používá. Reprezentace převádí všechny informace, které mohou mít nějaká vliv na finální vyhodnocení pozice.
+o pozici na data, která následně neuronová síť dokáže zpracovat. Stav byl převeden na numerické hodnoty, vhodné pro zpracování konvolucí, kterou neuronová
+síť používá. Reprezentace převádí všechny informace, které mohou mít nějaký vliv na finální vyhodnocení pozice.
 
 \subsection{Kódování herního stavu}
 
 Neuronová síť používá dva kanály vstupních informací.
 
 První je kanál, kde se přenáší informace spojené se samotnou hrací deskou. Každá barva kamenů na desce je převedena na binární rovinu, která udává, na kterých 
-pozicích se dané barva nachází. Tím nám vznikne 6 masek, pro každou ze základních barev, šedou univerzální a černou.
+pozicích se daná barva nachází. Tím nám vznikne 6 masek, pro každou ze základních barev, šedou univerzální a černou.
 
 Druhý je pak s informacemi o globálních hodnotách, které se neváží přímo na desku. Mezi ty patří množina aktuálně zakázaných barev, informace o inventáři - kolik
-jakých druhů kamený je ještě k dispozici - cílové tvary obou hráčů a informace o hráči, jenž je právě na řadě.
+jakých druhů kamenů je ještě k dispozici - cílové tvary obou hráčů a informace o hráči, jenž je právě na řadě.
 
-Takto lze rozdělit prostorové informace vhodné pro konvoluci od informací, který popisují celkový stav partie.
+Takto lze rozdělit prostorové informace vhodné pro konvoluci od informací, které popisují celkový stav partie.
 
 \begin{table}[H]
 \centering
@@ -75,8 +76,8 @@ Aktivní hráč & Binární hodnota \\
 Vstup, jak již bylo zmíněno, je rozdělen na dvě části. První je reprezentace desky pomocí šesti binárních rovin rozměrově $7 \times 7$. Hodnota 1 
 na dané pozici značí, že se tam kámen dané barvy nachází, v opačném případě 0.
 
-Druhou tvoří jednorozměrný vektor globálních informací o délce 99. Sem se řadí výherní tvary o velikosti 88 - 4 váherní tvary, každý je jedníém z 18 a má
-určenou jednu ze 4 barev. Dále zakázané barvy (velikost 5), informace o inventáři(velikost 5) a informace kdo hraje (velikost 1). 
+Druhou tvoří jednorozměrný vektor globálních informací o délce 99. Sem se řadí výherní tvary o velikosti 88 - 4 výherní tvary, každý je jedním z 18 a má
+určenou jednu ze 4 barev. Dále zakázané barvy (velikost 5), informace o inventáři(velikost 5) a informace o tom, kdo hraje (velikost 1). 
 
 Tyto části se nejdříve zpracovávají odděleně, reprezentace hrací desky je zpracována konvolucí, zatímco globální vektor je převeden do skryté reprezentace
 za pomoci plně propojené vrstvy. Obě reprezentace jsou následně spojeny a tvoří vstup pro výpočet policy a value výstupů.
@@ -89,7 +90,7 @@ odhad výsledku pozice (value). Oba výstupy sdílí společnou část sítě, k
 
 \subsection{Společná část sítě}
 
-Reprezentace herníé desky je zpracována dvěma konvolučními vrstvami s jádrem velikosti $3 \times 3$. Konvoluce umožňuje zachytit prostorové vztahy
+Reprezentace herní desky je zpracována dvěma konvolučními vrstvami s jádrem velikosti $3 \times 3$. Konvoluce umožňuje zachytit prostorové vztahy
 mezi kameny a rozpoznávat lokální vzory či tvary na hrací ploše. Po druhé konvoluci je aplikována operace Global Average Pooling, která převádí 
 prostorovou reprezentaci na jednorozměrný vektor dané délky.
 
@@ -101,10 +102,10 @@ tam se berou hned hodnoty bez softmaxového převedení na pravděpodobnostní r
 
 \subsection{Value Head}
 
-Value head vrací číslo z intervalu $<-1,1>$. Čísla blížící se k $1$ odpovídají pozici, které jsou váhodné pro hráče na tahu, hodnota blízká $-1$ naopak 
+Value head vrací číslo z intervalu $<-1,1>$. Čísla blížící se k $1$ odpovídají pozici, které jsou výhodné pro hráče na tahu, hodnota blízká $-1$ naopak 
 značí pozici výhodnou pro soupeře. K výpočtu používá neuronová síť dvě plně propojené vrstvy. První vrstva převádí společnou reprezentaci do skryté vrstvy
-a využívá aktivační funkce ReLU. Ta síti umožňuje modelovat vztahy mezi jednotlivými složkami a je klasicky využívána v mnoha neuronovách sítích. 
-Druhá vrstva pka vypočítává samotnou výstupní hodnotu. To dělá pomocí aktivačční funkce \texttt{tanh}. Díky ní je vástup omezen na interval $<-1,1>$.
+a využívá aktivační funkce ReLU. Ta síti umožňuje modelovat vztahy mezi jednotlivými složkami a je klasicky využívána v mnoha neuronových sítích. 
+Druhá vrstva pak vypočítává samotnou výstupní hodnotu. To dělá pomocí aktivační funkce \texttt{tanh}. Díky ní je výstup omezen na interval $<-1,1>$.
 
 \begin{figure}[H]
     \centering
@@ -118,14 +119,14 @@ Druhá vrstva pka vypočítává samotnou výstupní hodnotu. To dělá pomocí 
 Hlavním zdrojem trénovacích dat nejsou předpřipravené příklady, ale hry, které jsou generovány přímo při učení. Celá množina trénovacích dat je 
 spojením několika lidských partií a následně partií vytvořených metodou self-play. Každá pozice z každé partie obsahuje informace o 
 herním stavu, policy distribuci a především konečný výsledek partie. Data se pak ukládají do Replay Bufferu, ze kterého
-si neuronová síť bere data pro učeíní.
+si neuronová síť bere data pro učení.
 
 \subsection{Self-play}
 
 Po předtrénování sítě na lidských partiích generuje trénovací pipeline partie metodou self-play. U té proti sobě hrají dvě instance stejného
 agenta využívající aktuální neuronovou síť. Kvalita generovaných dat se pak postupně zvyšuje s kvalitou natrénovaného modelu.
 
-Partie jsou odehrány až do koncového stavu nebo do maximálního počtu tahů. V případě, že self-play partie skončí remízou, je  uložena jen
+Partie jsou odehrány až do koncového stavu nebo do maximálního počtu tahů. V případě, že self-play partie skončí remízou, je uložena jen
 třetina všech stavů z té dané partie. Toto opatření existuje z důvodu, že remízy nám moc neřeknou a zbytečně zamlžují ostatní partie
 v Replay Bufferu. V případě normálního výsledku partie se uloží všechny stavy, které se ve hře udály a je jim přiřazeno, který z hráčů
 vyhrál.
@@ -174,7 +175,7 @@ partie z dané pozice. Celková ztrátová funkce je pak součtem policy ztráty
 L = L_{\mathrm{policy}} + L_{\mathrm{value}}.
 \end{equation}
 
-Policy část se vypočítá pomocí křížové entropie mezi policy distribucí z MCTS a výstupem policy části neuronové sítě
+Policy část se vypočítá pomocí křížové entropie mezi policy distribucí z MCTS a výstupem policy části neuronové sítě.
 
 \begin{equation}
 L_{\mathrm{policy}}
@@ -184,7 +185,7 @@ L_{\mathrm{policy}}
 
 kde $\pi(a)$ představuje cílovou pravděpodobnost akce z MCTS a $p(a)$ pravděpodobnost odhadovaná neuronovou sítí~\cite{goodfellow2016deep}.
 
-Value část naopak využívá střední kvadratickou chybu mezi výsledkem partie a hodnotou, kterou odhadla neuronová síť
+Value část naopak využívá střední kvadratickou chybu mezi výsledkem partie a hodnotou, kterou odhadla neuronová síť.
 
 \begin{equation}
 L_{\mathrm{value}}
@@ -225,8 +226,8 @@ Jedna natrénovaná neuronová síť tak slouží jako společná ohodnocovací 
 
 \section{Výpočetní prostředí}
 
-Trénování neuronové sítě probíhalo na několika různých výpočetních prostředích. Byla testována i trénována na lokálně na osobním ale výkoném
+Trénování neuronové sítě probíhalo na několika různých výpočetních prostředích. Byla testována i trénována lokálně na osobním ale výkonném
 počítači. Dalším bylo prostředí Parallel Laboratory (ParLab) Matematicko-Fyzikální fakulty Univerzity Karlovy, kde probíhal zejména trénink.
-Posledním pak bylo prostředí Google Colaboratory, které poskytuje přístup ke grafickým akcelerátorům pomocí cloutu.
+Posledním pak bylo prostředí Google Colaboratory, které poskytuje přístup ke grafickým akcelerátorům pomocí cloudu.
 
-Trénování probíhalo trhavě v průběhu jednoho měsíce, kdy celkový čistý čas strávený trénováním dosahval dvou týdnů.
+Trénování probíhalo trhavě v průběhu jednoho měsíce, kdy celkový čistý čas strávený trénováním dosahoval dvou týdnů.

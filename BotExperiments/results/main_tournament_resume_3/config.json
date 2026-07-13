@@ -1,0 +1,13 @@
+{
+  "tournament_name": "main_tournament_resume_3",
+  "games_per_pair": 250,
+  "max_game_len": 50,
+  "bots": [
+    "Random",
+    "Heuristic",
+    "AlphaBeta-new-d3",
+    "MCTS-old-100",
+    "MCTS-new-100"
+  ],
+  "created_or_resumed_at": "2026-07-11T13:16:40.375990"
+}

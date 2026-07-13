@@ -1,0 +1,355 @@
+{
+  "number_of_runs": 3,
+  "total_games": 5000,
+  "bots": [
+    "AlphaBeta-new-d3",
+    "Heuristic",
+    "MCTS-new-100",
+    "MCTS-old-100",
+    "Random"
+  ],
+  "source_files": [
+    "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\BotExperiments\\results\\main_tournament_resume\\games.csv",
+    "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\BotExperiments\\results\\main_tournament_resume_2\\games.csv",
+    "C:\\Users\\ProchajdaF\\Matfyz\\3_rocnik\\rocnikovy_projekt\\frantisek-prochazka\\BotExperiments\\results\\main_tournament_resume_3\\games.csv"
+  ],
+  "overall": {
+    "AlphaBeta-new-d3": {
+      "wins": 676,
+      "losses": 1269,
+      "draws": 55,
+      "games": 2000,
+      "win_rate": 0.338,
+      "loss_rate": 0.6345,
+      "draw_rate": 0.0275,
+      "score": 703.5,
+      "score_rate": 0.35175,
+      "avg_moves": 11.616,
+      "avg_time": 12.228300397396088
+    },
+    "Heuristic": {
+      "wins": 1841,
+      "losses": 135,
+      "draws": 24,
+      "games": 2000,
+      "win_rate": 0.9205,
+      "loss_rate": 0.0675,
+      "draw_rate": 0.012,
+      "score": 1853.0,
+      "score_rate": 0.9265,
+      "avg_moves": 10.0125,
+      "avg_time": 10.072077930450439
+    },
+    "MCTS-new-100": {
+      "wins": 1073,
+      "losses": 793,
+      "draws": 134,
+      "games": 2000,
+      "win_rate": 0.5365,
+      "loss_rate": 0.3965,
+      "draw_rate": 0.067,
+      "score": 1140.0,
+      "score_rate": 0.57,
+      "avg_moves": 15.1035,
+      "avg_time": 25.058862863898277
+    },
+    "MCTS-old-100": {
+      "wins": 1091,
+      "losses": 795,
+      "draws": 114,
+      "games": 2000,
+      "win_rate": 0.5455,
+      "loss_rate": 0.3975,
+      "draw_rate": 0.057,
+      "score": 1148.0,
+      "score_rate": 0.574,
+      "avg_moves": 14.599,
+      "avg_time": 21.697005573749543
+    },
+    "Random": {
+      "wins": 120,
+      "losses": 1809,
+      "draws": 71,
+      "games": 2000,
+      "win_rate": 0.06,
+      "loss_rate": 0.9045,
+      "draw_rate": 0.0355,
+      "score": 155.5,
+      "score_rate": 0.07775,
+      "avg_moves": 13.415,
+      "avg_time": 10.030425580382348
+    }
+  },
+  "pairwise": {
+    "AlphaBeta-new-d3": {
+      "Heuristic": {
+        "wins": 23,
+        "losses": 477,
+        "draws": 0,
+        "games": 500,
+        "win_rate": 0.046,
+        "loss_rate": 0.954,
+        "draw_rate": 0.0,
+        "score": 23.0,
+        "score_rate": 0.046,
+        "avg_moves": 7.814,
+        "avg_time": 6.913756489753723
+      },
+      "MCTS-new-100": {
+        "wins": 108,
+        "losses": 374,
+        "draws": 18,
+        "games": 500,
+        "win_rate": 0.216,
+        "loss_rate": 0.748,
+        "draw_rate": 0.036,
+        "score": 117.0,
+        "score_rate": 0.234,
+        "avg_moves": 12.298,
+        "avg_time": 17.348300144195555
+      },
+      "MCTS-old-100": {
+        "wins": 107,
+        "losses": 379,
+        "draws": 14,
+        "games": 500,
+        "win_rate": 0.214,
+        "loss_rate": 0.758,
+        "draw_rate": 0.028,
+        "score": 114.0,
+        "score_rate": 0.228,
+        "avg_moves": 12.198,
+        "avg_time": 16.444327893257142
+      },
+      "Random": {
+        "wins": 438,
+        "losses": 39,
+        "draws": 23,
+        "games": 500,
+        "win_rate": 0.876,
+        "loss_rate": 0.078,
+        "draw_rate": 0.046,
+        "score": 449.5,
+        "score_rate": 0.899,
+        "avg_moves": 14.154,
+        "avg_time": 8.20681706237793
+      }
+    },
+    "Heuristic": {
+      "AlphaBeta-new-d3": {
+        "wins": 477,
+        "losses": 23,
+        "draws": 0,
+        "games": 500,
+        "win_rate": 0.954,
+        "loss_rate": 0.046,
+        "draw_rate": 0.0,
+        "score": 477.0,
+        "score_rate": 0.954,
+        "avg_moves": 7.814,
+        "avg_time": 6.913756489753723
+      },
+      "MCTS-new-100": {
+        "wins": 428,
+        "losses": 59,
+        "draws": 13,
+        "games": 500,
+        "win_rate": 0.856,
+        "loss_rate": 0.118,
+        "draw_rate": 0.026,
+        "score": 434.5,
+        "score_rate": 0.869,
+        "avg_moves": 11.884,
+        "avg_time": 17.511550636291503
+      },
+      "MCTS-old-100": {
+        "wins": 437,
+        "losses": 52,
+        "draws": 11,
+        "games": 500,
+        "win_rate": 0.874,
+        "loss_rate": 0.104,
+        "draw_rate": 0.022,
+        "score": 442.5,
+        "score_rate": 0.885,
+        "avg_moves": 11.682,
+        "avg_time": 14.15203013753891
+      },
+      "Random": {
+        "wins": 499,
+        "losses": 1,
+        "draws": 0,
+        "games": 500,
+        "win_rate": 0.998,
+        "loss_rate": 0.002,
+        "draw_rate": 0.0,
+        "score": 499.0,
+        "score_rate": 0.998,
+        "avg_moves": 8.67,
+        "avg_time": 1.710974458217621
+      }
+    },
+    "MCTS-new-100": {
+      "AlphaBeta-new-d3": {
+        "wins": 374,
+        "losses": 108,
+        "draws": 18,
+        "games": 500,
+        "win_rate": 0.748,
+        "loss_rate": 0.216,
+        "draw_rate": 0.036,
+        "score": 383.0,
+        "score_rate": 0.766,
+        "avg_moves": 12.298,
+        "avg_time": 17.348300144195555
+      },
+      "Heuristic": {
+        "wins": 59,
+        "losses": 428,
+        "draws": 13,
+        "games": 500,
+        "win_rate": 0.118,
+        "loss_rate": 0.856,
+        "draw_rate": 0.026,
+        "score": 65.5,
+        "score_rate": 0.131,
+        "avg_moves": 11.884,
+        "avg_time": 17.511550636291503
+      },
+      "MCTS-old-100": {
+        "wins": 201,
+        "losses": 227,
+        "draws": 72,
+        "games": 500,
+        "win_rate": 0.402,
+        "loss_rate": 0.454,
+        "draw_rate": 0.144,
+        "score": 237.0,
+        "score_rate": 0.474,
+        "avg_moves": 19.956,
+        "avg_time": 45.68167706918717
+      },
+      "Random": {
+        "wins": 439,
+        "losses": 30,
+        "draws": 31,
+        "games": 500,
+        "win_rate": 0.878,
+        "loss_rate": 0.06,
+        "draw_rate": 0.062,
+        "score": 454.5,
+        "score_rate": 0.909,
+        "avg_moves": 16.276,
+        "avg_time": 19.693923605918883
+      }
+    },
+    "MCTS-old-100": {
+      "AlphaBeta-new-d3": {
+        "wins": 379,
+        "losses": 107,
+        "draws": 14,
+        "games": 500,
+        "win_rate": 0.758,
+        "loss_rate": 0.214,
+        "draw_rate": 0.028,
+        "score": 386.0,
+        "score_rate": 0.772,
+        "avg_moves": 12.198,
+        "avg_time": 16.444327893257142
+      },
+      "Heuristic": {
+        "wins": 52,
+        "losses": 437,
+        "draws": 11,
+        "games": 500,
+        "win_rate": 0.104,
+        "loss_rate": 0.874,
+        "draw_rate": 0.022,
+        "score": 57.5,
+        "score_rate": 0.115,
+        "avg_moves": 11.682,
+        "avg_time": 14.15203013753891
+      },
+      "MCTS-new-100": {
+        "wins": 227,
+        "losses": 201,
+        "draws": 72,
+        "games": 500,
+        "win_rate": 0.454,
+        "loss_rate": 0.402,
+        "draw_rate": 0.144,
+        "score": 263.0,
+        "score_rate": 0.526,
+        "avg_moves": 19.956,
+        "avg_time": 45.68167706918717
+      },
+      "Random": {
+        "wins": 433,
+        "losses": 50,
+        "draws": 17,
+        "games": 500,
+        "win_rate": 0.866,
+        "loss_rate": 0.1,
+        "draw_rate": 0.034,
+        "score": 441.5,
+        "score_rate": 0.883,
+        "avg_moves": 14.56,
+        "avg_time": 10.509987195014954
+      }
+    },
+    "Random": {
+      "AlphaBeta-new-d3": {
+        "wins": 39,
+        "losses": 438,
+        "draws": 23,
+        "games": 500,
+        "win_rate": 0.078,
+        "loss_rate": 0.876,
+        "draw_rate": 0.046,
+        "score": 50.5,
+        "score_rate": 0.101,
+        "avg_moves": 14.154,
+        "avg_time": 8.20681706237793
+      },
+      "Heuristic": {
+        "wins": 1,
+        "losses": 499,
+        "draws": 0,
+        "games": 500,
+        "win_rate": 0.002,
+        "loss_rate": 0.998,
+        "draw_rate": 0.0,
+        "score": 1.0,
+        "score_rate": 0.002,
+        "avg_moves": 8.67,
+        "avg_time": 1.710974458217621
+      },
+      "MCTS-new-100": {
+        "wins": 30,
+        "losses": 439,
+        "draws": 31,
+        "games": 500,
+        "win_rate": 0.06,
+        "loss_rate": 0.878,
+        "draw_rate": 0.062,
+        "score": 45.5,
+        "score_rate": 0.091,
+        "avg_moves": 16.276,
+        "avg_time": 19.693923605918883
+      },
+      "MCTS-old-100": {
+        "wins": 50,
+        "losses": 433,
+        "draws": 17,
+        "games": 500,
+        "win_rate": 0.1,
+        "loss_rate": 0.866,
+        "draw_rate": 0.034,
+        "score": 58.5,
+        "score_rate": 0.117,
+        "avg_moves": 14.56,
+        "avg_time": 10.509987195014954
+      }
+    }
+  }
+}

@@ -84,12 +84,12 @@ Na začátku partie jsou oběma hráčům přiřazeny dva cílové tvary, které
 tvar \emph{nesmí} být složen. Hrací deska je prázdná s výjimkou prostředního pole, kde je umístěn černý hrací kámen.
 
 První tah provádí hráč 1 a po provedení jedné z legálních akcí hraje hráč 2. Takto se hráči střídají až do koncového stavu, kterým je buď složení cílového tvaru
-nebo dosažení maximálního povoleného počtu tahů. V každém tahu může hráč provést právě jednu z akcí popsaných v následujících podkapitolách.
+nebo dosažení maximálního povoleného počtu tahů. V každém tahu může hráč provést právě jednu z níže popsaných akcí.
 
 \subsection{Typy akcí}
 
 V každém tahu může hráč provést právě jednu ze tří základních akcí: umístění kamene, přesun kamene nebo nahrazení kamene. 
-Dostupnost jednotlivých akcí závisí na aktuálním stavu hry a musí splňovat všechna pravidla popsaná v následujících podkapitolách. 
+Dostupnost jednotlivých akcí závisí na aktuálním stavu hry a musí splňovat všechna pravidla popsaná v této kapitole. 
 Hráč není povinen využívat všechny typy akcí rovnoměrně a může během partie opakovaně provádět stejný typ akce, pokud je v daném okamžiku legální.
 
 \subsection{Umístění kamene}
@@ -119,9 +119,9 @@ společnou hranu, nikoli pole dotýkající se rohem.
 Akce přesun kamene umožňuje hráči posunout kámen na hrací ploše z jeho stávajícího místa na jiné. Počet kamenů v inventáři se tudíž nemění. Přesouvat lze
 kameny libovolné barvy, včetně černé.
 
-Podmínek na posunutí je více. Zaprvé, pole na které kámen přesouváme musí být prázdné a opět musí mít alespoň jeden sousední kámen. Druhou podmínkou je
+Podmínek na posunutí je více. Zaprvé, pole, na které kámen přesouváme musí být prázdné a opět musí mít alespoň jeden sousední kámen. Druhou podmínkou je
 dosažitelnost cílového pole z dosavadního místa cestou tvořenou prázdnými poli. Cesta je tvořena pouze ortogonálně sousedními poli; diagonální pohyb není 
-povolen. Při hledání této cesty se původní pozice přesouvaného kamene považuje za prázdné pole. 
+povolen. Při hledání této cesty se původní pozice přesouvaného kamene považuje za prázdné. 
 
 \begin{figure}[H]
     \centering
@@ -185,7 +185,7 @@ Zakázané barvy platí pouze pro bezprostředně následující tah soupeře. P
 
 \section{Ukončení hry}
 
-Partie končí okamžitě v moment, kdy některý z hráčů vytvoří na hrací desce jeden ze svých nebo soupeřových cílových tvarů v souladu se všemi pravidly hry. 
+Partie končí okamžitě ve chvíli, kdy některý z hráčů vytvoří na hrací desce jeden ze svých nebo soupeřových cílových tvarů v souladu se všemi pravidly hry. 
 Hráč tedy může po svém tahu prohrát, složí-li svým tahem cílový tvar soupeře. Hráč se složeným cílovým tvarem je pak prohlášen vítězem.
 
 Aby byl cílový tvar považován za platně vytvořený, musí být splněno několik podmínek. Všechny kameny tvořící tvar musí mít stejnou barvu, přičemž jeden
@@ -213,7 +213,7 @@ Oba hráči mají úplnou informaci v každé části hry. Tudíž mají dostupn
 Hra se řadí mezi hry s nulovým součtem, neboli vítězství jednoho z hráčů znamená prohru druhého.
 
 V každém tahu má hráč k dispozici velké množství legálních akcí. Jejich počet závisí na aktuálním stavu partie, 
-avšak v prostřední fázi hry se pohybuje v řádu stovek možných tahů. Faktor větvení je proto poměrně vysoký a herní strom tudíž také.
+avšak v prostřední fázi hry se pohybuje v řádu stovek možných tahů. Faktor větvení je proto poměrně vysoký a herní strom tudíž velmi rozsáhlý.
 Kombinace velikosti hrací desky, sdíleného inventáře, šesti barev kamenů a osmnácti cílových tvarů vede k velmi rozsáhlému stavovému prostoru.
 
 Všechna tato fakta ukazují na to, že hra je vhodná pro algoritmy založené na selektivním prohledávání, zejména MCTS. 

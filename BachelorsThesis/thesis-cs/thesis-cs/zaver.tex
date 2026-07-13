@@ -1,2 +1,27 @@
 \chapter*{Závěr}
 \addcontentsline{toc}{chapter}{Závěr}
+
+Cílem této bakalářské práce bylo navrhnout a implementovat herní prostředí pro hru inspirovanou deskovou hrou Logix a vytvořit 
+ukázkové agenty, kteří využívají různé algoritmy pro rozhodování. Důraz byl kladen na implementaci a trénování neuronové sítě,
+pro účely ohodnocování herních pozic a její následné využití v algoritmech prohledávání herního stromu.
+
+V rámci této práce byla vytvořena implementace v prostředí Unity, která umožňuje partii dvou lidských hráčů, hru proti počítačovým agentům
+i možnost ukázkové partie dvou agentů. Současně bylo v jazyce Python vytvořeno prostředí určené pro experimenty, implementaci agentů 
+a trénování neuronové sítě. 
+
+Implementovaní agenti byli založeni na odlišných principech rozhodování. Kromě základních agentů s náhodným a heuristickým rozhodováním byli implementováni 
+také agenti využívající algoritmus minimax s alfa-beta ořezáváním a algoritmus Monte Carlo Tree Search. Oba pokročilejší agenti sdílejí
+společnou neuronovou síť, která poskytuje odhad kvality herních pozic a také apriorní pravděpodobnosti jednotlivých tahů.
+
+Součástí práce byla také implementace trénovací pipeline založené na metodě self-play. Přestože se neuronovou síť podařilo natrénovat
+a do obou algoritmů integrovat, experimenty ukázaly, že z hlediska kvality nedosahuje úrovně navržené heuristiky. 
+Heuristický agent dosáhl nejlepších výsledků, zatímco agenti s algoritmy prohledávání herního stromu s neuronovou sítí představují
+pouze funkční, ale stále nedostatečné řešení. Výsledky naznačují nevhodnou implementaci neuronové sítě, která se s časem trénování
+nezlepšila.
+
+Možností pro další rozvoj je mnoho, zejména ale v oblasti neuronových sítí. Nabízí se delší trénování, předělání architektury či lepší 
+a rychlejší implementace algoritmu MCTS pro rychlejší vyhledávání a tím i rychlejší trénování.
+
+Přestože se nepodařilo vytvořit agenta, který by překonal heuristického agenta, byly splněny hlavní cíle práce. Vzniklo funkční
+prostředí, sada vzorových agentů i infrastruktura pro trénování neuronové ohodnocovací funkce, což představuje vhodný základ pro případný
+výzkum a budoucí rozvoj této hry.

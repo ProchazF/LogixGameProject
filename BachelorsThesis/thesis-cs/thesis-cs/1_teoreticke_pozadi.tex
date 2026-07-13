@@ -53,8 +53,8 @@ Algoritmus minimax je jeden ze základních algoritmů pro rozhodování v deter
 Cílem je nalézt tah, který maximalizuje šanci na vítězství pro hráče na tahu za předpokladu, že soupeř vždy zvolí 
 optimální odpověď. Algoritmus tedy vychází z předpokladu racionálního protihráče, nikoli náhodného nebo chybujícího \cite{russell2021aima}.
 
-Základním předpokladem algoritmu tedy je, že se partie odehrává mezi dvěma racionálními hráči s opačnými cíli. Jeden z hráčů, označovaného jako MAX,
-se snaží maximalizovat hodnotu výsledné pozice, zatímco druhý hráč, označovaného jako MIN, se snaží tuto hodnotu minimalizovat. Hodnota pozice je číselné
+Základním předpokladem algoritmu tedy je, že se partie odehrává mezi dvěma racionálními hráči s opačnými cíli. Jeden z hráčů, označovaný jako MAX,
+se snaží maximalizovat hodnotu výsledné pozice, zatímco druhý hráč, označovaný jako MIN, se snaží tuto hodnotu minimalizovat. Hodnota pozice je číselné
 ohodnocení stavu z pohledu hráče MAX, kdy vyšší hodnota odpovídá lepší pozici pro tohoto hráče \cite{russell2021aima}.
 
 Při průchodu stromem tedy algoritmus střídavě uvažuje tahy obou hráčů. Ve vrcholech, které odpovídají tahům hráče MAX je z možných pokračování 
@@ -145,7 +145,7 @@ Přestože algoritmus minimax zaručuje nalezení optimálního tahu, jeho prakt
 Ve většině deskových her není možné prohledat celý herní strom do dostatečné hloubky během rozumného času pouze s použitím algoritmu  minimax. 
 Z tohoto důvodu vznikla řada optimalizačních metod, jejichž cílem je snížit počet navštívených vrcholů bez ovlivnění výsledného rozhodnutí. 
 Nejvýznamnější z nich je právě algoritmus alfa-beta ořezávání, který dokáže vynechat části herního stromu, jejichž prohledání 
-nemůže mít vliv na končnou volbu tahu \cite{russell2021aima}.
+nemůže mít vliv na konečnou volbu tahu \cite{russell2021aima}.
 
 Algoritmus alfa-beta ořezávání využívá skutečnosti, že během prohledávání stromu lze u některých větví již před jejich úplným prozkoumáním 
 rozhodnout, zda mohou či nemohou ovlivnit výslednou hodnotu nadřazeného vrcholu. Za tímto účelem algoritmus udržuje dvě krajní hodnoty označované jako
@@ -243,7 +243,8 @@ Na rozdíl od algoritmů minimax nebo alfa-beta neprohledává MCTS všechny mo�
 Namísto toho se soustředí zejména na větve, které se podle dosavadních simulací jeví jako nejvhodnější. Algoritmus
 tedy postupně buduje pouze část herního stromu, jehož velikost se zvětšuje s rostoucím počtem simulací.
 
-Každá iterace algoritmu se skládá ze čtyř na sebe navazujících fází: Selekce (Selection), Rozšíření (Expansion), Simulace (Simulation) a Zpětná propagace(Backpropagation).
+Každá iterace algoritmu se skládá ze čtyř na sebe navazujících fází: Selekce (Selection), Rozšíření (Expansion), Simulace (Simulation) 
+a zpětná propagace(Backpropagation).
 Během těchto fází algoritmus vybere vhodnou větev stromu, rozšíří ji o nový vrchol, provede simulaci průběhu hry a získaný 
 výsledek zpětně propaguje ke kořeni stromu. Opakováním tohoto procesu algoritmus postupně zpřesňuje odhad kvality jednotlivých tahů \cite{browne2012mcts}.
 
@@ -267,7 +268,7 @@ uzlu, ve kterém bude strom dále rozšířen o nové pokračování partie \cit
 Smyslem selekce není pouze opakovaně navštěvovat dosud nejúspěšnější větve stromu. Naopak je nutné nalézt rovnováhu 
 mezi využitím již prozkoumaných kvalitních tahů a objevováním nových možností, které zatím nebyly dostatečně prozkoumány. 
 Tento kompromis je označován jako \emph{exploitation} a \emph{exploration} a představuje jednu z klíčových myšlenek algoritmu MCTS. 
-Samotná výběrová strategie bývá nejčastěji realizována pomocí algoritmu UCT, který bude podrobně popsán v samostatné podkapitole \cite{browne2012mcts,kocsis2006uct}.
+Samotná výběrová strategie bývá nejčastěji realizována pomocí algoritmu UCT. \cite{browne2012mcts,kocsis2006uct}.
 
 Výsledkem fáze selekce je nalezení listového uzlu, který bude v následující fázi rozšířen.
 
@@ -395,7 +396,7 @@ P(s,a)
 \]
 
 Ve vzorci představuje $Q(s,a)$ průměrné ohodnocení tahu získané z dosavadních simulací. Hodnota $P(s,a)$ odpovídá původní 
-pravděpodobnosti tahu odhadlé neuronovou sítí. Symbol $N(s)$ označuje počet návštěv aktuálního uzlu a $N(s,a)$ počet výběrů 
+pravděpodobnosti tahu odhadnuté neuronovou sítí. Symbol $N(s)$ označuje počet návštěv aktuálního uzlu a $N(s,a)$ počet výběrů 
 daného tahu. Konstanta $c_{puct}$ určuje míru preferování tahů s vysokou priorní pravděpodobností \cite{silver2017alphazero}.
 
 Zařazením priorních pravděpodobností do výběru dokáže algoritmus efektivněji využít znalosti získané během 
@@ -441,12 +442,11 @@ simulací. Díky tomu lze snadno přizpůsobit algoritmus dostupnému výpočetn
 
 Nevýhodou klasického algoritmu MCTS je zejména závislost na kvalitě prováděných simulací. V případě čistě náhodných 
 simulací může být odhad hodnoty silně nepřesný, zejména u složitějších her s vysokým faktorem větvení. Dalším omezením 
-je potřeba velkého počtu iterací pro dosažení rozumnách výsledků. Moderní přístupy proto nahrazují náhodné simulace 
+je potřeba velkého počtu iterací pro dosažení rozumných výsledků. Moderní přístupy proto nahrazují náhodné simulace 
 hodnoticími funkcemi nebo neuronovými sítěmi, které poskytují lepší odhad kvality jednotlivých pozic a současně 
 napomáhají efektivnějšímu výběru tahů \cite{browne2012mcts,silver2017alphazero}.
 
-Právě propojení algoritmu MCTS s neuronovými sítěmi představuje základ moderních herních systémů, jako jsou AlphaGo Zero nebo AlphaZero. 
-Návrhu a trénování těchto sítí je věnována následující kapitola \cite{silver2017alphazero}.
+Právě propojení algoritmu MCTS s neuronovými sítěmi představuje základ moderních herních systémů, jako jsou AlphaGo Zero nebo AlphaZero. \cite{silver2017alphazero}.
 
 \section{Neuronové sítě pro hraní her}
 

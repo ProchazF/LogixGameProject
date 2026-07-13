@@ -1,9 +1,9 @@
 \chapter{Implementace herních agentů}
 \label{sec:agents}
 
-Cílem této kapitoly je popsat implementaci jednotlivých herních agentů. Popíše se v ní idea a nastíní algorimty rozhodující o výběru tahu.
+Cílem této kapitoly je popsat implementaci jednotlivých herních agentů. Popíše se v ní idea a nastíní algoritmy rozhodující o výběru tahu.
 Implementace těchto algoritmů vznikala především v jazyce Python, kvůli dostupnosti knihoven pro strojové učení a velmi snadnému experimentování
-s algoritmy. Vybraní a otestovaní agenti byli pak reimplementováni v jazyce C\# do samotné Unity aplikace. Obě implementace jsou shodné, jak alforitmy,
+s algoritmy. Vybraní a otestovaní agenti byli pak reimplementováni v jazyce C\# do samotné Unity aplikace. Obě implementace jsou shodné, jak algoritmy,
 tak reprezentací stavu, liší se pouze prostředím a programovacím jazykem.
 Další informace o agentech, které nemusí být z důvodu rozsahu implementace popsány, jsou dostupné v repozitáři~\cite{logix_gitlab}.
 
@@ -12,8 +12,8 @@ Další informace o agentech, které nemusí být z důvodu rozsahu implementace
 Všichni agenti využívají stejné herní prostředí. Reprezentace stavu i generování legálních tahů je tedy totožné a implementace se liší pouze algoritmy pro
 výběr tahu.
 
-Každý agent obdrží aktuální stav hry a podle něj provede výběr jedné z legálních akcí, dle svůho algoritmu. Ten pak vrátí volající aplikaci a čeká na dalši
-zavolání. Díky této implementaci ja pak snadné agenty zaměňovat a přímo porovnávat.
+Každý agent obdrží aktuální stav hry a podle něj provede výběr jedné z legálních akcí, dle svého algoritmu. Ten pak vrátí volající aplikaci a čeká na další
+zavolání. Díky této implementaci je pak snadné agenty zaměňovat a přímo porovnávat.
 
 \section{Náhodný agent}
 
@@ -29,7 +29,7 @@ pseudonáhodných čísel.
 \section{Heuristický agent}
 
 Heuristický agent představuje prvního agenta, který hraje podle nějaké strategie. Agent se snaží v rychlosti odhadnout kvalitu dostupných tahů. Jeho 
-cílem není prohledávat herní strom do velké hloubky. Heuristika uvažuje jen pozice vziklá po jednom, případně dvou tazích a z nich se snaží vrátit 
+cílem není prohledávat herní strom do velké hloubky. Heuristika uvažuje jen pozice vzniklá po jednom, případně dvou tazích a z nich se snaží vrátit 
 rozumný tah.
 
 Nejprve agent ověří, zda některá z legálních akcí nevede k přímému vítězství. Pokud ano, tak ji zahraje. V opačném případě jsou všechny legální tahy ohodnoceny
@@ -37,7 +37,7 @@ velmi jednoduchou heuristickou funkcí a podle ní seřazeny. Nakonec ještě ag
 zahrání nemůže soupeř dalším tahem vyhrát.
 
 Ohodnocovací heuristická funkce vyhodnotí stav podle toho, jak je hráč blízko ke složení jednoho z jeho cílových tvarů. Pro každý tvar se uvažují i jeho rotace a 
-polohy vůči černému kameni. Pokud je v pozici více tvarů blížících se k hledaným tvarům, vratí funkce vyšší hodnotu. Téměř dokončené tvary jsou navíc zvýhodněny
+polohy vůči černému kameni. Pokud je v pozici více tvarů blížících se k hledaným tvarům, vrátí funkce vyšší hodnotu. Téměř dokončené tvary jsou navíc zvýhodněny
 kvadraticky, aby agent preferoval tahy vedoucí k rychlému vítězství. Heuristika navíc dělá to samé pro soupeřovy tvary, kdy naopak odečítá skóre za tvary,
 které se blíží soupeřovým cílovým tvarům.
 
@@ -48,10 +48,10 @@ heuristickým skórem bez ohledu na bezpečnost.
 
 Tento agent využívá klasické prohledávání herního stromu pomocí algoritmu minimax s alfa-beta ořezáváním, jak bylo popsáno v sekcích~\ref{sec:minimax} a~\ref{sec:pruning}.
 Na rozdíl od heuristického agenta nepoužívá vlastní ručně navrženou ohodnocovací funkci, ale předem natrénovanou neuronovou síť, která je podrobněji popsána
-v následující kapitole. 
+v kapitole~\ref{sec:neural_network}. 
 
 Samotné prohledávání je pak omezeno dvěma parametry. Prvním je hloubka prohledávání, která udává, kolik tahů dopředu bude algoritmus procházet. Druhým je pak 
-limit počtu tahů v každém uzlu. Jelikož legální počet akcí může být opravdu vysoký, necháme si pouze N tahů nejvyšší prioritou podle policy části neuronové sítě
+limit počtu tahů v každém uzlu. Jelikož legální počet akcí může být opravdu vysoký, necháme si pouze N tahů s nejvyšší prioritou podle policy části neuronové sítě
 a na nich pokračujeme s prohledáváním.
 
 Pokud algoritmus dosáhne maximální hloubky a pozice není konečná, tak vrátí hodnotu vzatou z value části neuronové sítě. Jelikož ale síť hodnotí pozici
@@ -60,7 +60,7 @@ z pohledu hráče, který je právě na tahu, tak v případě potřeby je hodno
 \section{Agent využívající Monte Carlo Tree Search}
 \label{sec:MCTS_agent}
 
-Tato sekce se věnuje implementaci agenta využívající algoritmu MCTS, jak byl popsán v sekci ~\ref{sec:mcts}. Implementace využívá natrénovanou 
+Tato sekce se věnuje implementaci agenta využívající algoritmus MCTS, jak byl popsán v sekci ~\ref{sec:mcts}. Implementace využívá natrénovanou 
 neuronovou síť a algoritmus PUCT. Jelikož byl v této práci kladen velký důraz na algoritmus MCTS, je tato sekce obsáhlejší, než sekce
 věnované ostatním agentům.
 
@@ -75,7 +75,7 @@ navštívení lze pokračovat bez zbytečného přepočítávání.
 \subsection{Výběr uzlu}
 
 Výběr uzlu probíhá pomocí pravidel algoritmu PUCT. V každém kroku vybere algoritmus tu akci, která maximalizuje součet složky exploatační a explorační. 
-První část odpovídá průměrnám hodnotám daných akcí z předešlých simulací, druhá - explorační - využívá apriorní pravděpodobnosti získané z neuronové sítě.
+První část odpovídá průměrným hodnotám daných akcí z předešlých simulací, druhá - explorační - využívá apriorní pravděpodobnosti získané z neuronové sítě.
 
 Díky tomu může algoritmus procházet strom efektivně, rozvádět dál slibné tahy bez opomenutí dosud nenavštívených.
 
@@ -106,8 +106,8 @@ prohru druhého.
 
 \subsection{Heuristika}
 
-Agent také využívá dvou jendoduchých heuristik. První heuristikou je se podívat, jestli není nějký tah ihned vyhrávající a případně ho ihned zahrát.
-Tím se vyhneme zbytečného prohledávání v koncových pozicích a omezíme řípadné chyby. Druhou heuristikou je před vybráním výsledného tahu se podívat,
+Agent také využívá dvou jednoduchých heuristik. První heuristikou je se podívat, jestli není nějaký tah ihned vyhrávající a případně ho ihned zahrát.
+Tím se vyhneme zbytečného prohledávání v koncových pozicích a omezíme případné chyby. Druhou heuristikou je před vybráním výsledného tahu se podívat,
 zda tímto tahem nemůže soupeř vyhrát. Pokud ano, podíváme se na další nejlépe vyhodnocený tah.
 
 Tyto jednoduché heuristiky by v případě správné implementace a funkčnosti agenta neměly být nutné, jsou však na místě kvůli případným
@@ -117,10 +117,10 @@ chybám, na které agent nebyl připraven.
 
 Není-li žádný tah vyhrávající, postupujeme podle popsaného algoritmu MCTS a vyhodnocovacího stromu.
 Po provedení daného počtu simulací z kořenového uzlu získáme počty návštěv jednotlivých tahů. Výsledný tah je pak ten, který má počet návštěv nejvyšší. 
-Tento přístup odpovídá algoritmu používaný v AlphaZero\cite{silver2017alphazero}.
+Tento přístup odpovídá algoritmu používanému v AlphaZero\cite{silver2017alphazero}.
 
 Pokud z důvodu numerické chyby, bugu nebo další jiné neočekávané situace nebyla navštívena jediná legální akce, tak implementace zvolí náhodný
-legální tah. To by se ale z pravidla nemělo díky implementaci stávat.
+legální tah. To by se ale zpravidla nemělo díky implementaci stávat.
 
 Na závěr této kapitoly Tabulka~\ref{tab:agents_summary} shrnuje hlavní vlastnosti všech implementovaných agentů a jejich vzájemné rozdíly.
 
