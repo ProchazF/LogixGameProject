@@ -71,7 +71,7 @@ python play_tournament.py
 
 A Unity implementation of the Logix board game featuring an interactive graphical interface and support for Human vs Human, Human vs AI, and AI vs AI gameplay. The project integrates several search-based artificial intelligence agents, including neural-network-assisted opponents.
 
-For more information, see **`LogixGame/README.md`**.
+For more information, see [LogixGame documentation](LogixGame/README.md)
 
 ---
 
@@ -79,7 +79,7 @@ For more information, see **`LogixGame/README.md`**.
 
 A Python framework implementing an AlphaZero-inspired reinforcement learning pipeline for training neural-network-based evaluation functions. It includes self-play generation, Monte Carlo Tree Search, replay buffer management, checkpointing, and ONNX model export.
 
-For more information, see **`EvaluationFunction/README.md`**.
+For more information, see [EvaluationFunction documentation](EvaluationFunction/README.md)
 
 ---
 
@@ -87,13 +87,15 @@ For more information, see **`EvaluationFunction/README.md`**.
 
 A benchmarking framework used to evaluate and compare different game-playing agents through automated tournaments. It collects detailed performance statistics and generates visualizations used during experimental evaluation.
 
-For more information, see **`BotExperiments/README.md`**.
+For more information, see [Open BotExperiments documentation](BotExperiments/README.md)
 
 ---
 
 ### BachelorsThesis
 
 Contains the complete LaTeX source of the accompanying bachelor's thesis describing the design, implementation, training process, and experimental evaluation of the project.
+
+[Open BachelorsThesis directory](BachelorsThesis/thesis-cs/thesis-cs)
 
 ## Technologies
 
