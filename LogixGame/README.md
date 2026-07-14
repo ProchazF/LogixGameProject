@@ -122,6 +122,27 @@ To create a standalone application:
 
 The generated executable can be distributed independently without requiring the Unity Editor.
 
+## Documentation
+
+Detailed technical documentation is available in the repository-level [`docs/logix-game/`](../docs/logix-game/) directory.
+
+- [Overview](../docs/logix-game/overview.md)  
+  High-level description of the Unity application, project architecture, gameplay features, and interaction with other repository components.
+
+- [Architecture](../docs/logix-game/architecture.md)  
+  Internal organization of the Unity project, including the GameManager, GameBoard, AI controllers, UI system, and scene structure.
+
+- [Game Flow](../docs/logix-game/game-flow.md)  
+  Complete match lifecycle, turn handling, supported game modes, game-state updates, and win detection.
+
+- [AI Integration](../docs/logix-game/ai-integration.md)  
+  Integration of AI opponents, bot interfaces, difficulty levels, ONNX model deployment, and interaction with the game logic.
+
+- [UI System](../docs/logix-game/ui-system.md)  
+  User interface architecture, board visualization, inventory, objective cards, menus, and player interaction.
+
+The complete rules of Logix are described in the [Game Rules](../docs/game-rules.md).
+
 ## Related Components
 
 This Unity project is one part of the complete Logix project, which also includes:

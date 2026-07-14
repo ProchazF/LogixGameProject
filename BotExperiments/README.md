@@ -209,6 +209,22 @@ Besides the tournament framework, the project includes several helper scripts us
 
 These scripts simplify benchmarking, debugging, and result analysis while remaining independent of the core tournament implementation.
 
+## Documentation
+
+Detailed technical documentation is available in the repository-level [`docs/bot-experiments/`](../docs/bot-experiments/) directory.
+
+- [Overview](../docs/bot-experiments/overview.md)  
+  Architecture, workflow, project structure, and interaction with other project components.
+
+- [Tournament Framework](../docs/bot-experiments/tournament-framework.md)  
+  Match execution, tournament formats, scheduling, resume support, and result generation.
+
+- [Implemented Agents](../docs/bot-experiments/implemented-agents.md)  
+  Description of all implemented agents, their decision-making algorithms, and evaluation methodology.
+
+- [Results](../docs/bot-experiments/results.md)  
+  Output files, tournament summaries, generated visualizations, and interpretation of experimental results.
+
 ## Related Components
 
 This framework is one component of the complete Logix project, which also includes:

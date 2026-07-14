@@ -258,6 +258,30 @@ In addition to the core training framework, the project includes several utility
 
 These scripts are intended primarily for development and experimentation and are not required for the standard training pipeline.
 
+## Documentation
+
+Detailed technical documentation is available in the repository-level [`docs/evaluation-function/`](../docs/evaluation-function/) directory.
+
+- [Evaluation Function Overview](../docs/evaluation-function/overview.md)  
+  High-level architecture, training workflow, major modules, and data flow.
+
+- [Game Environment](../docs/evaluation-function/environment.md)  
+  Environment state, legal actions, inventory management, move execution, simulation, and termination.
+
+- [State and Action Encoding](../docs/evaluation-function/state-and-action-encoding.md)  
+  Board planes, feature-vector representation, action indexing, legal-action masking, and neural-network interfaces.
+
+- [Neural Network](../docs/evaluation-function/neural-network.md)  
+  Network inputs, policy and value outputs, inference, checkpoints, and ONNX compatibility.
+
+- [MCTS and Self-Play](../docs/evaluation-function/mcts-and-self-play.md)  
+  Tree search, node statistics, policy targets, value backup, move selection, and self-play data generation.
+
+- [Training](../docs/evaluation-function/training.md)  
+  Replay-buffer usage, optimization, losses, checkpoint management, resuming training, and model export.
+
+The complete game rules shared by the Python and Unity implementations are documented separately in the [Logix Game Rules](../docs/game-rules.md).
+
 ## Related Components
 
 This framework is one component of a larger project developed as part of a bachelor's thesis. The complete project consists of:
