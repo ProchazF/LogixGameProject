@@ -32,22 +32,23 @@ implementaci herních akcí.
 
 Herní kámen představuje základní herní komponentu. Každý kámen je reprezentován svou barvou a případně pozicí. V průběhu partie může být umístěn
 ze společného inventáře na herní desku, na samotné herní desce přemístěn či nahrazen kamenem jiné barvy z inventáře. 
-Podrobnější popis jednotlivých akcí je uveden v následující sekci. Celkový počet
-kamenů dané barvy je omezen, což přidává další strategický faktor.
+Podrobnější popis jednotlivých akcí je uveden v následující sekci. Celkový počet kamenů dané barvy je omezen, což přidává další strategický faktor.
 
 \subsection{Barvy}
 \label{sec:colors}
 
-Ve hře je celkem 6 barev kamenů. 4 základní - modrá, červená, žlutá a zelená - plus 2 univerzální - černá a šedá. Černá je na hrací ploše již od začátku hry,
-nelze ji z desky žádným způsobem odebrat a musí být součástí výherního tvaru. Černá i šedá představují univerzální kameny, které mohou při vytváření cílového 
-tvaru zastoupit libovolnou ze čtyř základních barev. Barvy mohou být během partie omezeny předchozím tahem soupeře, což dále ovlivňuje výslednou strategii hráčů.
+Ve hře je celkem 6 barev kamenů. 4 základní - modrá, červená, žlutá a zelená - plus 2 univerzální - černá a šedá. Černý kámen je na hrací ploše již od začátku hry,
+nelze jej z desky žádným způsobem odebrat a musí být součástí výherního tvaru.
+
+Černý a šedý kámen jsou tzv. univerzální, tedy mohou při vytváření vítězného tvaru zastupovat libovolnou ze čtyř základních barev. Na rozdíl od černého 
+kamene není kámen šedý pevně umístěn na hrací desce a hráči s ním mohou během partie provádět všechny běžné akce, jako s kamenem základní barvy.
 
 \subsection{Inventář}
 
 Inventář představuje společnou zásobu dosud nevyužitých herních kamenů. Pro každou barvu je určen počet kamenů, které jsou během partie stále k dispozici. 
 Při umístění nového kamene nebo jeho nahrazení je příslušný kámen z inventáře odebrán, zatímco odstraněný kámen je do inventáře vrácen. Stav inventáře je 
 součástí herního stavu a přímo ovlivňuje množinu legálních tahů i strategická rozhodnutí hráčů. Klasicky je v inventáři na začátku hry 6 kamenů od každé
-základní barvy a 2 šedé kameny. Černý kámen, jak již bylo zmíněno, začíná na ploše a do inventáře se vrátit nemůže.
+základní barvy a 2 šedé kameny. Černý kámen začíná na ploše a do inventáře se vrátit nemůže.
 
 \begin{figure}[H]
     \centering
@@ -59,10 +60,12 @@ základní barvy a 2 šedé kameny. Černý kámen, jak již bylo zmíněno, za�
 \subsection{Cílové tvary}
 
 Cílové tvary určují vítěznou podmínku hry. Oproti základní verzi Logixu, kdy má každý hráč jeden skrytý tvar, v této verzi se hráč snaží o složení jednoho ze 
-svých dvou tvarů, které jsou ale známy protihráči. Každý tvar je tvořen pěti propojenými poli a odpovídá tzv. \emph{pentominu}. Hráč vyhraje, povede-li
+svých dvou tvarů. Každý tvar je tvořen pěti propojenými poli a odpovídá tzv. \emph{pentominu}. Hráč vyhraje, povede-li
 se mu složit jeden ze svých herních tvarů na herní ploše z jedné celistvé barvy, s tím, že jeden libovolný kámen té barvy musí být základní černý kámen. 
 Každému cílovému tvaru je navíc přiřazena jedna základní barva. Z kamenů této barvy tvar \emph{nesmí} být složen, což vytváří další strategické 
 možnosti při blokování protivníka a hře celkově přidává další vrstvu strategie.
+
+Oba cílové tvary i jejich zakázané barvy jsou po celou dobu partie známé oběma hráčům.
 
 \begin{figure}[H]
     \centering
@@ -85,6 +88,8 @@ tvar \emph{nesmí} být složen. Hrací deska je prázdná s výjimkou prostřed
 
 První tah provádí hráč 1 a po provedení jedné z legálních akcí hraje hráč 2. Takto se hráči střídají až do koncového stavu, kterým je buď složení cílového tvaru
 nebo dosažení maximálního povoleného počtu tahů. V každém tahu může hráč provést právě jednu z níže popsaných akcí.
+
+Po každém provedeném tahu je zkontrolováno splnění vítězné podmínky a případně je partie okamžitě ukončena.
 
 \subsection{Typy akcí}
 
@@ -188,11 +193,15 @@ Zakázané barvy platí pouze pro bezprostředně následující tah soupeře. P
 Partie končí okamžitě ve chvíli, kdy některý z hráčů vytvoří na hrací desce jeden ze svých nebo soupeřových cílových tvarů v souladu se všemi pravidly hry. 
 Hráč tedy může po svém tahu prohrát, složí-li svým tahem cílový tvar soupeře. Hráč se složeným cílovým tvarem je pak prohlášen vítězem.
 
-Aby byl cílový tvar považován za platně vytvořený, musí být splněno několik podmínek. Všechny kameny tvořící tvar musí mít stejnou barvu, přičemž jeden
-z nich musí být nahrazen základním černým kamenem. Současně musí vytvořená konfigurace přesně odpovídat jednomu z cílových tvarů nebo jeho libovolné rotaci.
+Aby byl cílový tvar považován za platně vytvořený, musí být splněno několik podmínek. Všechny kameny tvořící tvar musí mít stejnou barvu
+(buď stejnou základní nebo šedou), přičemž jeden
+z nich musí být nahrazen základním černým kamenem. Tvar nesmí být vytvořen barvou, která mu byla na začátku hry přidělena.
+Současně musí vytvořená konfigurace přesně odpovídat jednomu z cílových tvarů nebo jeho libovolné rotaci.
 Zrcadlené varianty tvarů se za totožné nepovažují a jsou ve hře reprezentovány jako samostatné cílové tvary. 
-Přítomnost dalších kamenů stejné barvy bezprostředně navazujících na vítězný tvar není přípustná, tvar musí být takzvaně \emph{jednolitý}. Univerzální kameny
-se do nadbytečných nepočítají.
+
+Přítomnost dalších kamenů stejné barvy bezprostředně navazujících na vítězný tvar není přípustná, tvar musí být takzvaně \emph{jednolitý}. Při kontrole 
+jednolitosti tvaru se nadbytečné kameny stejné základní barvy považují za porušení vítězné podmínky. Šedé kameny se při kontrole jednolitosti ignorují, 
+protože nepředstavují konkrétní základní barvu a mohou zastupovat libovolnou z nich.
 
 Pokud žádný z hráčů nedosáhne vítězné podmínky před dosažením maximálního povoleného počtu tahů, partie končí remízou.
 

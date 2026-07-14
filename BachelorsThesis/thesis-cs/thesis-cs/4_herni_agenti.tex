@@ -5,7 +5,7 @@ Cílem této kapitoly je popsat implementaci jednotlivých herních agentů. Pop
 Implementace těchto algoritmů vznikala především v jazyce Python, kvůli dostupnosti knihoven pro strojové učení a velmi snadnému experimentování
 s algoritmy. Vybraní a otestovaní agenti byli pak reimplementováni v jazyce C\# do samotné Unity aplikace. Obě implementace jsou shodné, jak algoritmy,
 tak reprezentací stavu, liší se pouze prostředím a programovacím jazykem.
-Další informace o agentech, které nemusí být z důvodu rozsahu implementace popsány, jsou dostupné v repozitáři~\cite{logix_gitlab}.
+Podrobnější informace o implementaci jednotlivých agentů jsou dostupné v repozitáři projektu~\cite{logix_gitlab}.
 
 \section{Architektura implementace agentů}
 
@@ -61,8 +61,7 @@ z pohledu hráče, který je právě na tahu, tak v případě potřeby je hodno
 \label{sec:MCTS_agent}
 
 Tato sekce se věnuje implementaci agenta využívající algoritmus MCTS, jak byl popsán v sekci ~\ref{sec:mcts}. Implementace využívá natrénovanou 
-neuronovou síť a algoritmus PUCT. Jelikož byl v této práci kladen velký důraz na algoritmus MCTS, je tato sekce obsáhlejší, než sekce
-věnované ostatním agentům.
+neuronovou síť a algoritmus PUCT. Implementace algoritmu MCTS obsahuje více kroků než ostatní agenti, proto je této části věnován větší prostor.
 
 \subsection{Struktura vyhledávacího stromu}
 

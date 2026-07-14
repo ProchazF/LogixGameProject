@@ -10,9 +10,17 @@ Cílem procesu je naučit neuronovou síť odhadnout kvalitu stavu herních pozi
 algoritmem MCTS i minimax s alfa-beta ořezáváním.
 
 Proces je inspirován metodou, kterou využívá AlphaZero. Na rozdíl od AlphaZero, které využívá data čistě generovaná pomocí self-play, tak použitá implementace
-navíc používá předpřipravené lidské hry, aby algoritmus nezačínal úplně s ničím.
+navíc používá předpřipravené lidské hry, aby algoritmus nezačínal úplně s ničím. Díky tomu síť nemusí od začátku objevovat základní principy hry čistě 
+náhodným hraním.
+
+Trénování probíhá iterativně. Nejprve jsou odehrány partie, ze kterých vznikají trénovací data. Každá navštívená herní pozice je uložena společně 
+s pravděpodobnostním rozdělením tahů získaným pomocí algoritmu MCTS a s konečným výsledkem celé partie. Tyto informace tvoří jeden trénovací příklad.
+
 Odehrané hry se ukládají do \emph{Replay Bufferu}, ze kterého jsou vybírány trénovací data pro samotné 
-učení neuronové sítě. Po aktualizaci parametrů z učení je nově vzniklá síť použita na generování dalších partií a proces se opakuje až do zastavení.
+učení neuronové sítě. Po aktualizaci parametrů z učení je nově vzniklá síť použita na generování dalších partií.
+Kvalita trénovacích dat se tak postupně zlepšuje společně s kvalitou samotné neuronové sítě.
+
+Celý tento cyklus se opakuje až do ukončení trénování. Schéma celého procesu je znázorněno na obrázku~\ref{fig:training_pipeline}.
 
 \begin{figure}[H]
     \centering
@@ -126,6 +134,9 @@ si neuronová síť bere data pro učení.
 Po předtrénování sítě na lidských partiích generuje trénovací pipeline partie metodou self-play. U té proti sobě hrají dvě instance stejného
 agenta využívající aktuální neuronovou síť. Kvalita generovaných dat se pak postupně zvyšuje s kvalitou natrénovaného modelu.
 
+Výhodou tohoto přístupu je, že není potřeba rozsáhlá databáze lidských partií. Jakmile se neuronová síť mírně zlepší, začne sama 
+vytvářet kvalitnější partie. Ty následně slouží jako nová trénovací data, takže se celý proces postupně sám zdokonaluje.
+
 Partie jsou odehrány až do koncového stavu nebo do maximálního počtu tahů. V případě, že self-play partie skončí remízou, je uložena jen
 třetina všech stavů z té dané partie. Toto opatření existuje z důvodu, že remízy nám moc neřeknou a zbytečně zamlžují ostatní partie
 v Replay Bufferu. V případě normálního výsledku partie se uloží všechny stavy, které se ve hře udály a je jim přiřazeno, který z hráčů
@@ -134,8 +145,10 @@ vyhrál.
 \subsection{Monte Carlo Tree Search pro self-play}
 
 Při výběru tahů v self-play se používá také MCTS, není využíván pouze výstup policy části neuronové sítě. Nad aktuální pozicí
-je spuštěno vyhledávání podle algoritmu MCTS, který navíc využívá informace z neuronové sítě, jak již bylo nastíněno v 
-kapitole~\ref{sec:mcts}.
+je spuštěno vyhledávání podle algoritmu MCTS, který navíc využívá informace z neuronové sítě. Neuronová síť sama o sobě na 
+začátku trénování neposkytuje kvalitní odhady. Algoritmus MCTS proto kombinuje informace z policy a value části sítě s prohledáváním 
+herního stromu a nachází kvalitnější tahy, než by vybrala samotná neuronová síť. Právě výsledky MCTS pak slouží jako cílové hodnoty 
+při učení policy části sítě.
 
 Díky využití MCTS v self-play zvedáme efektivitu učení, jelikož self-play partie budou častěji končit v koncových stavech, než 
 v remíze. Zároveň s tím je neuronová síť díky tomu trénována přímo na MCTS, takže samotné využití u agenta je o to lepší.
@@ -161,14 +174,22 @@ Replay Buffer umožňuje neuronové síti se současně učit ze starších i no
 z Replay Bufferu náhodně vybrány dávky příkladů, což zabraňuje neuronové síti učit se jen na pár špatných hrách. Po dosažení maximální kapacity 
 Replay Bufferu jsou nejstarší partie vyhozeny a jsou nahrazeny nově vytvořenými.
 
+Bez Replay Bufferu by se neuronová síť učila pouze z právě odehraných partií. To by vedlo k velmi nestabilnímu učení, protože by jednotlivé 
+dávky dat byly silně závislé na aktuální kvalitě modelu. Replay Buffer proto udržuje směs starších i novějších zkušeností a stabilizuje celý 
+trénovací proces.
+
 \section{Proces učení}
 
 Tato sekce popisuje samotné učení a upravování parametrů neuronové sítě. Po výběru vygenerovaných dat z Replay Bufferu je na nich
 vypočtena ztrátová funkce. Na jejím základě jsou pak pomocí gradientního sestupu aktualizovány váhy neuronové sítě.
 
+Samotné učení probíhá iterativně. Nejprve jsou z Replay Bufferu náhodně vybrány dávky trénovacích příkladů. Pro každý příklad neuronová 
+síť vypočítá vlastní odhad policy i value. Tyto odhady jsou následně porovnány s cílovými hodnotami získanými z MCTS a výsledku partie. 
+Rozdíl mezi nimi určuje velikost chyby, podle které jsou upraveny váhy neuronové sítě pomocí algoritmu zpětné propagace.
+
 \subsection{Ztrátová funkce}
 
-Trénování neuronové sítě probíhá na dvou úlohách. První je aproximace policy distribuce pomocí MCTS algoritmu, druhou je odhad konečného výsledku
+Trénování neuronové sítě probíhá na dvou úlohách. První je aproximace policy distribuce tahů pomocí MCTS algoritmu, druhou je odhad konečného výsledku
 partie z dané pozice. Celková ztrátová funkce je pak součtem policy ztráty a value ztráty~\cite{silver2017alphazero}.
 
 \begin{equation}
