@@ -832,6 +832,7 @@ GameObject:
   m_Component:
   - component: {fileID: 440973044}
   - component: {fileID: 440973043}
+  - component: {fileID: 440973045}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -856,6 +857,7 @@ MonoBehaviour:
   spawnP2: {fileID: 1095649537}
   humanPrefab: {fileID: 0}
   botPrefab: {fileID: 0}
+  neuralNetwork: {fileID: 440973045}
   settingsDisplay: {fileID: 1872843814}
   boardVisualizer: {fileID: 1071488999}
   inventoryUI: {fileID: 380741315}
@@ -884,6 +886,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &440973045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440973042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4d1ed2e42b363e4392c3b5965c67f48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelAsset: {fileID: 5022602860645237092, guid: 20e8b67ffa390ba4d9587475e2176423, type: 3}
+  boardInputName: board
+  featureInputName: features
+  policyOutputName: policy
+  valueOutputName: value
+  backendType: 256
 --- !u!1 &477743506
 GameObject:
   m_ObjectHideFlags: 0

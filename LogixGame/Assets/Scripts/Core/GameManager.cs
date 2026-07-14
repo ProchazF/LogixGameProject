@@ -32,6 +32,9 @@ public class GameManager : MonoBehaviour
     public GameObject humanPrefab;
     public GameObject botPrefab;
 
+    [SerializeField]
+    private LogixNeuralNetwork neuralNetwork;
+
     public WinShapeInstance[] playerACards; // Player cards
     public WinShapeInstance[] playerBCards;
 
@@ -157,25 +160,47 @@ public class GameManager : MonoBehaviour
         botB = ParseDifficulty(PlayerPrefs.GetString("BotB", "Normal"));
 
         // --- Create bots as needed ---
+        // --- Validate neural network reference ---
+        if (neuralNetwork == null)
+        {
+            neuralNetwork = GetComponent<LogixNeuralNetwork>();
+        }
+
+        if (neuralNetwork == null)
+        {
+            Debug.LogError(
+                "[GameManager] No LogixNeuralNetwork is assigned. " +
+                "Hard difficulty will not work correctly."
+            );
+        }
+
+        // --- Create bots as needed ---
         if (mode == GameMode.PvE)
         {
-            // Player B is the bot
-            var goB = new GameObject("BotPlayer_B");
+            // Player B is the bot.
+            GameObject goB = new GameObject("BotPlayer_B");
+
             botBController = goB.AddComponent<BotController>();
+            botBController.Initialize(neuralNetwork);
             botBController.SetDifficulty(botA);
+
             DontDestroyOnLoad(goB);
         }
         else if (mode == GameMode.EvE)
         {
-            // Player A is a bot
-            var goA = new GameObject("BotPlayer_A");
-            botAController = goA.AddComponent<BotController>();
-            botAController.SetDifficulty(botA);   // BotA difficulty
+            // Player A bot.
+            GameObject goA = new GameObject("BotPlayer_A");
 
-            // Player B is a bot
-            var goB = new GameObject("BotPlayer_B");
+            botAController = goA.AddComponent<BotController>();
+            botAController.Initialize(neuralNetwork);
+            botAController.SetDifficulty(botA);
+
+            // Player B bot.
+            GameObject goB = new GameObject("BotPlayer_B");
+
             botBController = goB.AddComponent<BotController>();
-            botBController.SetDifficulty(botB);   // BotB difficulty
+            botBController.Initialize(neuralNetwork);
+            botBController.SetDifficulty(botB);
 
             DontDestroyOnLoad(goA);
             DontDestroyOnLoad(goB);
