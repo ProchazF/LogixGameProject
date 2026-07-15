@@ -1,7 +1,7 @@
 [Ll]ibrary/
 [Tt]emp/
 #[Bb]uild/
-[Bb]uilds/
+#[Bb]uilds/
 [Pp]ackages/
 obj/
 *.csproj
