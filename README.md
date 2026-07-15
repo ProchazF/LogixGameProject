@@ -28,6 +28,7 @@ Together, these components provide a complete workflow covering game implementat
 ├── BotExperiments/         # Tournament framework
 ├── Builds/                 # Compiled game builds
 ├── BachelorsThesis/        # Thesis source
+├── docs/                   # Detailed documentation
 └── README.md
 ```
 
