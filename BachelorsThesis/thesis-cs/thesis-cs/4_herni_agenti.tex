@@ -5,12 +5,12 @@ Cílem této kapitoly je popsat implementaci jednotlivých herních agentů. Pop
 Implementace těchto algoritmů vznikala především v jazyce Python, kvůli dostupnosti knihoven pro strojové učení a velmi snadnému experimentování
 s algoritmy. Vybraní a otestovaní agenti byli pak reimplementováni v jazyce C\# do samotné Unity aplikace. Obě implementace jsou shodné, jak algoritmy,
 tak reprezentací stavu, liší se pouze prostředím a programovacím jazykem.
-Podrobnější informace o implementaci jednotlivých agentů jsou dostupné v repozitáři projektu~\cite{logix_gitlab}.
+Kompletní implementace jednotlivých agentů je součástí elektronické přílohy (viz příloha~\ref{app:electronic}).
 
 \section{Architektura implementace agentů}
 
 Všichni agenti využívají stejné herní prostředí. Reprezentace stavu i generování legálních tahů je tedy totožné a implementace se liší pouze algoritmy pro
-výběr tahu.
+výběr tahu. 
 
 Každý agent obdrží aktuální stav hry a podle něj provede výběr jedné z legálních akcí, dle svého algoritmu. Ten pak vrátí volající aplikaci a čeká na další
 zavolání. Díky této implementaci je pak snadné agenty zaměňovat a přímo porovnávat.
@@ -29,7 +29,7 @@ pseudonáhodných čísel.
 \section{Heuristický agent}
 
 Heuristický agent představuje prvního agenta, který hraje podle nějaké strategie. Agent se snaží v rychlosti odhadnout kvalitu dostupných tahů. Jeho 
-cílem není prohledávat herní strom do velké hloubky. Heuristika uvažuje jen pozice vzniklá po jednom, případně dvou tazích a z nich se snaží vrátit 
+cílem není prohledávat herní strom do velké hloubky. Heuristika uvažuje jen pozice vzniklé po jednom, případně dvou tazích a z nich se snaží vrátit 
 rozumný tah.
 
 Nejprve agent ověří, zda některá z legálních akcí nevede k přímému vítězství. Pokud ano, tak ji zahraje. V opačném případě jsou všechny legální tahy ohodnoceny
@@ -118,7 +118,7 @@ Není-li žádný tah vyhrávající, postupujeme podle popsaného algoritmu MCT
 Po provedení daného počtu simulací z kořenového uzlu získáme počty návštěv jednotlivých tahů. Výsledný tah je pak ten, který má počet návštěv nejvyšší. 
 Tento přístup odpovídá algoritmu používanému v AlphaZero\cite{silver2017alphazero}.
 
-Pokud z důvodu numerické chyby, bugu nebo další jiné neočekávané situace nebyla navštívena jediná legální akce, tak implementace zvolí náhodný
+Pokud z důvodu numerické chyby, bugu nebo jiné neočekávané situace nebyla navštívena jediná legální akce, tak implementace zvolí náhodný
 legální tah. To by se ale zpravidla nemělo díky implementaci stávat.
 
 Na závěr této kapitoly Tabulka~\ref{tab:agents_summary} shrnuje hlavní vlastnosti všech implementovaných agentů a jejich vzájemné rozdíly.

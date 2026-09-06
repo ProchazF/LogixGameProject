@@ -11,11 +11,11 @@ stejných pravidel hry, ale liší se svým účelem a použitými technologiemi
 
 Část projektu zaměřená na jednoduchou grafickou implementaci a hratelnou verzi hry byla implementována v herním enginu Unity v jazyce C\#.
 Cílem bylo umožnit uživateli hru zobrazit, spustit, vizuálně sledovat a dle pravidel hrát. Hru je možno spustit jako lokální hru dvou hráčů u jedné obrazovky,
-hra proti jednomu z botů, případně i jednoduchou vizualizaci partie různých botů. Primárně tedy aplikace slouží jako uživatelské rozhraní 
+hru proti jednomu z botů, případně i jednoduchou vizualizaci partie různých botů. Primárně tedy aplikace slouží jako uživatelské rozhraní 
 a jako demonstrace navržené hry.
 
 Aplikace v herním režimu zobrazuje herní desku, její aktuální stav, inventář a cílové tvary obou hráčů. Během svého tahu může uživatel 
-jednoduše provádět jednu z podporovaných akcí a to pomocí interaktivního rozhraní. Po každém provedeném tahu aplikace ověří jeho legalitu, 
+jednoduše provádět jednu z podporovaných akcí, a to pomocí interaktivního rozhraní. Po každém provedeném tahu aplikace ověří jeho legalitu, 
 aktualizuje herní stav a následně zkontroluje, zda byly splněny podmínky pro ukončení partie.
 
 \subsection{Uživatelské rozhraní}
@@ -26,7 +26,7 @@ tah zakázány. Nalevo od herního pole pak vidíme graficky znázorněné tvary
 
 Ovládání je implementováno pomocí myši. Akce jsou prováděny výběrem kamene, kterým chceme hrát, ať už z inventáře nebo hrací desky. Vybraný kámen následně 
 položíme tam,
-kam ho chceme umístit, případně vyměnit. Hra detekuje, zda je tento tah legální a pokud ano, aktualizuje stav hry a zkontroluje, zda některý z hráčů nedosáhl
+kam ho chceme umístit, případně vyměnit. Hra detekuje, zda je tento tah legální, a pokud ano, aktualizuje stav hry a zkontroluje, zda některý z hráčů nedosáhl
 podmínek vítězství.
 
 Součástí celé aplikace je také hlavní menu, ve kterém si uživatel může znovu přečíst pravidla, přečíst si o projektu nebo zahájit hru. V herním menu si
@@ -52,6 +52,7 @@ Jednotlivé tahy jsou reprezentovány třídou \texttt{Move}. Ta uchovává typ 
 počáteční. Tato reprezentace umožňuje zpracovávat všechny typy akcí jednotným způsobem.
 
 Podrobnější dokumentace jednotlivých tříd a kompletní zdrojové kódy Unity aplikace jsou dostupné v repozitáři projektu~\cite{logix_gitlab}.
+Archivovaná verze použitá při vypracování této práce je současně součástí elektronické přílohy (viz příloha~\ref{app:electronic}).
 
 \subsection{Implementace pravidel}
 
@@ -70,7 +71,7 @@ kontrola vítězné podmínky a případně je partie ukončena.
 \subsection{Herní režimy}
 
 Unity aplikace nabízí tři herní režimy. Ty slouží jak pro běžné hraní, tak pro demonstraci vzorových botů. Základním režimem je lokální hra 
-dvou hráčů, při které hráči střídavě provádějí tahy na jednom zařízení. Tento režim slouží především k ověření pravidel - zda byla implementována
+dvou hráčů, při které hráči střídavě provádějí tahy na jednom zařízení. Tento režim slouží především k ověření pravidel --- zda byla implementována
 korektně.
 
 Dalším režimem je hra proti počítačovému soupeři. Před zahájením samotné hry si uživatel může zvolit obtížnost bota, proti kterému chce hrát. Jednotlivé

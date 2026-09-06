@@ -1,8 +1,8 @@
 \chapter{Trénování ohodnocovací funkce}
 \label{sec:neural_network}
 
-V této sekci je popsán vývoj a architektura ohodnocovací funkce, která se využívá ve výsledné implementaci herních agentů. Podrobnější informace o samotné
-architektuře lze najít v dokumentaci v repozitáři~\cite{logix_gitlab}.
+V této sekci je popsán vývoj a architektura ohodnocovací funkce, která se využívá ve výsledné implementaci herních agentů. Podrobnější 
+implementační detaily neuronové sítě jsou součástí elektronické přílohy této práce (viz příloha~\ref{app:electronic}).
 
 \section{Přehled trénovacího procesu}
 
@@ -82,10 +82,16 @@ Aktivní hráč & Binární hodnota \\
 \subsection{Vstupní tenzor}
 
 Vstup, jak již bylo zmíněno, je rozdělen na dvě části. První je reprezentace desky pomocí šesti binárních rovin rozměrově $7 \times 7$. Hodnota 1 
-na dané pozici značí, že se tam kámen dané barvy nachází, v opačném případě 0.
+na dané pozici značí, že se tam kámen dané barvy nachází, v opačném případě 0. Celkem tato část vstupu obsahuje
+\[
+6 \cdot 7 \cdot 7 = 294
+\]
+binárních hodnot.
 
 Druhou tvoří jednorozměrný vektor globálních informací o délce 99. Sem se řadí výherní tvary o velikosti 88 - 4 výherní tvary, každý je jedním z 18 a má
 určenou jednu ze 4 barev. Dále zakázané barvy (velikost 5), informace o inventáři(velikost 5) a informace o tom, kdo hraje (velikost 1). 
+
+
 
 Tyto části se nejdříve zpracovávají odděleně, reprezentace hrací desky je zpracována konvolucí, zatímco globální vektor je převeden do skryté reprezentace
 za pomoci plně propojené vrstvy. Obě reprezentace jsou následně spojeny a tvoří vstup pro výpočet policy a value výstupů.

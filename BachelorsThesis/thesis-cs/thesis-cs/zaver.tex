@@ -2,7 +2,7 @@
 \addcontentsline{toc}{chapter}{Závěr}
 
 Cílem této bakalářské práce bylo navrhnout a implementovat herní prostředí pro hru inspirovanou deskovou hrou Logix a vytvořit 
-ukázkové agenty, kteří využívají různé algoritmy pro rozhodování. Důraz byl kladen na implementaci a trénování neuronové sítě,
+ukázkové agenty, kteří využívají různé algoritmy pro rozhodování. Důraz byl kladen na implementaci a trénování neuronové sítě
 pro účely ohodnocování herních pozic a její následné využití v algoritmech prohledávání herního stromu.
 
 V rámci této práce byla vytvořena implementace v prostředí Unity, která umožňuje partii dvou lidských hráčů, hru proti počítačovým agentům
@@ -16,8 +16,8 @@ společnou neuronovou síť, která poskytuje odhad kvality herních pozic a tak
 Součástí práce byla také implementace trénovací pipeline založené na metodě self-play. Přestože se neuronovou síť podařilo natrénovat
 a do obou algoritmů integrovat, experimenty ukázaly, že z hlediska kvality nedosahuje úrovně navržené heuristiky. 
 Heuristický agent dosáhl nejlepších výsledků, zatímco agenti s algoritmy prohledávání herního stromu s neuronovou sítí představují
-pouze funkční, ale stále nedostatečné řešení. Výsledky naznačují nevhodnou implementaci neuronové sítě, která se s časem trénování
-nezlepšila.
+pouze funkční, ale stále nedostatečné řešení. Výsledky naznačují, že zvolená architektura neuronové sítě nebo způsob jejího trénování nebyly pro 
+danou úlohu dostatečně vhodné, jelikož se s časem trénování její kvalita nezlepšila.
 
 Možností pro další rozvoj je mnoho, zejména ale v oblasti neuronových sítí. Nabízí se delší trénování, předělání architektury či lepší 
 a rychlejší implementace algoritmu MCTS pro rychlejší vyhledávání a tím i rychlejší trénování.

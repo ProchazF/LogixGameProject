@@ -142,7 +142,7 @@ zachování stejného výsledného tahu jako u klasického algoritmu minimax \ci
 \label{sec:pruning}
 
 Přestože algoritmus minimax zaručuje nalezení optimálního tahu, jeho praktické využití je výrazně omezeno vysokou časovou složitostí. 
-Ve většině deskových her není možné prohledat celý herní strom do dostatečné hloubky během rozumného času pouze s použitím algoritmu  minimax. 
+Ve většině deskových her není možné prohledat celý herní strom do dostatečné hloubky během rozumného času pouze s použitím algoritmu minimax. 
 Z tohoto důvodu vznikla řada optimalizačních metod, jejichž cílem je snížit počet navštívených vrcholů bez ovlivnění výsledného rozhodnutí. 
 Nejvýznamnější z nich je právě algoritmus alfa-beta ořezávání, který dokáže vynechat části herního stromu, jejichž prohledání 
 nemůže mít vliv na konečnou volbu tahu \cite{russell2021aima}.
@@ -244,7 +244,7 @@ Namísto toho se soustředí zejména na větve, které se podle dosavadních si
 tedy postupně buduje pouze část herního stromu, jehož velikost se zvětšuje s rostoucím počtem simulací.
 
 Každá iterace algoritmu se skládá ze čtyř na sebe navazujících fází: Selekce (Selection), Rozšíření (Expansion), Simulace (Simulation) 
-a zpětná propagace(Backpropagation).
+a zpětná propagace (Backpropagation).
 Během těchto fází algoritmus vybere vhodnou větev stromu, rozšíří ji o nový vrchol, provede simulaci průběhu hry a získaný 
 výsledek zpětně propaguje ke kořeni stromu. Opakováním tohoto procesu algoritmus postupně zpřesňuje odhad kvality jednotlivých tahů \cite{browne2012mcts}.
 
@@ -446,14 +446,14 @@ je potřeba velkého počtu iterací pro dosažení rozumných výsledků. Moder
 hodnoticími funkcemi nebo neuronovými sítěmi, které poskytují lepší odhad kvality jednotlivých pozic a současně 
 napomáhají efektivnějšímu výběru tahů \cite{browne2012mcts,silver2017alphazero}.
 
-Právě propojení algoritmu MCTS s neuronovými sítěmi představuje základ moderních herních systémů, jako jsou AlphaGo Zero nebo AlphaZero. \cite{silver2017alphazero}.
+Právě propojení algoritmu MCTS s neuronovými sítěmi představuje základ moderních herních systémů, jako jsou AlphaGo Zero nebo AlphaZero \cite{silver2017alphazero}.
 
 \section{Neuronové sítě pro hraní her}
 
 Moderní algoritmy pro hraní deskových her jsou založeny na propojení metod pro prohledávání herního stromu s neuronovými sítěmi. 
 Zatímco algoritmus MCTS efektivně rozhoduje o tom, které části stromu budou prozkoumány, neuronové sítě poskytují odhad kvality 
 jednotlivých pozic a doporučují kvalitní tahy. Díky tomuto spojení je možné výrazně omezit počet potřebných simulací a současně 
-zvýšit kvalitu nalezeného řešení \cite{silver2017alphazero}
+zvýšit kvalitu nalezeného řešení \cite{silver2017alphazero}.
 
 Moderní systémy, jako jsou AlphaGo Zero nebo AlphaZero, využívají dva základní typy neuronových sítí. \emph{Policy Network} odhaduje 
 pravděpodobnosti jednotlivých tahů, zatímco \emph{Value Network} přímo odhaduje hodnotu aktuální herní pozice. Oba typy sítí jsou následně 
@@ -471,7 +471,7 @@ algoritmus nadále zohledňuje také informace získané z předchozích simulac
 rychlejší koncentraci simulací na výhodnější části herního stromu \cite{silver2017alphazero}.
 
 \emph{Policy Network} je trénována na datech vzniklých během self-play. Cílem trénování není napodobovat přímo provedené tahy, ale pravděpodobnostní 
-rozdělení tahů získané algoritmem MCTS. Síť se tak postupně učí předpovídat tahy, které byly během prohledávání označeny jako nejlepší, 
+rozdělení tahů získané algoritmem MCTS. Síť se tak postupně učí předpovídat tahy, které byly během prohledávání označeny jako nejlepší 
 a její výstupy se s rostoucím množstvím trénovacích dat dále zpřesňují \cite{silver2017alphazero}.
 
 \subsection{Value Network}

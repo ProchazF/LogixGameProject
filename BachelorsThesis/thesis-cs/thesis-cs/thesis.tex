@@ -175,9 +175,32 @@
 %%% interaktivní grafy apod.). Elektronické přílohy se nahrávají do SISu.
 %%% Povolené formáty souborů specifikuje opatření rektora č. 72/2017.
 %%% Výjimky schvaluje fakultní koordinátor pro zavěrečné práce.
-% \appendix
-% \chapter{Přílohy}
+\appendix
+\chapter{Přílohy}
 
-% \section{První příloha}
+\section{Elektronická příloha}
+\label{app:electronic}
+
+Součástí práce je elektronická příloha obsahující kompletní zdrojové kódy projektu. 
+Příloha zahrnuje implementaci Unity aplikace, prostředí pro experimenty a trénování 
+neuronové sítě v jazyce Python, experimentální skripty i projektovou dokumentaci.
+
+Obsah elektronické přílohy je rozdělen do několika hlavních částí:
+
+\begin{itemize}
+    \item \textbf{LogixGame} – projekt vytvořený v prostředí Unity obsahující kompletní implementaci hry, grafické uživatelské rozhraní a implementované herní agenty.
+    
+    \item \textbf{EvaluationFunction} – implementace prostředí v jazyce Python určená pro trénování neuronové sítě, algoritmus Monte Carlo Tree Search, reprezentaci herního stavu a další podpůrné nástroje používané při učení.
+
+    \item \textbf{BotExperiments} – experimentální skripty použité pro automatické turnaje agentů, vyhodnocování výsledků a reprodukci experimentů uvedených v této práci.
+
+    \item \textbf{docs} – projektová dokumentace obsahující stručný popis jednotlivých částí projektu, jejich struktury a způsobu použití.
+
+    \item \textbf{Logix\_Windows} – zkompilovanou verzi aplikace pro operační systém Windows. Hru lze spustit pomocí programu \texttt{LogixGame.exe} bez nutnosti otevírat projekt v prostředí Unity.
+\end{itemize}
+
+Elektronická příloha představuje archivovanou verzi projektu použitou při vypracování této bakalářské práce. Aktuální vývojová verze projektu je současně dostupná v repozitáři projektu~\cite{logix_gitlab}.
 
 \end{document}
+
+
